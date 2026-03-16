@@ -343,6 +343,31 @@
     let acaoPagamentoPendente = null;
     let idComandaEmEdicao = null;
 
+    // --- FUNÇÃO PARA FORMATAR A DATA BONITA SEMPRE ---
+    function formatarDataExibicao(dataStr) {
+        if (!dataStr) return "";
+        let str = String(dataStr);
+        if (str.includes('T')) {
+            let d = new Date(str);
+            let dia = String(d.getDate()).padStart(2, '0'); let mes = String(d.getMonth() + 1).padStart(2, '0');
+            let ano = d.getFullYear(); let hora = String(d.getHours()).padStart(2, '0'); let min = String(d.getMinutes()).padStart(2, '0');
+            return `${dia}/${mes}/${ano} ${hora}:${min}`;
+        }
+        let limpa = str.replace(',', ''); let p = limpa.split(' ');
+        if (p.length >= 2) return `${p[0]} ${p[1].substring(0,5)}`;
+        return str;
+    }
+
+    function parseDataBR(dataStr) { 
+        if(!dataStr) return new Date(0); 
+        let str = String(dataStr);
+        if(str.includes('T')) return new Date(str);
+        let partes = str.split(/[\s,]+/); 
+        let dma = partes[0].split('/'); 
+        if(dma.length === 3) return new Date(`${dma[2]}-${dma[1]}-${dma[0]}T12:00:00`); 
+        return new Date(0); 
+    }
+
     async function reqPOST(dados) {
         return await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
     }
@@ -444,7 +469,8 @@
 
         bancoCaixaGlobal.forEach(m => {
             if(m.Tipo === "Entrada" && (m.Descricao.includes("Venda") || m.Descricao.includes("Pgto Comanda"))) {
-                let dStr = m.Data_Hora.split(/[\s,]+/)[0]; let idx = hjFormatDateArray.indexOf(dStr);
+                let dStr = m.Data_Hora.split(/[\s,T]+/)[0]; // Trata espaço ou T
+                let idx = hjFormatDateArray.indexOf(dStr);
                 if(idx !== -1) dadosFaturamento[idx] += parseFloat(m.Valor.toString().replace(',','.')) || 0;
             }
         });
@@ -464,7 +490,6 @@
         chartProd = new Chart(document.getElementById('graficoProdutos'), { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
-    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO (FLEXÍVEL E CORRIGIDO) ---
     function abrirModalPagamento(valorTotal, acaoObj) {
         document.getElementById('pagTotalLabel').innerText = valorTotal.toFixed(2);
         ['pagPix','pagCredito','pagDebito','pagEspecie'].forEach(id => document.getElementById(id).value = "");
@@ -478,10 +503,7 @@
         document.getElementById('pagPix').focus();
     }
     
-    function fecharModalPagamento() { 
-        document.getElementById('modalPagamento').style.display = 'none'; 
-        acaoPagamentoPendente = null; 
-    }
+    function fecharModalPagamento() { document.getElementById('modalPagamento').style.display = 'none'; acaoPagamentoPendente = null; }
 
     function calcularRestantePagamento() {
         let totalRequerido = acaoPagamentoPendente.valorTotal; 
@@ -517,11 +539,7 @@
         if(p > 0) formas.push(`Pix: ${p.toFixed(2)}`); if(c > 0) formas.push(`Crédito: ${c.toFixed(2)}`);
         if(d > 0) formas.push(`Débito: ${d.toFixed(2)}`); if(e > 0) formas.push(`Espécie: ${e.toFixed(2)}`);
         
-        // EXECUTA A AÇÃO ANTES DE APAGAR A MEMÓRIA DA JANELA
-        executarAcaoPagamento(formas.join(" + "), totalPago);
-        
-        // AGORA SIM FECHA A JANELA (oculta e limpa a variável)
-        fecharModalPagamento(); 
+        fecharModalPagamento(); executarAcaoPagamento(formas.join(" + "), totalPago);
     }
 
     async function executarAcaoPagamento(formaPagStr, totalPagoFinal) {
@@ -555,38 +573,6 @@
         abrirModalPagamento(total, { tipo: 'venda_direta', cliente: clienteSel, carrinhoSalvo: [...carrinho], totalSalvo: total, valorTotal: total });
     }
 
-    // --- EDIÇÃO DE COMANDAS ---
-    function editarComanda(id, cliente, itensEncoded) {
-        idComandaEmEdicao = id; carrinho = JSON.parse(decodeURIComponent(itensEncoded));
-        total = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
-        document.getElementById('bannerEdicaoComanda').style.display = 'flex'; document.getElementById('nomeEdicaoComanda').innerText = cliente;
-        let selectCli = document.getElementById('selectClienteVenda');
-        if(!Array.from(selectCli.options).some(opt => opt.value === cliente)) { selectCli.add(new Option(cliente, cliente)); }
-        selectCli.value = cliente;
-        document.getElementById('btnSalvarComanda').innerText = "Gravar Alterações (F3)"; document.getElementById('btnSalvarComanda').classList.replace("btn-laranja", "btn-amarelo");
-        atualizarCarrinho(); mudarTela('tela-caixa');
-    }
-
-    function cancelarEdicaoComanda() {
-        idComandaEmEdicao = null; carrinho = []; total = 0; document.getElementById('bannerEdicaoComanda').style.display = 'none';
-        document.getElementById('btnSalvarComanda').innerText = "Salvar na Comanda (F3)"; document.getElementById('btnSalvarComanda').classList.replace("btn-amarelo", "btn-laranja");
-        document.getElementById('selectClienteVenda').value = "Consumidor Final"; atualizarCarrinho();
-    }
-
-    function acaoBotaoComanda() {
-        if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!");
-        if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); }
-    }
-
-    async function atualizarComandaExistente() {
-        let clienteSel = document.getElementById('selectClienteVenda').value;
-        document.getElementById('status-bar').innerText = "Atualizando Comanda...";
-        await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho });
-        alert("Comanda atualizada com sucesso!");
-        cancelarEdicaoComanda(); recarregarDadosSilencioso();
-    }
-
-    // --- CAIXA: QUADRAS E CARRINHO ---
     function adicionarQuadra(nomeQuadra) { let horas = prompt(`Quantas horas para a ${nomeQuadra}?`, "1"); if(!horas) return; let valor = prompt(`Valor TOTAL a cobrar?`, "80.00"); if(!valor) return; let precoObj = parseFloat(valor.replace(',','.')); carrinho.push({ codigo: 'SERVICO', nome: `${nomeQuadra} (${parseInt(horas)}h)`, preco: precoObj, qtd: 1 }); total += precoObj; atualizarCarrinho(); }
     
     document.getElementById('codigoInput').addEventListener('keypress', function(e) { if (e.key === 'Enter' && this.value.trim() !== "") { e.preventDefault(); processarEntradaCodigo(this.value.trim()); this.value = ""; } });
@@ -677,7 +663,6 @@
     async function removerProduto(id) { if(confirm("Apagar produto?")) { await reqPOST({ acao: "remover", id: id }); recarregarDadosSilencioso(); } }
 
     function mudarFormDespesa() { let t = document.getElementById('tipoMovimento').value; if(t === "Saida") document.getElementById('boxCategoriaDespesa').style.display = "block"; else document.getElementById('boxCategoriaDespesa').style.display = "none"; }
-    function parseDataBR(dataStr) { if(!dataStr) return new Date(0); let partes = dataStr.split(/[\s,]+/); let dma = partes[0].split('/'); if(dma.length === 3) return new Date(`${dma[2]}-${dma[1]}-${dma[0]}T12:00:00`); return new Date(0); }
     
     function atualizarDashboardECaixa() {
         let sTurno = 0, vHoje = 0, hj = new Date().toLocaleDateString('pt-BR'); 
@@ -705,8 +690,7 @@
             if (dIni && recordDate < dIni) return; if (dFim && recordDate > dFim) return;
 
             let v = parseFloat(m.Valor.toString().replace(',','.'))||0; 
-            let pTempo = m.Data_Hora.split(m.Data_Hora.includes(',') ? ',' : ' '); 
-            let hData = pTempo.length > 1 ? `${pTempo[1].trim()} - ${pTempo[0].trim()}` : m.Data_Hora;
+            let hData = formatarDataExibicao(m.Data_Hora);
             let c = m.Tipo==='Entrada' ? 'val-entrada' : 'val-saida'; 
 
             if(m.Tipo === 'Entrada') somaEntradas += v; if(m.Tipo === 'Saida') somaSaidas += v;
