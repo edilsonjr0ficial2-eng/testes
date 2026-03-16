@@ -247,6 +247,7 @@
 
         <div class="form-grupo">
             <div><label>Movimento</label><select id="tipoMovimento" onchange="mudarFormDespesa()"><option value="Entrada">Entrada</option><option value="Saida">Saída (Despesa)</option></select></div>
+            
             <div id="boxCategoriaDespesa" style="display: none;">
                 <label>Categoria</label>
                 <select id="categoriaDespesa">
@@ -257,6 +258,7 @@
                     <option value="Outros">Outros</option>
                 </select>
             </div>
+
             <div><label>Descrição Extra</label><input type="text" id="descMovimento" placeholder="Ex: Compra de Água" autocomplete="off"></div>
             <div><label>Valor (R$)</label><input type="text" inputmode="decimal" id="valorMovimento" placeholder="Ex: 5,50" autocomplete="off"></div>
             <button type="button" class="btn-verde" id="btnRegistrarLivro" style="margin-bottom: 2px;" onclick="registrarCaixa()" disabled>Registrar</button>
@@ -343,7 +345,7 @@
     let acaoPagamentoPendente = null;
     let idComandaEmEdicao = null;
 
-    // --- FUNÇÃO PARA FORMATAR A DATA BONITA SEMPRE ---
+    // --- FUNÇÃO DE DATA BONITA ---
     function formatarDataExibicao(dataStr) {
         if (!dataStr) return "";
         let str = String(dataStr);
@@ -469,7 +471,7 @@
 
         bancoCaixaGlobal.forEach(m => {
             if(m.Tipo === "Entrada" && (m.Descricao.includes("Venda") || m.Descricao.includes("Pgto Comanda"))) {
-                let dStr = m.Data_Hora.split(/[\s,T]+/)[0]; // Trata espaço ou T
+                let dStr = m.Data_Hora.split(/[\s,T]+/)[0]; 
                 let idx = hjFormatDateArray.indexOf(dStr);
                 if(idx !== -1) dadosFaturamento[idx] += parseFloat(m.Valor.toString().replace(',','.')) || 0;
             }
@@ -490,6 +492,7 @@
         chartProd = new Chart(document.getElementById('graficoProdutos'), { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
+    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO ---
     function abrirModalPagamento(valorTotal, acaoObj) {
         document.getElementById('pagTotalLabel').innerText = valorTotal.toFixed(2);
         ['pagPix','pagCredito','pagDebito','pagEspecie'].forEach(id => document.getElementById(id).value = "");
@@ -503,7 +506,10 @@
         document.getElementById('pagPix').focus();
     }
     
-    function fecharModalPagamento() { document.getElementById('modalPagamento').style.display = 'none'; acaoPagamentoPendente = null; }
+    function fecharModalPagamento() { 
+        document.getElementById('modalPagamento').style.display = 'none'; 
+        acaoPagamentoPendente = null; 
+    }
 
     function calcularRestantePagamento() {
         let totalRequerido = acaoPagamentoPendente.valorTotal; 
@@ -539,11 +545,16 @@
         if(p > 0) formas.push(`Pix: ${p.toFixed(2)}`); if(c > 0) formas.push(`Crédito: ${c.toFixed(2)}`);
         if(d > 0) formas.push(`Débito: ${d.toFixed(2)}`); if(e > 0) formas.push(`Espécie: ${e.toFixed(2)}`);
         
-        fecharModalPagamento(); executarAcaoPagamento(formas.join(" + "), totalPago);
+        // FECHA O MODAL IMEDIATAMENTE ANTES DE ENVIAR PARA NÃO CAUSAR BUG VISUAL
+        fecharModalPagamento(); 
+        
+        // ENVIA A AÇÃO PARA O GOOGLE
+        executarAcaoPagamento(formas.join(" + "), totalPago);
     }
 
     async function executarAcaoPagamento(formaPagStr, totalPagoFinal) {
         let acao = acaoPagamentoPendente;
+        
         if(acao.tipo === 'venda_direta') {
             document.getElementById('btnFinalizarVenda').innerText = "Gravando..."; document.getElementById('btnFinalizarVenda').disabled = true;
             await reqPOST({ acao: "venda", cliente: acao.cliente, total: acao.totalSalvo, carrinho: acao.carrinhoSalvo, operador: operadorAtual, forma_pagamento: formaPagStr });
@@ -573,6 +584,57 @@
         abrirModalPagamento(total, { tipo: 'venda_direta', cliente: clienteSel, carrinhoSalvo: [...carrinho], totalSalvo: total, valorTotal: total });
     }
 
+    // --- LÓGICA CORRIGIDA PARA EDITAR A COMANDA ---
+    function editarComanda(idComanda) {
+        let comanda = bancoComandas.find(c => String(c.ID_Comanda) === String(idComanda));
+        if(!comanda) return alert("Comanda não encontrada!");
+
+        idComandaEmEdicao = idComanda; 
+        try { carrinho = JSON.parse(comanda.Itens_JSON); } catch(e) { carrinho = []; }
+        total = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
+        
+        document.getElementById('bannerEdicaoComanda').style.display = 'flex'; 
+        document.getElementById('nomeEdicaoComanda').innerText = comanda.Cliente;
+        
+        let selectCli = document.getElementById('selectClienteVenda');
+        if(!Array.from(selectCli.options).some(opt => opt.value === comanda.Cliente)) { 
+            selectCli.add(new Option(comanda.Cliente, comanda.Cliente)); 
+        }
+        selectCli.value = comanda.Cliente;
+        
+        document.getElementById('btnSalvarComanda').innerText = "Gravar Alterações (F3)"; 
+        document.getElementById('btnSalvarComanda').classList.replace("btn-laranja", "btn-amarelo");
+        document.getElementById('btnSalvarComanda').disabled = false;
+        document.getElementById('btnFinalizarVenda').style.display = 'none'; // Impede vender direto enquanto edita a comanda
+        
+        atualizarCarrinho(); 
+        mudarTela('tela-caixa');
+    }
+
+    function cancelarEdicaoComanda() {
+        idComandaEmEdicao = null; carrinho = []; total = 0; 
+        document.getElementById('bannerEdicaoComanda').style.display = 'none';
+        document.getElementById('btnSalvarComanda').innerText = "Salvar na Comanda (F3)"; 
+        document.getElementById('btnSalvarComanda').classList.replace("btn-amarelo", "btn-laranja");
+        document.getElementById('btnFinalizarVenda').style.display = 'block'; // Mostra botão de venda novamente
+        document.getElementById('selectClienteVenda').value = "Consumidor Final"; 
+        atualizarCarrinho();
+    }
+
+    function acaoBotaoComanda() {
+        if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!");
+        if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); }
+    }
+
+    async function atualizarComandaExistente() {
+        let clienteSel = document.getElementById('selectClienteVenda').value;
+        document.getElementById('status-bar').innerText = "A Atualizar Comanda...";
+        await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho });
+        alert("Comanda atualizada com sucesso!");
+        cancelarEdicaoComanda(); recarregarDadosSilencioso();
+    }
+
+    // --- CAIXA: QUADRAS E CARRINHO ---
     function adicionarQuadra(nomeQuadra) { let horas = prompt(`Quantas horas para a ${nomeQuadra}?`, "1"); if(!horas) return; let valor = prompt(`Valor TOTAL a cobrar?`, "80.00"); if(!valor) return; let precoObj = parseFloat(valor.replace(',','.')); carrinho.push({ codigo: 'SERVICO', nome: `${nomeQuadra} (${parseInt(horas)}h)`, preco: precoObj, qtd: 1 }); total += precoObj; atualizarCarrinho(); }
     
     document.getElementById('codigoInput').addEventListener('keypress', function(e) { if (e.key === 'Enter' && this.value.trim() !== "") { e.preventDefault(); processarEntradaCodigo(this.value.trim()); this.value = ""; } });
@@ -617,9 +679,11 @@
             let itensStr = "", itensObj = []; 
             try { itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `${i.qtd}x ${i.nome}`).join(', '); } catch(e) {} 
             let valor = parseFloat(c.Total.toString().replace(',','.')) || 0; 
+            
+            // O botão de Editar agora passa apenas o ID da Comanda! Seguro e à prova de bugs.
             return `<tr><td>#${c.ID_Comanda}</td><td style="font-weight:bold;">${c.Cliente}</td><td>${itensStr}</td><td style="color:#10b981; font-weight:bold;">R$ ${valor.toFixed(2)}</td>
             <td style="display:flex; gap:5px; flex-wrap:wrap;">
-                <button type="button" class="btn-azul" style="padding: 8px 12px; margin-bottom:2px;" onclick="editarComanda('${c.ID_Comanda}', '${c.Cliente}', '${encodeURIComponent(JSON.stringify(itensObj))}')">✏️ Editar</button>
+                <button type="button" class="btn-azul" style="padding: 8px 12px; margin-bottom:2px;" onclick="editarComanda('${c.ID_Comanda}')">✏️ Editar</button>
                 <button type="button" class="btn-amarelo" style="padding: 8px 12px; margin-bottom:2px;" onclick="iniciarPagamentoParcial('${c.ID_Comanda}', '${c.Cliente}', ${valor})">Pgto Parcial</button>
                 <button type="button" class="btn-verde" style="padding: 8px 12px; margin-bottom:2px;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${c.Cliente}', '${encodeURIComponent(JSON.stringify(itensObj))}', ${valor})">Cobrar Todo</button>
                 <button type="button" class="btn-vermelho" style="padding: 8px 12px;" onclick="excluirComanda('${c.ID_Comanda}')">X (Zerar)</button>
@@ -633,7 +697,7 @@
         if(promptVal === null) return;
         let valorA_Pagar = parseFloat(promptVal.replace(',','.'));
         if(!valorA_Pagar || isNaN(valorA_Pagar) || valorA_Pagar <= 0) return;
-        if(valorA_Pagar >= totalVal) return alert("O valor digitado liquida ou passa do total da comanda. Para isso, use o botão verde 'Cobrar Todo'.");
+        if(valorA_Pagar >= totalVal) return alert("O valor digitado liquida ou passa do total da comanda. Para isso, feche este aviso e use o botão verde 'Cobrar Todo'.");
 
         abrirModalPagamento(valorA_Pagar, { tipo: 'comanda_parcial', id_comanda: idComanda, cliente: cliente, valorTotal: valorA_Pagar });
     }
