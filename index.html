@@ -58,6 +58,7 @@
         .form-grupo div { flex: 1; display: flex; flex-direction: column; min-width: 120px; }
         .form-grupo input, .form-grupo select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; background-color: #fff;}
         
+        /* BOTÕES */
         button { cursor: pointer; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; color: white; font-size: 15px; transition: 0.2s; -webkit-appearance: none; appearance: none; }
         .btn-azul { background-color: #0ea5e9; } .btn-azul:hover:not(:disabled) { background-color: #0284c7; }
         .btn-verde { background-color: #10b981; } .btn-verde:hover:not(:disabled) { background-color: #059669; }
@@ -78,14 +79,15 @@
         
         #alerta-caixa { display: none; background: #fee2e2; color: #991b1b; padding: 15px; text-align: center; font-weight: bold; border-radius: 5px; margin-bottom: 20px; border: 2px solid #ef4444; }
 
+        /* MODAIS */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background: #fff; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;}
         .lista-comandas-modal { max-height: 300px; overflow-y: auto; margin: 20px 0; text-align: left; -webkit-overflow-scrolling: touch; }
         .btn-comanda-item { display: block; width: 100%; margin-bottom: 10px; padding: 15px; background: #f1f5f9; color: #333; border: 1px solid #cbd5e1; text-align: left; font-size: 16px; border-radius: 5px; }
 
-        .linha-pag { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .linha-pag { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap:wrap;}
         .linha-pag label { width: 120px; text-align: left; font-weight: bold; color: #475569; }
-        .linha-pag input { flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none;}
+        .linha-pag input { flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; min-width:150px;}
 
         @media (max-width: 768px) {
             body { flex-direction: column; } 
@@ -97,6 +99,7 @@
             .tela { padding: 15px; }
             .form-grupo div { min-width: 100%; } 
             .botoes-caixa button, .btn-quadra { width: 100%; font-size: 16px; padding: 15px; margin-bottom: 5px; }
+            .linha-pag label { width:100%; margin-bottom:5px; }
         }
     </style>
 </head>
@@ -171,8 +174,8 @@
         </div>
 
         <div class="botoes-quadra">
-            <button type="button" class="btn-quadra" onclick="adicionarQuadra('Quadra Chicashoes')">🎾 Quadra Chicashoes</button>
-            <button type="button" class="btn-quadra" onclick="adicionarQuadra('Quadra Padaria do Helder')">🎾 Quadra Padaria do Helder</button>
+            <button type="button" class="btn-quadra" onclick="adicionarQuadraInteligente('Quadra Chicashoes')">🎾 Quadra Chicashoes</button>
+            <button type="button" class="btn-quadra" onclick="adicionarQuadraInteligente('Quadra Padaria do Helder')">🎾 Quadra Padaria do Helder</button>
         </div>
 
         <div class="form-grupo" style="margin-bottom: 10px;">
@@ -199,9 +202,9 @@
         <div style="text-align: right; font-size: 24px; font-weight: bold; color: #10b981; margin: 20px 0;">Total: R$ <span id="valorTotal">0.00</span></div>
         
         <div class="botoes-caixa">
-            <button type="button" class="btn-vermelho" id="btnDescontoCaixa" style="flex: 0 0 auto;" onclick="aplicarDescontoCaixa()" disabled>-% Desc</button>
-            <button type="button" class="btn-laranja" id="btnSalvarComanda" style="flex: 1;" onclick="acaoBotaoComanda()" disabled>Salvar Comanda (F3)</button>
-            <button type="button" class="btn-azul" id="btnFinalizarVenda" style="flex: 1;" onclick="iniciarVendaDireta()" disabled>Cobrar (F2)</button>
+            <button type="button" class="btn-vermelho" id="btnDescontoCaixa" style="flex: 0 0 auto; background-color:#8b5cf6;" onclick="aplicarDescontoCaixa()" disabled>-% Desc</button>
+            <button type="button" class="btn-laranja" id="btnSalvarComanda" style="flex: 1;" onclick="acaoBotaoComanda()" disabled>Salvar na Comanda (F3)</button>
+            <button type="button" class="btn-azul" id="btnFinalizarVenda" style="flex: 1;" onclick="iniciarVendaDireta()" disabled>Cobrar Direto (F2)</button>
         </div>
     </div>
 
@@ -264,7 +267,11 @@
     </div>
 
     <div id="tela-estoque" class="tela">
-        <h1>Gestão de Estoque</h1>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h1>Gestão de Estoque</h1>
+            <button type="button" class="btn-azul" onclick="abrirModalHistorico()">📜 Ver Histórico de Stock</button>
+        </div>
+        
         <div class="form-grupo">
             <div style="flex-direction: row; gap: 5px;">
                 <div style="flex: 1;"><label>ID/Código</label><input type="text" id="novoId" placeholder="Bipe, digite ou câmera" autocomplete="off"></div>
@@ -275,7 +282,7 @@
             <div><label>Venda</label><input type="text" inputmode="decimal" id="novoPreco" placeholder="Ex: 5,00"></div>
             <div><label>Qtd</label><input type="number" id="novaQtd"></div>
             <div><label>Estoque Mín.</label><input type="number" id="novoMinimo" placeholder="Ex: 10"></div>
-            <button type="button" class="btn-verde" style="margin-bottom: 2px;" onclick="salvarProdutoEstoque()" id="btnAdicionarEstoque">Salvar</button>
+            <button type="button" class="btn-verde" style="margin-bottom: 2px;" onclick="salvarProdutoEstoque()" id="btnAdicionarEstoque">Salvar Produto</button>
         </div>
         <div class="table-responsive">
             <table>
@@ -308,11 +315,27 @@
     </div>
 </div>
 
+<div id="modalHistorico" class="modal-overlay">
+    <div class="modal-box" style="max-width: 800px; width: 95%;">
+        <h3 style="margin-top:0; color:#0f172a;">📜 Histórico de Movimentações (Estoque)</h3>
+        <div class="table-responsive" style="max-height: 400px;">
+            <table>
+                <thead><tr><th>Data/Hora</th><th>Operador</th><th>Produto</th><th>Qtd</th><th>Motivo</th></tr></thead>
+                <tbody id="listaHistoricoModal"></tbody>
+            </table>
+        </div>
+        <button type="button" class="btn-vermelho" style="width: 100%; margin-top: 15px;" onclick="fecharModalHistorico()">Fechar Histórico</button>
+    </div>
+</div>
+
 <div id="modalPagamento" class="modal-overlay">
     <div class="modal-box" style="max-width: 400px;">
         <h3 id="pagTituloModal" style="margin-bottom: 5px; color: #0f172a;">Caixa de Pagamento</h3>
         <div style="font-size: 32px; font-weight: bold; margin-bottom: 20px; color: #10b981;">R$ <span id="pagTotalLabel">0.00</span></div>
         
+        <div class="linha-pag"><label>👤 Quem Paga:</label><input type="text" id="pagNomePagador" placeholder="Nome (Ex: João)" autocomplete="off"></div>
+        <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 15px 0;">
+
         <div class="linha-pag"><label>💠 Pix:</label><input type="text" inputmode="decimal" id="pagPix" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
         <div class="linha-pag"><label>💳 Crédito:</label><input type="text" inputmode="decimal" id="pagCredito" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
         <div class="linha-pag"><label>💳 Débito:</label><input type="text" inputmode="decimal" id="pagDebito" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
@@ -332,7 +355,7 @@
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
     
-    let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [];
+    let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
     let turnoAtual = null, carrinho = [], total = 0, leitorHtml5 = null;
     let inputCameraAlvo = "codigoInput", idEditandoEstoque = null, operadorAtual = "";
     
@@ -341,43 +364,23 @@
     let idComandaEmEdicao = null;
 
     function formatarDataExibicao(dataStr) {
-        if (!dataStr) return "";
-        let str = String(dataStr);
-        if (str.includes('T')) {
-            let d = new Date(str);
-            let dia = String(d.getDate()).padStart(2, '0'); let mes = String(d.getMonth() + 1).padStart(2, '0');
-            let ano = d.getFullYear(); let hora = String(d.getHours()).padStart(2, '0'); let min = String(d.getMinutes()).padStart(2, '0');
-            return `${dia}/${mes}/${ano} ${hora}:${min}`;
-        }
-        let limpa = str.replace(',', ''); let p = limpa.split(' ');
-        if (p.length >= 2) return `${p[0]} ${p[1].substring(0,5)}`;
-        return str;
+        if (!dataStr) return ""; let str = String(dataStr);
+        if (str.includes('T')) { let d = new Date(str); let dia = String(d.getDate()).padStart(2, '0'); let mes = String(d.getMonth() + 1).padStart(2, '0'); let ano = d.getFullYear(); let hora = String(d.getHours()).padStart(2, '0'); let min = String(d.getMinutes()).padStart(2, '0'); return `${dia}/${mes}/${ano} ${hora}:${min}`; }
+        let limpa = str.replace(',', ''); let p = limpa.split(' '); if (p.length >= 2) return `${p[0]} ${p[1].substring(0,5)}`; return str;
     }
 
     function parseDataBR(dataStr) { 
-        if(!dataStr) return new Date(0); 
-        let str = String(dataStr);
-        if(str.includes('T')) return new Date(str);
-        let partes = str.split(/[\s,]+/); 
-        let dma = partes[0].split('/'); 
-        if(dma.length === 3) return new Date(`${dma[2]}-${dma[1]}-${dma[0]}T12:00:00`); 
-        return new Date(0); 
+        if(!dataStr) return new Date(0); let str = String(dataStr);
+        if(str.includes('T')) return new Date(str); let partes = str.split(/[\s,]+/); let dma = partes[0].split('/'); if(dma.length === 3) return new Date(`${dma[2]}-${dma[1]}-${dma[0]}T12:00:00`); return new Date(0); 
     }
 
-    async function reqPOST(dados) {
-        return await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
-    }
+    async function reqPOST(dados) { return await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }); }
 
-    document.getElementById('loginSenha').addEventListener('keypress', e => { 
-        if(e.key === 'Enter') { e.preventDefault(); fazerLogin(); } 
-    });
+    document.getElementById('loginSenha').addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); fazerLogin(); } });
 
     window.onload = () => {
         let opSalvo = localStorage.getItem('arena_operador');
-        if (opSalvo) {
-            document.getElementById('caixa-login-inputs').style.display = 'none';
-            document.getElementById('caixa-login-loading').style.display = 'block';
-        }
+        if (opSalvo) { document.getElementById('caixa-login-inputs').style.display = 'none'; document.getElementById('caixa-login-loading').style.display = 'block'; }
         carregarDadosIniciais();
     };
 
@@ -386,7 +389,7 @@
             const resposta = await fetch(API_URL); const dados = await resposta.json();
             bancoDeProdutos = dados.produtos || []; bancoComandas = dados.comandas || [];
             bancoCaixaGlobal = dados.caixa || []; bancoClientes = dados.clientes || [];
-            bancoUsuarios = dados.usuarios || []; bancoVendas = dados.vendas || [];
+            bancoUsuarios = dados.usuarios || []; bancoVendas = dados.vendas || []; bancoHistorico = dados.historico || [];
             turnoAtual = (dados.turnos || []).find(t => t.Status === "Aberto");
             
             let opSalvo = localStorage.getItem('arena_operador'); let nomeSalvo = localStorage.getItem('arena_operador_nome');
@@ -399,25 +402,16 @@
                 mudarTela(tabSalva, document.querySelector(`.menu-item[onclick*="${tabSalva}"]`));
             } else {
                 localStorage.removeItem('arena_operador');
-                document.getElementById('caixa-login-loading').style.display = 'none';
-                document.getElementById('caixa-login-inputs').style.display = 'block';
-                mudarTela('tela-dashboard', null);
-                document.getElementById('status-login').innerText = "✅ Conectado! Pode fazer login.";
-                document.getElementById('status-login').style.color = "#10b981";
+                document.getElementById('caixa-login-loading').style.display = 'none'; document.getElementById('caixa-login-inputs').style.display = 'block';
+                mudarTela('tela-dashboard', null); document.getElementById('status-login').innerText = "✅ Conectado! Pode fazer login."; document.getElementById('status-login').style.color = "#10b981";
                 ['loginUsuario', 'loginSenha', 'btnEntrar'].forEach(id => document.getElementById(id).disabled = false);
             }
             atualizarTodasAsTelas();
-        } catch (erro) { 
-            document.getElementById('caixa-login-loading').style.display = 'none';
-            document.getElementById('caixa-login-inputs').style.display = 'block';
-            document.getElementById('status-login').innerHTML = "Erro de conexão.<br>Recarregue a página."; 
-            document.getElementById('status-login').style.color = "#ef4444"; 
-        }
+        } catch (erro) { document.getElementById('caixa-login-loading').style.display = 'none'; document.getElementById('caixa-login-inputs').style.display = 'block'; document.getElementById('status-login').innerHTML = "Erro de conexão.<br>Recarregue a página."; document.getElementById('status-login').style.color = "#ef4444"; }
     }
 
     function fazerLogin() {
-        let userTyped = document.getElementById('loginUsuario').value.trim().toLowerCase();
-        let passTyped = document.getElementById('loginSenha').value.trim();
+        let userTyped = document.getElementById('loginUsuario').value.trim().toLowerCase(); let passTyped = document.getElementById('loginSenha').value.trim();
         let userEncontrado = bancoUsuarios.find(u => String(u.Login).toLowerCase() === userTyped && String(u.Senha) === passTyped);
         if(userEncontrado) {
             operadorAtual = userTyped.charAt(0).toUpperCase() + userTyped.slice(1);
@@ -435,9 +429,8 @@
         try {
             const resposta = await fetch(API_URL); const dados = await resposta.json();
             bancoDeProdutos = dados.produtos || []; bancoComandas = dados.comandas || [];
-            bancoCaixaGlobal = dados.caixa || []; bancoClientes = dados.clientes || []; bancoUsuarios = dados.usuarios || []; bancoVendas = dados.vendas || [];
-            turnoAtual = (dados.turnos || []).find(t => t.Status === "Aberto");
-            document.getElementById('status-bar').innerText = "Sistema Online";
+            bancoCaixaGlobal = dados.caixa || []; bancoClientes = dados.clientes || []; bancoUsuarios = dados.usuarios || []; bancoVendas = dados.vendas || []; bancoHistorico = dados.historico || [];
+            turnoAtual = (dados.turnos || []).find(t => t.Status === "Aberto"); document.getElementById('status-bar').innerText = "Sistema Online";
             atualizarTodasAsTelas();
         } catch(e) { document.getElementById('status-bar').innerText = "Erro de conexão."; }
     }
@@ -465,8 +458,7 @@
 
         bancoCaixaGlobal.forEach(m => {
             if(m.Tipo === "Entrada" && (m.Descricao.includes("Venda") || m.Descricao.includes("Pgto Comanda"))) {
-                let dStr = m.Data_Hora.split(/[\s,T]+/)[0]; 
-                let idx = hjFormatDateArray.indexOf(dStr);
+                let dStr = m.Data_Hora.split(/[\s,T]+/)[0]; let idx = hjFormatDateArray.indexOf(dStr);
                 if(idx !== -1) dadosFaturamento[idx] += parseFloat(m.Valor.toString().replace(',','.')) || 0;
             }
         });
@@ -481,93 +473,74 @@
         });
 
         let prodOrder = Object.keys(contagemProdutos).map(k => ({nome: k, qtd: contagemProdutos[k]})).sort((a,b) => b.qtd - a.qtd).slice(0, 5);
-        
         if(chartProd) chartProd.destroy();
         chartProd = new Chart(document.getElementById('graficoProdutos'), { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
-    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO ---
+    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO (AGORA RETÉM O PAGADOR) ---
     function abrirModalPagamento(valorTotal, acaoObj) {
         document.getElementById('pagTotalLabel').innerText = valorTotal.toFixed(2);
-        ['pagPix','pagCredito','pagDebito','pagEspecie'].forEach(id => document.getElementById(id).value = "");
+        ['pagPix','pagCredito','pagDebito','pagEspecie', 'pagNomePagador'].forEach(id => document.getElementById(id).value = "");
         acaoPagamentoPendente = acaoObj; 
-        
-        if(acaoObj.tipo === 'comanda_parcial') { document.getElementById('pagTituloModal').innerText = "Pagamento Parcial"; } 
-        else { document.getElementById('pagTituloModal').innerText = "Caixa de Pagamento"; }
-        
-        calcularRestantePagamento();
-        document.getElementById('modalPagamento').style.display = 'flex';
-        document.getElementById('pagPix').focus();
+        if(acaoObj.tipo === 'comanda_parcial') { document.getElementById('pagTituloModal').innerText = "Pagamento Parcial"; } else { document.getElementById('pagTituloModal').innerText = "Caixa de Pagamento"; }
+        calcularRestantePagamento(); document.getElementById('modalPagamento').style.display = 'flex'; document.getElementById('pagNomePagador').focus();
     }
     
-    function fecharModalPagamento() { 
-        document.getElementById('modalPagamento').style.display = 'none'; 
-        acaoPagamentoPendente = null; 
-    }
+    function fecharModalPagamento() { document.getElementById('modalPagamento').style.display = 'none'; acaoPagamentoPendente = null; }
 
     function calcularRestantePagamento() {
         if(!acaoPagamentoPendente) return;
         let totalRequerido = acaoPagamentoPendente.valorTotal; 
-        let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0;
-        let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
-        let d = parseFloat(document.getElementById('pagDebito').value.replace(',', '.')) || 0;
-        let e = parseFloat(document.getElementById('pagEspecie').value.replace(',', '.')) || 0;
-        let totalPagoAgora = p + c + d + e;
+        let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0; let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
+        let d = parseFloat(document.getElementById('pagDebito').value.replace(',', '.')) || 0; let e = parseFloat(document.getElementById('pagEspecie').value.replace(',', '.')) || 0;
+        let totalPagoAgora = p + c + d + e; let box = document.getElementById('boxStatusPagamento'); let falta = totalRequerido - totalPagoAgora;
         
-        let box = document.getElementById('boxStatusPagamento');
-        let falta = totalRequerido - totalPagoAgora;
-        
-        if (falta > 0.01) { 
-            box.style.color = "#dc2626"; box.innerHTML = `Falta: R$ <span id="pagRestanteLabel">${falta.toFixed(2)}</span>`; 
-            document.getElementById('btnConfirmarPagamento').disabled = true; 
-        } else if (falta < -0.01) { 
-            box.style.color = "#eab308"; box.innerHTML = `Troco: R$ <span id="pagRestanteLabel">${Math.abs(falta).toFixed(2)}</span>`; 
-            document.getElementById('btnConfirmarPagamento').disabled = false; 
-        } else { 
-            box.style.color = "#16a34a"; box.innerHTML = `Exato: R$ <span id="pagRestanteLabel">0.00</span>`; 
-            document.getElementById('btnConfirmarPagamento').disabled = false; 
-        }
+        if (falta > 0.01) { box.style.color = "#dc2626"; box.innerHTML = `Falta: R$ <span id="pagRestanteLabel">${falta.toFixed(2)}</span>`; document.getElementById('btnConfirmarPagamento').disabled = true; 
+        } else if (falta < -0.01) { box.style.color = "#eab308"; box.innerHTML = `Troco: R$ <span id="pagRestanteLabel">${Math.abs(falta).toFixed(2)}</span>`; document.getElementById('btnConfirmarPagamento').disabled = false; 
+        } else { box.style.color = "#16a34a"; box.innerHTML = `Exato: R$ <span id="pagRestanteLabel">0.00</span>`; document.getElementById('btnConfirmarPagamento').disabled = false; }
     }
 
     function confirmarPagamentoMisto() {
-        let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0;
-        let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
-        let d = parseFloat(document.getElementById('pagDebito').value.replace(',', '.')) || 0;
-        let e = parseFloat(document.getElementById('pagEspecie').value.replace(',', '.')) || 0;
-        let totalPago = p + c + d + e;
-        
-        let formas = [];
+        let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0; let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
+        let d = parseFloat(document.getElementById('pagDebito').value.replace(',', '.')) || 0; let e = parseFloat(document.getElementById('pagEspecie').value.replace(',', '.')) || 0;
+        let pagNome = document.getElementById('pagNomePagador').value.trim() || "Não informado";
+        let totalPago = p + c + d + e; let formas = [];
         if(p > 0) formas.push(`Pix: ${p.toFixed(2)}`); if(c > 0) formas.push(`Crédito: ${c.toFixed(2)}`);
         if(d > 0) formas.push(`Débito: ${d.toFixed(2)}`); if(e > 0) formas.push(`Espécie: ${e.toFixed(2)}`);
         
-        let acaoSegura = acaoPagamentoPendente; // Salva o estado antes de fechar a janela
-        fecharModalPagamento(); // Limpa a tela
-        executarAcaoPagamento(acaoSegura, formas.join(" + "), totalPago); // Executa com segurança
+        let acaoSegura = acaoPagamentoPendente;
+        // TRANCA A TELA E ENVIA O COMANDO ANTES DE LIMPAR O MODAL
+        document.getElementById('btnConfirmarPagamento').innerText = "Aguarde...";
+        document.getElementById('btnConfirmarPagamento').disabled = true;
+        
+        executarAcaoPagamento(acaoSegura, formas.join(" + "), totalPago, pagNome).then(() => {
+            document.getElementById('btnConfirmarPagamento').innerText = "Receber";
+            fecharModalPagamento(); 
+        });
     }
 
-    async function executarAcaoPagamento(acao, formaPagStr, totalPagoFinal) {
+    async function executarAcaoPagamento(acao, formaPagStr, totalPagoFinal, pagadorNome) {
         if(!acao) return;
-
         if(acao.tipo === 'venda_direta') {
             document.getElementById('btnFinalizarVenda').innerText = "Gravando..."; document.getElementById('btnFinalizarVenda').disabled = true;
-            await reqPOST({ acao: "venda", cliente: acao.cliente, total: acao.totalSalvo, carrinho: acao.carrinhoSalvo, operador: operadorAtual, forma_pagamento: formaPagStr });
+            await reqPOST({ acao: "venda", cliente: acao.cliente, total: acao.totalSalvo, carrinho: acao.carrinhoSalvo, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr });
             carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso();
-            document.getElementById('btnFinalizarVenda').innerText = "Cobrar (F2)"; document.getElementById('btnFinalizarVenda').disabled = false;
-            if(confirm("Imprimir recibo térmico?")) imprimirCupao(acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
-            if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
+            document.getElementById('btnFinalizarVenda').innerText = "Cobrar Direto (F2)"; document.getElementById('btnFinalizarVenda').disabled = false;
+            if(confirm("Imprimir recibo térmico?")) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
+            if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
         } 
         else if (acao.tipo === 'comanda') {
             document.getElementById('status-bar').innerText = "Recebendo...";
-            await reqPOST({ acao: "cobrar_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, forma_pagamento: formaPagStr + acao.msgExtra });
+            await reqPOST({ acao: "cobrar_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr + acao.msgExtra });
             let iArr = JSON.parse(decodeURIComponent(acao.itensJsonStr)); recarregarDadosSilencioso();
-            if(confirm("Imprimir recibo térmico?")) imprimirCupao(acao.cliente, iArr, acao.totalSalvo);
-            if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(acao.cliente, iArr, acao.totalSalvo);
+            if(confirm("Imprimir recibo térmico?")) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
+            if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
         }
         else if (acao.tipo === 'comanda_parcial') {
             document.getElementById('status-bar').innerText = "Recebendo Parcial...";
-            await reqPOST({ acao: "pagamento_parcial_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, forma_pagamento: formaPagStr, valor_pago: totalPagoFinal });
+            await reqPOST({ acao: "pagamento_parcial_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr, valor_pago: totalPagoFinal });
             recarregarDadosSilencioso();
-            alert(`Pagamento parcial de R$ ${totalPagoFinal.toFixed(2)} registado!\nA comanda continua em aberto com o restante do saldo.`);
+            alert(`Pagamento parcial de R$ ${totalPagoFinal.toFixed(2)} recebido de ${pagadorNome}!\nA comanda continua em aberto com o restante do saldo.`);
         }
     }
 
@@ -577,66 +550,46 @@
         abrirModalPagamento(total, { tipo: 'venda_direta', cliente: clienteSel, carrinhoSalvo: [...carrinho], totalSalvo: total, valorTotal: total });
     }
 
-    // --- NOVA LÓGICA PARA QUADRAS ---
-    function adicionarQuadra(nomeQuadra) { 
-        let horasStr = prompt(`Quantas horas para a ${nomeQuadra}?`, "1"); 
-        if(!horasStr) return; 
-        let horas = parseInt(horasStr);
-        if(isNaN(horas) || horas <= 0) return;
+    // --- NOVA LÓGICA INTELIGENTE DAS QUADRAS ---
+    function adicionarQuadraInteligente(nomeQuadra) { 
+        let horasStr = prompt(`Quantas horas o cliente vai jogar na ${nomeQuadra}?`, "1"); 
+        if(!horasStr) return; let horas = parseInt(horasStr); if(isNaN(horas) || horas <= 0) return;
 
-        let horaInicio = prompt(`A que horas começa o jogo?\n(Digite apenas a hora inicial. Ex: 16)`, new Date().getHours());
-        if(!horaInicio) return;
-        let hInicial = parseInt(horaInicio);
-        if(isNaN(hInicial)) return;
+        let horaInicio = prompt(`A que horas começa o jogo?\n(Digite apenas a hora inicial. Exemplo: 16 ou 19)`, new Date().getHours());
+        if(!horaInicio) return; let hInicial = parseInt(horaInicio); if(isNaN(hInicial)) return;
         
-        let precoCalculado = 0;
-        let hAtual = hInicial;
-        
-        // Loop inteligente que calcula o valor hora a hora
+        let precoCalculado = 0; let hAtual = hInicial;
         for(let i = 0; i < horas; i++) {
-            if(hAtual >= 17 && hAtual <= 22) {
-                precoCalculado += 45; // Tarifa Noturna
-            } else {
-                precoCalculado += 35; // Tarifa Diurna (7h às 16h, ou madrugada)
-            }
-            hAtual++;
-            if(hAtual > 23) hAtual = 0;
+            if(hAtual >= 17 && hAtual <= 22) { precoCalculado += 45; } else { precoCalculado += 35; }
+            hAtual++; if(hAtual > 23) hAtual = 0;
         }
 
-        let confirma = confirm(`Início: ${hInicial}h | Duração: ${horas}h\nTotal Calculado: R$ ${precoCalculado.toFixed(2)}\n\nConfirmar adição ao carrinho?`);
-        if(!confirma) return;
+        if(!confirm(`Início: ${hInicial}h | Duração: ${horas}h\nTotal Calculado: R$ ${precoCalculado.toFixed(2)}\n\nConfirmar adição?`)) return;
 
         carrinho.push({ codigo: 'SERVICO', nome: `${nomeQuadra} (${horas}h a partir das ${hInicial}h)`, preco: precoCalculado, qtd: 1 }); 
-        total += precoCalculado; 
-        atualizarCarrinho(); 
+        total += precoCalculado; atualizarCarrinho(); 
     }
     
-    // --- LÓGICA DE DESCONTOS ---
+    // --- DESCONTOS ---
     function aplicarDescontoCaixa() {
         if(carrinho.length === 0) return alert("Adicione produtos primeiro!");
-        let descStr = prompt("Digite o valor do desconto (Ex: 10,00):", "0,00");
-        if(!descStr) return;
-        let valDesc = parseFloat(descStr.replace(',', '.'));
-        if(isNaN(valDesc) || valDesc <= 0) return;
+        let descStr = prompt(`Total Atual: R$ ${total.toFixed(2)}\n\nDigite o valor do desconto (Ex: 10,00):`, "0,00");
+        if(!descStr) return; let valDesc = parseFloat(descStr.replace(',', '.')); if(isNaN(valDesc) || valDesc <= 0) return;
         if(valDesc > total) return alert("O desconto não pode ser maior que o total da compra!");
 
         carrinho.push({ codigo: 'DESC', nome: 'Desconto Aplicado', preco: -valDesc, qtd: 1 });
-        total -= valDesc;
-        atualizarCarrinho();
+        total -= valDesc; atualizarCarrinho();
     }
 
     async function aplicarDescontoComanda(idComanda, cliente, totalAtual) {
         if(!turnoAtual) return alert("Abra o caixa!");
         let descStr = prompt(`Comanda de ${cliente}: R$ ${totalAtual.toFixed(2)}\n\nDigite o valor do DESCONTO (Ex: 10,00):`, "0,00");
-        if(!descStr) return;
-        let valDesc = parseFloat(descStr.replace(',', '.'));
-        if(isNaN(valDesc) || valDesc <= 0) return;
+        if(!descStr) return; let valDesc = parseFloat(descStr.replace(',', '.')); if(isNaN(valDesc) || valDesc <= 0) return;
         if(valDesc > totalAtual) return alert("O desconto não pode ser maior que a comanda!");
 
         document.getElementById('status-bar').innerText = "Aplicando Desconto...";
         await reqPOST({ acao: "desconto_comanda", id_comanda: idComanda, valor_desconto: valDesc });
-        alert(`Desconto de R$ ${valDesc.toFixed(2)} aplicado com sucesso!`);
-        recarregarDadosSilencioso();
+        alert(`Desconto aplicado com sucesso!`); recarregarDadosSilencioso();
     }
 
     document.getElementById('codigoInput').addEventListener('keypress', function(e) { if (e.key === 'Enter' && this.value.trim() !== "") { e.preventDefault(); processarEntradaCodigo(this.value.trim()); this.value = ""; } });
@@ -644,10 +597,8 @@
     function processarEntradaCodigo(termo) { 
         termo = termo.toLowerCase(); let prod = bancoDeProdutos.find(p => String(p.ID_Produto).toLowerCase() === termo || String(p.Nome_Produto).toLowerCase() === termo); 
         if (!prod) { let achados = bancoDeProdutos.filter(p => String(p.Nome_Produto).toLowerCase().includes(termo)); if (achados.length === 1) prod = achados[0]; else if (achados.length > 1) { alert("Múltiplos produtos encontrados. Digite o código exato."); return; } } 
-        
         if (prod) { 
-            let preco = parseFloat(prod.Preco_Venda.toString().replace(',','.')) || 0; 
-            let qtdMult = parseInt(document.getElementById('qtdInput').value) || 1;
+            let preco = parseFloat(prod.Preco_Venda.toString().replace(',','.')) || 0; let qtdMult = parseInt(document.getElementById('qtdInput').value) || 1;
             let ext = carrinho.find(i => i.codigo === prod.ID_Produto); 
             if(ext) { ext.qtd += qtdMult; } else { carrinho.push({ codigo: prod.ID_Produto, nome: prod.Nome_Produto, preco: preco, qtd: qtdMult }); } 
             total += (preco * qtdMult); atualizarCarrinho(); document.getElementById('qtdInput').value = "1"; 
@@ -661,8 +612,7 @@
 
     function atualizarCarrinho() { 
         document.getElementById('listaCarrinho').innerHTML = carrinho.map((i, index) => `<tr><td>${i.codigo}</td><td>${i.nome}</td><td>${i.qtd}</td><td>R$ ${i.preco.toFixed(2)}</td><td>R$ ${(i.preco * i.qtd).toFixed(2)}</td><td><button type="button" class="btn-vermelho" style="padding: 5px 10px; font-size:12px;" onclick="removerItemCarrinho(${index})">X</button></td></tr>`).join(''); 
-        document.getElementById('valorTotal').innerText = total.toFixed(2); 
-        document.getElementById('btnDescontoCaixa').disabled = carrinho.length === 0;
+        document.getElementById('valorTotal').innerText = total.toFixed(2); document.getElementById('btnDescontoCaixa').disabled = carrinho.length === 0;
     }
 
     function alternarCamera(alvoId) { inputCameraAlvo = alvoId; let divCamera = document.getElementById('leitorCamera'); if (divCamera.style.display === "block") fecharCamera(); else abrirCamera(); }
@@ -671,8 +621,8 @@
 
     function abrirModalComandas() { let lista = document.getElementById('listaComandasModal'); lista.innerHTML = bancoComandas.length === 0 ? "<p>Nenhuma comanda aberta.</p>" : bancoComandas.map(c => `<button type="button" class="btn-comanda-item" onclick="adicionarNaComandaExistente('${c.ID_Comanda}', '${c.Cliente}')">👤 ${c.Cliente} (Comanda #${c.ID_Comanda})</button>`).join(''); document.getElementById('modalComandas').style.display = 'flex'; }
     function fecharModalComandas() { document.getElementById('modalComandas').style.display = 'none'; }
-    async function criarNovaComandaModal() { fecharModalComandas(); let nome = prompt("Nome do Cliente para a NOVA comanda?"); if(!nome) return; document.getElementById('status-bar').innerText = "Abrindo Comanda..."; await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho }); alert("Comanda criada!"); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
-    async function adicionarNaComandaExistente(idComanda, nomeCli) { fecharModalComandas(); document.getElementById('status-bar').innerText = "Adicionando itens..."; await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho }); alert(`Itens adicionados!`); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
+    async function criarNovaComandaModal() { fecharModalComandas(); let nome = prompt("Nome do Cliente para a NOVA comanda?"); if(!nome) return; document.getElementById('status-bar').innerText = "Abrindo Comanda..."; await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda criada!"); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
+    async function adicionarNaComandaExistente(idComanda, nomeCli) { fecharModalComandas(); document.getElementById('status-bar').innerText = "Adicionando itens..."; await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho, operador: operadorAtual }); alert(`Itens adicionados!`); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
     
     function atualizarTabelaComandas() { 
         let tbody = document.getElementById('listaComandas'); 
@@ -681,9 +631,21 @@
             if(!c.ID_Comanda) return ''; 
             let itensStr = "", itensObj = []; 
             try { itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `${i.qtd}x ${i.nome}`).join(', '); } catch(e) {} 
-            let valor = parseFloat(c.Total.toString().replace(',','.')) || 0; 
             
-            return `<tr><td>#${c.ID_Comanda}</td><td style="font-weight:bold;">${c.Cliente}</td><td>${itensStr}</td><td style="color:#10b981; font-weight:bold;">R$ ${valor.toFixed(2)}</td>
+            // Renderiza as anotações de pagamentos parciais se houver
+            let pagamentosHtml = "";
+            if(c.Pagamentos_JSON) {
+                try {
+                    let pags = JSON.parse(c.Pagamentos_JSON);
+                    if(pags.length > 0) {
+                        let strPags = pags.map(p => `${p.nome} (R$ ${p.valor.toFixed(2)})`).join(', ');
+                        pagamentosHtml = `<div style="font-size:12px; color:#16a34a; margin-top:6px; background:#dcfce7; padding:4px; border-radius:4px;">✅ <b>Abonado por:</b> ${strPags}</div>`;
+                    }
+                } catch(e){}
+            }
+
+            let valor = parseFloat(c.Total.toString().replace(',','.')) || 0; 
+            return `<tr><td>#${c.ID_Comanda}</td><td style="font-weight:bold;">${c.Cliente}</td><td>${itensStr}${pagamentosHtml}</td><td style="color:#10b981; font-weight:bold;">R$ ${valor.toFixed(2)}</td>
             <td style="display:flex; gap:5px; flex-wrap:wrap;">
                 <button type="button" class="btn-azul" style="padding: 8px 12px; margin-bottom:2px;" onclick="editarComanda('${c.ID_Comanda}')">✏️ Editar</button>
                 <button type="button" style="padding: 8px 12px; margin-bottom:2px; background-color:#8b5cf6; color:white; border:none; border-radius:5px; font-weight:bold;" onclick="aplicarDescontoComanda('${c.ID_Comanda}', '${c.Cliente}', ${valor})">-% Desc</button>
@@ -714,58 +676,51 @@
         abrirModalPagamento(totalVal, { tipo: 'comanda', id_comanda: idComanda, cliente: cliente, itensJsonStr: itensJsonStr, totalSalvo: totalVal, valorTotal: totalVal, msgExtra: msgDescricaoExtra });
     }
 
-    // --- EDIÇÃO DE COMANDAS ---
     function editarComanda(idComanda) {
-        let comanda = bancoComandas.find(c => String(c.ID_Comanda) === String(idComanda));
-        if(!comanda) return alert("Comanda não encontrada!");
-
-        idComandaEmEdicao = idComanda; 
-        try { carrinho = JSON.parse(comanda.Itens_JSON); } catch(e) { carrinho = []; }
+        let comanda = bancoComandas.find(c => String(c.ID_Comanda) === String(idComanda)); if(!comanda) return alert("Comanda não encontrada!");
+        idComandaEmEdicao = idComanda; try { carrinho = JSON.parse(comanda.Itens_JSON); } catch(e) { carrinho = []; }
         total = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
-        
-        document.getElementById('bannerEdicaoComanda').style.display = 'flex'; 
-        document.getElementById('nomeEdicaoComanda').innerText = comanda.Cliente;
-        
-        let selectCli = document.getElementById('selectClienteVenda');
-        if(!Array.from(selectCli.options).some(opt => opt.value === comanda.Cliente)) { 
-            selectCli.add(new Option(comanda.Cliente, comanda.Cliente)); 
-        }
-        selectCli.value = comanda.Cliente;
-        
-        document.getElementById('btnSalvarComanda').innerText = "Gravar Alterações (F3)"; 
-        document.getElementById('btnSalvarComanda').classList.replace("btn-laranja", "btn-amarelo");
-        document.getElementById('btnSalvarComanda').disabled = false;
-        document.getElementById('btnFinalizarVenda').style.display = 'none';
-        
+        document.getElementById('bannerEdicaoComanda').style.display = 'flex'; document.getElementById('nomeEdicaoComanda').innerText = comanda.Cliente;
+        let selectCli = document.getElementById('selectClienteVenda'); if(!Array.from(selectCli.options).some(opt => opt.value === comanda.Cliente)) { selectCli.add(new Option(comanda.Cliente, comanda.Cliente)); }
+        selectCli.value = comanda.Cliente; document.getElementById('btnSalvarComanda').innerText = "Gravar Alterações (F3)"; document.getElementById('btnSalvarComanda').classList.replace("btn-laranja", "btn-amarelo"); document.getElementById('btnSalvarComanda').disabled = false; document.getElementById('btnFinalizarVenda').style.display = 'none';
         atualizarCarrinho(); mudarTela('tela-caixa');
     }
 
     function cancelarEdicaoComanda() {
-        idComandaEmEdicao = null; carrinho = []; total = 0; 
-        document.getElementById('bannerEdicaoComanda').style.display = 'none';
-        document.getElementById('btnSalvarComanda').innerText = "Salvar na Comanda (F3)"; 
-        document.getElementById('btnSalvarComanda').classList.replace("btn-amarelo", "btn-laranja");
-        document.getElementById('btnFinalizarVenda').style.display = 'block'; 
-        document.getElementById('selectClienteVenda').value = "Consumidor Final"; 
-        atualizarCarrinho();
+        idComandaEmEdicao = null; carrinho = []; total = 0; document.getElementById('bannerEdicaoComanda').style.display = 'none';
+        document.getElementById('btnSalvarComanda').innerText = "Salvar na Comanda (F3)"; document.getElementById('btnSalvarComanda').classList.replace("btn-amarelo", "btn-laranja"); document.getElementById('btnFinalizarVenda').style.display = 'block'; document.getElementById('selectClienteVenda').value = "Consumidor Final"; atualizarCarrinho();
     }
 
-    function acaoBotaoComanda() {
-        if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!");
-        if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); }
-    }
+    function acaoBotaoComanda() { if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!"); if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); } }
 
     async function atualizarComandaExistente() {
-        let clienteSel = document.getElementById('selectClienteVenda').value;
-        document.getElementById('status-bar').innerText = "A Atualizar Comanda...";
-        await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho });
-        alert("Comanda atualizada com sucesso!");
-        cancelarEdicaoComanda(); recarregarDadosSilencioso();
+        let clienteSel = document.getElementById('selectClienteVenda').value; document.getElementById('status-bar').innerText = "A Atualizar Comanda...";
+        await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho, operador: operadorAtual });
+        alert("Comanda atualizada!"); cancelarEdicaoComanda(); recarregarDadosSilencioso();
     }
 
-    async function excluirComanda(idComanda) { if(confirm("ATENÇÃO: Deseja excluir a comanda e devolver TODOS os itens ao estoque sem cobrar?")) { await reqPOST({ acao: "excluir_comanda", id_comanda: idComanda }); recarregarDadosSilencioso(); } }
+    async function excluirComanda(idComanda) { if(confirm("ATENÇÃO: Deseja excluir a comanda e devolver TODOS os itens ao estoque sem cobrar?")) { await reqPOST({ acao: "excluir_comanda", id_comanda: idComanda, operador: operadorAtual }); recarregarDadosSilencioso(); } }
 
-    function atualizarTabelaEstoque() { document.getElementById('listaGestao').innerHTML = bancoDeProdutos.map(p => { if(!p.ID_Produto) return ''; return `<tr><td>${p.ID_Produto}</td><td>${p.Nome_Produto}</td><td>R$ ${p.Preco_Custo}</td><td>R$ ${p.Preco_Venda}</td><td style="font-weight:bold;">${p.Quantidade}</td><td>${p.Estoque_Minimo || 0}</td><td style="display:flex; gap:5px;"><button type="button" class="btn-amarelo" onclick="prepararEdicaoEstoque('${p.ID_Produto}')">Editar</button><button type="button" class="btn-vermelho" onclick="removerProduto('${p.ID_Produto}')">Apagar</button></td></tr>`; }).join(''); }
+    // --- ESTOQUE (ENTRADA MANUAL E HISTÓRICO) ---
+    function abrirModalHistorico() {
+        let tbody = document.getElementById('listaHistoricoModal');
+        tbody.innerHTML = bancoHistorico.slice().reverse().map(h => {
+            if(!h.Data_Hora) return '';
+            let corQtd = String(h.Qtd).includes('-') ? 'color:#dc2626;' : 'color:#16a34a;';
+            return `<tr><td>${formatarDataExibicao(h.Data_Hora)}</td><td>${h.Operador}</td><td>${h.Produto}</td><td style="font-weight:bold; ${corQtd}">${h.Qtd}</td><td>${h.Motivo}</td></tr>`;
+        }).join('');
+        document.getElementById('modalHistorico').style.display = 'flex';
+    }
+    function fecharModalHistorico() { document.getElementById('modalHistorico').style.display = 'none'; }
+
+    function adicionarEntradaManual(idProduto, nomeProduto) {
+        let qtdStr = prompt(`Dar entrada no estoque: ${nomeProduto}\n\nQuantas unidades chegaram?`);
+        if(!qtdStr) return; let qtd = parseInt(qtdStr); if(isNaN(qtd) || qtd <= 0) return alert("Quantidade inválida!");
+        document.getElementById('status-bar').innerText = "Registrando entrada...";
+        reqPOST({ acao: "entrada_estoque", id_produto: idProduto, qtd: qtd, operador: operadorAtual }).then(() => { alert(`Entrada de ${qtd} unidades registrada!`); recarregarDadosSilencioso(); });
+    }
+
+    function atualizarTabelaEstoque() { document.getElementById('listaGestao').innerHTML = bancoDeProdutos.map(p => { if(!p.ID_Produto) return ''; return `<tr><td>${p.ID_Produto}</td><td>${p.Nome_Produto}</td><td>R$ ${p.Preco_Custo}</td><td>R$ ${p.Preco_Venda}</td><td style="font-weight:bold;">${p.Quantidade}</td><td>${p.Estoque_Minimo || 0}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button type="button" class="btn-verde" onclick="adicionarEntradaManual('${p.ID_Produto}', '${p.Nome_Produto}')">+ Entrada</button><button type="button" class="btn-amarelo" onclick="prepararEdicaoEstoque('${p.ID_Produto}')">Editar</button><button type="button" class="btn-vermelho" onclick="removerProduto('${p.ID_Produto}')">Apagar</button></td></tr>`; }).join(''); }
     function prepararEdicaoEstoque(id) { let p = bancoDeProdutos.find(x => String(x.ID_Produto) === String(id)); if(!p) return; document.getElementById('novoId').value = p.ID_Produto; document.getElementById('novoNome').value = p.Nome_Produto; document.getElementById('novoCusto').value = p.Preco_Custo; document.getElementById('novoPreco').value = p.Preco_Venda; document.getElementById('novaQtd').value = p.Quantidade; document.getElementById('novoMinimo').value = p.Estoque_Minimo || 0; idEditandoEstoque = id; document.getElementById('btnAdicionarEstoque').innerText = "Atualizar Produto"; document.getElementById('btnAdicionarEstoque').className = "btn-amarelo"; window.scrollTo(0, 0); }
     
     async function salvarProdutoEstoque() { 
@@ -817,7 +772,7 @@
     }
 
     function limparFiltroCaixa() { document.getElementById('filtroDataInicio').value = ""; document.getElementById('filtroDataFim').value = ""; filtrarLivroCaixa(); }
-    async function excluirItemCaixa(idTrans) { if(confirm("Apagar este registro do Caixa?")) { await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans }); recarregarDadosSilencioso(); } }
+    async function excluirItemCaixa(idTrans) { if(confirm("Apagar este registro do Caixa?")) { await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans, operador: operadorAtual }); recarregarDadosSilencioso(); } }
     
     async function registrarCaixa() { 
         let t = document.getElementById('tipoMovimento').value, d = document.getElementById('descMovimento').value;
@@ -842,7 +797,7 @@
             if(apStr!==null) { 
                 let ap = parseFloat(apStr.replace(',','.'))||0; let dif = ap - esp; 
                 if(confirm(`Esperado: R$ ${esp.toFixed(2)}\nContado: R$ ${ap.toFixed(2)}\nConfirmar fechamento?`)) { 
-                    await reqPOST({ acao: "fechar_caixa", valor_apurado: ap, diferenca: dif }); recarregarDadosSilencioso(); 
+                    await reqPOST({ acao: "fechar_caixa", valor_apurado: ap, diferenca: dif, operador: operadorAtual }); recarregarDadosSilencioso(); 
                     if(confirm("Enviar resumo do Fechamento de Caixa para o WhatsApp do grupo?")) { let textoFechamento = `*📊 FECHAMENTO DE CAIXA*%0A*Operador:* ${operadorAtual}%0A*Data:* ${new Date().toLocaleString('pt-BR')}%0A----------------%0A*Total Entradas:* R$ ${totalEntradas.toFixed(2)}%0A*Total Saídas (Despesas):* R$ ${totalSaidas.toFixed(2)}%0A----------------%0A*Esperado (Sistema):* R$ ${esp.toFixed(2)}%0A*Apurado (Gaveta):* R$ ${ap.toFixed(2)}%0A*Diferença:* R$ ${dif.toFixed(2)}%0A----------------%0A*Turno Encerrado.*`; window.open(`https://wa.me/?text=${textoFechamento}`, '_blank'); }
                 } 
             } 
