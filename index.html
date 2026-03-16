@@ -17,6 +17,7 @@
             #cupao-impressao { position: absolute; left: 0; top: 0; width: 58mm; padding: 0; margin: 0; font-family: monospace; font-size: 12px; color: #000; } 
         }
 
+        /* TELA DE LOGIN */
         #tela-login { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 999999; flex-direction: column; }
         .login-box { background: #fff; padding: 40px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .login-box h2 { color: #0f172a; margin-top: 0; margin-bottom: 10px; }
@@ -30,6 +31,7 @@
         #caixa-login-loading { display: none; color: white; text-align: center; }
         #caixa-login-loading h2 { color: #38bdf8; margin-bottom: 5px; }
 
+        /* MENU LATERAL */
         .sidebar { width: 250px; background-color: #1e293b; color: white; display: flex; flex-direction: column; padding-top: 20px; transition: 0.3s; flex-shrink: 0; }
         .sidebar h2 { text-align: center; margin-bottom: 5px; font-size: 22px; color: #38bdf8; }
         #operadorLogadoText { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
@@ -58,6 +60,7 @@
         .form-grupo div { flex: 1; display: flex; flex-direction: column; min-width: 120px; }
         .form-grupo input, .form-grupo select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; background-color: #fff;}
         
+        /* BOTÕES */
         button { cursor: pointer; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; color: white; font-size: 15px; transition: 0.2s; -webkit-appearance: none; appearance: none; }
         .btn-azul { background-color: #0ea5e9; } .btn-azul:hover:not(:disabled) { background-color: #0284c7; }
         .btn-verde { background-color: #10b981; } .btn-verde:hover:not(:disabled) { background-color: #059669; }
@@ -461,7 +464,7 @@
         chartProd = new Chart(document.getElementById('graficoProdutos'), { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
-    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO ---
+    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO (FLEXÍVEL E CORRIGIDO) ---
     function abrirModalPagamento(valorTotal, acaoObj) {
         document.getElementById('pagTotalLabel').innerText = valorTotal.toFixed(2);
         ['pagPix','pagCredito','pagDebito','pagEspecie'].forEach(id => document.getElementById(id).value = "");
@@ -475,7 +478,10 @@
         document.getElementById('pagPix').focus();
     }
     
-    function fecharModalPagamento() { document.getElementById('modalPagamento').style.display = 'none'; acaoPagamentoPendente = null; }
+    function fecharModalPagamento() { 
+        document.getElementById('modalPagamento').style.display = 'none'; 
+        acaoPagamentoPendente = null; 
+    }
 
     function calcularRestantePagamento() {
         let totalRequerido = acaoPagamentoPendente.valorTotal; 
@@ -511,7 +517,11 @@
         if(p > 0) formas.push(`Pix: ${p.toFixed(2)}`); if(c > 0) formas.push(`Crédito: ${c.toFixed(2)}`);
         if(d > 0) formas.push(`Débito: ${d.toFixed(2)}`); if(e > 0) formas.push(`Espécie: ${e.toFixed(2)}`);
         
-        fecharModalPagamento(); executarAcaoPagamento(formas.join(" + "), totalPago);
+        // EXECUTA A AÇÃO ANTES DE APAGAR A MEMÓRIA DA JANELA
+        executarAcaoPagamento(formas.join(" + "), totalPago);
+        
+        // AGORA SIM FECHA A JANELA (oculta e limpa a variável)
+        fecharModalPagamento(); 
     }
 
     async function executarAcaoPagamento(formaPagStr, totalPagoFinal) {
@@ -608,7 +618,6 @@
     function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { alert("Sem acesso à câmara."); divCamera.style.display = "none"; }); }
     function fecharCamera() { if(leitorHtml5) leitorHtml5.stop().then(() => { document.getElementById('leitorCamera').style.display = "none"; }).catch(e=>e); }
 
-    // --- COMANDAS TABELA ---
     function abrirModalComandas() { let lista = document.getElementById('listaComandasModal'); lista.innerHTML = bancoComandas.length === 0 ? "<p>Nenhuma comanda aberta.</p>" : bancoComandas.map(c => `<button type="button" class="btn-comanda-item" onclick="adicionarNaComandaExistente('${c.ID_Comanda}', '${c.Cliente}')">👤 ${c.Cliente} (Comanda #${c.ID_Comanda})</button>`).join(''); document.getElementById('modalComandas').style.display = 'flex'; }
     function fecharModalComandas() { document.getElementById('modalComandas').style.display = 'none'; }
     async function criarNovaComandaModal() { fecharModalComandas(); let nome = prompt("Nome do Cliente para a NOVA comanda?"); if(!nome) return; document.getElementById('status-bar').innerText = "Abrindo Comanda..."; await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho }); alert("Comanda criada!"); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
@@ -647,14 +656,13 @@
         if(!turnoAtual) return alert("Abra o caixa!");
         let numPessoas = parseInt(prompt("Dividir a conta para quantas pessoas? (Deixe 1 para não dividir)", "1")) || 1;
         let msgDescricaoExtra = numPessoas > 1 ? ` (Dividido para ${numPessoas})` : "";
-        if(numPessoas > 1) alert(`🎾 DIVIDIDO PARA ${numPessoas} PESSOAS\n💰 CADA UM PAGA: R$ ${(totalVal / numPessoas).toFixed(2)}\n\nAvance para registrar como esse valor total foi pago.`);
+        if(numPessoas > 1) alert(`🎾 DIVIDIDO PARA ${numPessoas} PESSOAS\n💰 CADA UM PAGA: R$ ${(totalVal / numPessoas).toFixed(2)}\n\nAvance para registar as formas de pagamento até liquidar a conta.`);
         
         abrirModalPagamento(totalVal, { tipo: 'comanda', id_comanda: idComanda, cliente: cliente, itensJsonStr: itensJsonStr, totalSalvo: totalVal, valorTotal: totalVal, msgExtra: msgDescricaoExtra });
     }
 
     async function excluirComanda(idComanda) { if(confirm("ATENÇÃO: Deseja excluir a comanda e devolver TODOS os itens ao estoque sem cobrar?")) { await reqPOST({ acao: "excluir_comanda", id_comanda: idComanda }); recarregarDadosSilencioso(); } }
 
-    // --- ESTOQUE ---
     function atualizarTabelaEstoque() { document.getElementById('listaGestao').innerHTML = bancoDeProdutos.map(p => { if(!p.ID_Produto) return ''; return `<tr><td>${p.ID_Produto}</td><td>${p.Nome_Produto}</td><td>R$ ${p.Preco_Custo}</td><td>R$ ${p.Preco_Venda}</td><td style="font-weight:bold;">${p.Quantidade}</td><td>${p.Estoque_Minimo || 0}</td><td style="display:flex; gap:5px;"><button type="button" class="btn-amarelo" onclick="prepararEdicaoEstoque('${p.ID_Produto}')">Editar</button><button type="button" class="btn-vermelho" onclick="removerProduto('${p.ID_Produto}')">Apagar</button></td></tr>`; }).join(''); }
     function prepararEdicaoEstoque(id) { let p = bancoDeProdutos.find(x => String(x.ID_Produto) === String(id)); if(!p) return; document.getElementById('novoId').value = p.ID_Produto; document.getElementById('novoNome').value = p.Nome_Produto; document.getElementById('novoCusto').value = p.Preco_Custo; document.getElementById('novoPreco').value = p.Preco_Venda; document.getElementById('novaQtd').value = p.Quantidade; document.getElementById('novoMinimo').value = p.Estoque_Minimo || 0; idEditandoEstoque = id; document.getElementById('btnAdicionarEstoque').innerText = "Atualizar Produto"; document.getElementById('btnAdicionarEstoque').className = "btn-amarelo"; window.scrollTo(0, 0); }
     
@@ -668,7 +676,6 @@
     }
     async function removerProduto(id) { if(confirm("Apagar produto?")) { await reqPOST({ acao: "remover", id: id }); recarregarDadosSilencioso(); } }
 
-    // --- LIVRO CAIXA E DASHBOARD ---
     function mudarFormDespesa() { let t = document.getElementById('tipoMovimento').value; if(t === "Saida") document.getElementById('boxCategoriaDespesa').style.display = "block"; else document.getElementById('boxCategoriaDespesa').style.display = "none"; }
     function parseDataBR(dataStr) { if(!dataStr) return new Date(0); let partes = dataStr.split(/[\s,]+/); let dma = partes[0].split('/'); if(dma.length === 3) return new Date(`${dma[2]}-${dma[1]}-${dma[0]}T12:00:00`); return new Date(0); }
     
@@ -710,14 +717,7 @@
     }
 
     function limparFiltroCaixa() { document.getElementById('filtroDataInicio').value = ""; document.getElementById('filtroDataFim').value = ""; filtrarLivroCaixa(); }
-    
-    // --- EXCLUSÃO DE ITEM DO CAIXA E RETORNO AO ESTOQUE ---
-    async function excluirItemCaixa(idTrans) { 
-        if(confirm("Deseja cancelar este registro do Caixa?\n\nSe for uma Venda ou Comanda paga, os itens retornarão ao estoque automaticamente e a venda será apagada.")) { 
-            await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans }); 
-            recarregarDadosSilencioso(); 
-        } 
-    }
+    async function excluirItemCaixa(idTrans) { if(confirm("Apagar este registro do Caixa?")) { await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans }); recarregarDadosSilencioso(); } }
     
     async function registrarCaixa() { 
         let t = document.getElementById('tipoMovimento').value, d = document.getElementById('descMovimento').value;
