@@ -30,7 +30,6 @@
         #caixa-login-loading { display: none; color: white; text-align: center; }
         #caixa-login-loading h2 { color: #38bdf8; margin-bottom: 5px; }
 
-        /* MENU LATERAL */
         .sidebar { width: 250px; background-color: #1e293b; color: white; display: flex; flex-direction: column; padding-top: 20px; transition: 0.3s; flex-shrink: 0; }
         .sidebar h2 { text-align: center; margin-bottom: 5px; font-size: 22px; color: #38bdf8; }
         #operadorLogadoText { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
@@ -142,7 +141,6 @@
     <div id="tela-dashboard" class="tela ativa">
         <h1>Visão Geral da Arena</h1>
         <div id="alerta-estoque"></div>
-
         <div class="dashboard-cards">
             <div class="card" id="card-status-caixa" style="background: #e0f2fe; border-color: #7dd3fc;">
                 <h3>Status do Caixa</h3>
@@ -152,7 +150,6 @@
             <div class="card"><h3>Vendas Hoje</h3><div class="valor" id="dash-vendas">R$ 0,00</div></div>
             <div class="card"><h3>Saldo Atual na Gaveta</h3><div class="valor" id="dash-saldo">R$ 0,00</div></div>
         </div>
-
         <div style="display:flex; gap:20px; flex-wrap:wrap; margin-top: 20px;">
             <div style="flex:2; min-width:300px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="margin-top:0; color:#475569; text-align:center;">📊 Faturamento (Últimos 7 Dias)</h3>
@@ -272,7 +269,6 @@
             <h1>Gestão de Estoque</h1>
             <button type="button" class="btn-azul" onclick="abrirModalHistorico()">📜 Ver Histórico de Stock</button>
         </div>
-        
         <div class="form-grupo">
             <div style="flex-direction: row; gap: 5px;">
                 <div style="flex: 1;"><label>ID/Código</label><input type="text" id="novoId" placeholder="Bipe, digite ou câmera" autocomplete="off"></div>
@@ -478,6 +474,7 @@
         chartProd = new Chart(document.getElementById('graficoProdutos'), { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
+    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO ---
     function abrirModalPagamento(valorTotal, acaoObj) {
         document.getElementById('pagTotalLabel').innerText = valorTotal.toFixed(2);
         ['pagPix','pagCredito','pagDebito','pagEspecie', 'pagNomePagador'].forEach(id => document.getElementById(id).value = "");
@@ -628,6 +625,7 @@
     async function criarNovaComandaModal() { fecharModalComandas(); let nome = prompt("Nome do Cliente para a NOVA comanda?"); if(!nome) return; document.getElementById('status-bar').innerText = "Abrindo Comanda..."; await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda criada!"); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
     async function adicionarNaComandaExistente(idComanda, nomeCli) { fecharModalComandas(); document.getElementById('status-bar').innerText = "Adicionando itens..."; await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho, operador: operadorAtual }); alert(`Itens adicionados!`); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
     
+    // --- FUNÇÃO CORRIGIDA PARA RENDERIZAR AS COMANDAS ---
     function atualizarTabelaComandas() { 
         let tbody = document.getElementById('listaComandas'); 
         if(bancoComandas.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhuma comanda aberta.</td></tr>`; return; } 
@@ -636,16 +634,18 @@
             let itensStr = "", itensObj = []; 
             try { itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `${i.qtd}x ${i.nome}`).join(', '); } catch(e) {} 
             
+            // Renderiza as anotações de pagamentos parciais COM O BOTÃO X
             let pagamentosHtml = "";
             if(c.Pagamentos_JSON) {
                 try {
                     let pags = JSON.parse(c.Pagamentos_JSON);
                     if(pags.length > 0) {
                         let strPags = pags.map(p => {
-                            let btnExcluir = p.id_transacao ? `<button type="button" onclick="removerPagamentoParcial('${c.ID_Comanda}', '${p.id_transacao}')" style="background:transparent;border:none;color:#dc2626;cursor:pointer;font-size:12px;padding:0;margin-left:5px;" title="Remover Pagamento">❌</button>` : '';
-                            return `${p.nome} (R$ ${p.valor.toFixed(2)})${btnExcluir}`;
+                            // Adiciona o botão vermelho com X chamando a função removerPagamentoParcial
+                            let btnExcluir = p.id_transacao ? `<button type="button" onclick="removerPagamentoParcial('${c.ID_Comanda}', '${p.id_transacao}')" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:14px; padding:0; margin-left:5px;" title="Remover Pagamento">❌</button>` : '';
+                            return `<b>${p.nome}</b> (R$ ${p.valor.toFixed(2)})${btnExcluir}`;
                         }).join(' | ');
-                        pagamentosHtml = `<div style="font-size:12px; color:#16a34a; margin-top:6px; background:#dcfce7; padding:4px; border-radius:4px;">✅ <b>Pago por:</b> ${strPags}</div>`;
+                        pagamentosHtml = `<div style="font-size:13px; color:#16a34a; margin-top:6px; background:#dcfce7; padding:6px; border-radius:4px; border: 1px solid #bbf7d0;">✅ <b>Pago por:</b> ${strPags}</div>`;
                     }
                 } catch(e){}
             }
@@ -660,6 +660,26 @@
                 <button type="button" class="btn-vermelho" style="padding: 8px 12px;" onclick="excluirComanda('${c.ID_Comanda}')">X (Zerar)</button>
             </td></tr>`; 
         }).join(''); 
+    }
+    
+    function iniciarPagamentoParcial(idComanda, cliente, totalVal) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        let promptVal = prompt(`A comanda de ${cliente} tem saldo de R$ ${totalVal.toFixed(2)}.\n\nQuanto ele vai adiantar (pagar agora)?`, "0,00");
+        if(promptVal === null) return;
+        let valorA_Pagar = parseFloat(promptVal.replace(',','.'));
+        if(!valorA_Pagar || isNaN(valorA_Pagar) || valorA_Pagar <= 0) return;
+        if(valorA_Pagar >= totalVal) return alert("O valor digitado liquida ou passa do total da comanda. Para isso, use o botão verde 'Cobrar Todo'.");
+
+        abrirModalPagamento(valorA_Pagar, { tipo: 'comanda_parcial', id_comanda: idComanda, cliente: cliente, valorTotal: valorA_Pagar });
+    }
+
+    function iniciarCobrancaComanda(idComanda, cliente, itensJsonStr, totalVal) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        let numPessoas = parseInt(prompt("Dividir a conta para quantas pessoas? (Deixe 1 para não dividir)", "1")) || 1;
+        let msgDescricaoExtra = numPessoas > 1 ? ` (Dividido para ${numPessoas})` : "";
+        if(numPessoas > 1) alert(`🎾 DIVIDIDO PARA ${numPessoas} PESSOAS\n💰 CADA UM PAGA: R$ ${(totalVal / numPessoas).toFixed(2)}\n\nAvance para registar as formas de pagamento até liquidar a conta.`);
+        
+        abrirModalPagamento(totalVal, { tipo: 'comanda', id_comanda: idComanda, cliente: cliente, itensJsonStr: itensJsonStr, totalSalvo: totalVal, valorTotal: totalVal, msgExtra: msgDescricaoExtra });
     }
 
     function editarComanda(idComanda) {
