@@ -17,7 +17,6 @@
             #cupao-impressao { position: absolute; left: 0; top: 0; width: 58mm; padding: 0; margin: 0; font-family: monospace; font-size: 12px; color: #000; } 
         }
 
-        /* TELA DE LOGIN */
         #tela-login { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 999999; flex-direction: column; }
         .login-box { background: #fff; padding: 40px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .login-box h2 { color: #0f172a; margin-top: 0; margin-bottom: 10px; }
@@ -31,7 +30,6 @@
         #caixa-login-loading { display: none; color: white; text-align: center; }
         #caixa-login-loading h2 { color: #38bdf8; margin-bottom: 5px; }
 
-        /* MENU LATERAL */
         .sidebar { width: 250px; background-color: #1e293b; color: white; display: flex; flex-direction: column; padding-top: 20px; transition: 0.3s; flex-shrink: 0; }
         .sidebar h2 { text-align: center; margin-bottom: 5px; font-size: 22px; color: #38bdf8; }
         #operadorLogadoText { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
@@ -60,7 +58,6 @@
         .form-grupo div { flex: 1; display: flex; flex-direction: column; min-width: 120px; }
         .form-grupo input, .form-grupo select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; background-color: #fff;}
         
-        /* BOTÕES */
         button { cursor: pointer; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; color: white; font-size: 15px; transition: 0.2s; -webkit-appearance: none; appearance: none; }
         .btn-azul { background-color: #0ea5e9; } .btn-azul:hover:not(:disabled) { background-color: #0284c7; }
         .btn-verde { background-color: #10b981; } .btn-verde:hover:not(:disabled) { background-color: #059669; }
@@ -81,7 +78,6 @@
         
         #alerta-caixa { display: none; background: #fee2e2; color: #991b1b; padding: 15px; text-align: center; font-weight: bold; border-radius: 5px; margin-bottom: 20px; border: 2px solid #ef4444; }
 
-        /* MODAIS */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background: #fff; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;}
         .lista-comandas-modal { max-height: 300px; overflow-y: auto; margin: 20px 0; text-align: left; -webkit-overflow-scrolling: touch; }
@@ -176,7 +172,7 @@
 
         <div class="botoes-quadra">
             <button type="button" class="btn-quadra" onclick="adicionarQuadra('Quadra Chicashoes')">🎾 Quadra Chicashoes</button>
-            <button type="button" class="btn-quadra" onclick="adicionarQuadra('Quadra padaria do Helder')">🎾 Quadra padaria do Helder</button>
+            <button type="button" class="btn-quadra" onclick="adicionarQuadra('Quadra Padaria do Helder')">🎾 Quadra Padaria do Helder</button>
         </div>
 
         <div class="form-grupo" style="margin-bottom: 10px;">
@@ -203,8 +199,9 @@
         <div style="text-align: right; font-size: 24px; font-weight: bold; color: #10b981; margin: 20px 0;">Total: R$ <span id="valorTotal">0.00</span></div>
         
         <div class="botoes-caixa">
-            <button type="button" class="btn-laranja" id="btnSalvarComanda" style="flex: 1;" onclick="acaoBotaoComanda()" disabled>Salvar na Comanda (F3)</button>
-            <button type="button" class="btn-azul" id="btnFinalizarVenda" style="flex: 1;" onclick="iniciarVendaDireta()" disabled>Finalizar Venda Direta (F2)</button>
+            <button type="button" class="btn-vermelho" id="btnDescontoCaixa" style="flex: 0 0 auto;" onclick="aplicarDescontoCaixa()" disabled>-% Desc</button>
+            <button type="button" class="btn-laranja" id="btnSalvarComanda" style="flex: 1;" onclick="acaoBotaoComanda()" disabled>Salvar Comanda (F3)</button>
+            <button type="button" class="btn-azul" id="btnFinalizarVenda" style="flex: 1;" onclick="iniciarVendaDireta()" disabled>Cobrar (F2)</button>
         </div>
     </div>
 
@@ -247,7 +244,6 @@
 
         <div class="form-grupo">
             <div><label>Movimento</label><select id="tipoMovimento" onchange="mudarFormDespesa()"><option value="Entrada">Entrada</option><option value="Saida">Saída (Despesa)</option></select></div>
-            
             <div id="boxCategoriaDespesa" style="display: none;">
                 <label>Categoria</label>
                 <select id="categoriaDespesa">
@@ -258,7 +254,6 @@
                     <option value="Outros">Outros</option>
                 </select>
             </div>
-
             <div><label>Descrição Extra</label><input type="text" id="descMovimento" placeholder="Ex: Compra de Água" autocomplete="off"></div>
             <div><label>Valor (R$)</label><input type="text" inputmode="decimal" id="valorMovimento" placeholder="Ex: 5,50" autocomplete="off"></div>
             <button type="button" class="btn-verde" id="btnRegistrarLivro" style="margin-bottom: 2px;" onclick="registrarCaixa()" disabled>Registrar</button>
@@ -345,7 +340,6 @@
     let acaoPagamentoPendente = null;
     let idComandaEmEdicao = null;
 
-    // --- FUNÇÃO DE DATA BONITA ---
     function formatarDataExibicao(dataStr) {
         if (!dataStr) return "";
         let str = String(dataStr);
@@ -483,7 +477,7 @@
         let contagemProdutos = {};
         bancoVendas.forEach(v => {
             if(!v.Itens_Vendidos) return; let itensStr = v.Itens_Vendidos.split('(')[0];
-            itensStr.split(',').forEach(item => { let match = item.trim().match(/(\d+)x\s(.+)/); if(match) { let qtd = parseInt(match[1]); let nome = match[2].trim(); if(nome !== "SERVICO" && !nome.includes("Quadra")) { contagemProdutos[nome] = (contagemProdutos[nome] || 0) + qtd; } } });
+            itensStr.split(',').forEach(item => { let match = item.trim().match(/(\d+)x\s(.+)/); if(match) { let qtd = parseInt(match[1]); let nome = match[2].trim(); if(nome !== "SERVICO" && !nome.includes("Quadra") && nome !== "Desconto Aplicado" && nome !== "Desconto Especial") { contagemProdutos[nome] = (contagemProdutos[nome] || 0) + qtd; } } });
         });
 
         let prodOrder = Object.keys(contagemProdutos).map(k => ({nome: k, qtd: contagemProdutos[k]})).sort((a,b) => b.qtd - a.qtd).slice(0, 5);
@@ -512,6 +506,7 @@
     }
 
     function calcularRestantePagamento() {
+        if(!acaoPagamentoPendente) return;
         let totalRequerido = acaoPagamentoPendente.valorTotal; 
         let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0;
         let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
@@ -545,21 +540,19 @@
         if(p > 0) formas.push(`Pix: ${p.toFixed(2)}`); if(c > 0) formas.push(`Crédito: ${c.toFixed(2)}`);
         if(d > 0) formas.push(`Débito: ${d.toFixed(2)}`); if(e > 0) formas.push(`Espécie: ${e.toFixed(2)}`);
         
-        // FECHA O MODAL IMEDIATAMENTE ANTES DE ENVIAR PARA NÃO CAUSAR BUG VISUAL
-        fecharModalPagamento(); 
-        
-        // ENVIA A AÇÃO PARA O GOOGLE
-        executarAcaoPagamento(formas.join(" + "), totalPago);
+        let acaoSegura = acaoPagamentoPendente; // Salva o estado antes de fechar a janela
+        fecharModalPagamento(); // Limpa a tela
+        executarAcaoPagamento(acaoSegura, formas.join(" + "), totalPago); // Executa com segurança
     }
 
-    async function executarAcaoPagamento(formaPagStr, totalPagoFinal) {
-        let acao = acaoPagamentoPendente;
-        
+    async function executarAcaoPagamento(acao, formaPagStr, totalPagoFinal) {
+        if(!acao) return;
+
         if(acao.tipo === 'venda_direta') {
             document.getElementById('btnFinalizarVenda').innerText = "Gravando..."; document.getElementById('btnFinalizarVenda').disabled = true;
             await reqPOST({ acao: "venda", cliente: acao.cliente, total: acao.totalSalvo, carrinho: acao.carrinhoSalvo, operador: operadorAtual, forma_pagamento: formaPagStr });
             carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso();
-            document.getElementById('btnFinalizarVenda').innerText = "Finalizar Venda Direta (F2)"; document.getElementById('btnFinalizarVenda').disabled = false;
+            document.getElementById('btnFinalizarVenda').innerText = "Cobrar (F2)"; document.getElementById('btnFinalizarVenda').disabled = false;
             if(confirm("Imprimir recibo térmico?")) imprimirCupao(acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
             if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
         } 
@@ -584,59 +577,68 @@
         abrirModalPagamento(total, { tipo: 'venda_direta', cliente: clienteSel, carrinhoSalvo: [...carrinho], totalSalvo: total, valorTotal: total });
     }
 
-    // --- LÓGICA CORRIGIDA PARA EDITAR A COMANDA ---
-    function editarComanda(idComanda) {
-        let comanda = bancoComandas.find(c => String(c.ID_Comanda) === String(idComanda));
-        if(!comanda) return alert("Comanda não encontrada!");
+    // --- NOVA LÓGICA PARA QUADRAS ---
+    function adicionarQuadra(nomeQuadra) { 
+        let horasStr = prompt(`Quantas horas para a ${nomeQuadra}?`, "1"); 
+        if(!horasStr) return; 
+        let horas = parseInt(horasStr);
+        if(isNaN(horas) || horas <= 0) return;
 
-        idComandaEmEdicao = idComanda; 
-        try { carrinho = JSON.parse(comanda.Itens_JSON); } catch(e) { carrinho = []; }
-        total = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
+        let horaInicio = prompt(`A que horas começa o jogo?\n(Digite apenas a hora inicial. Ex: 16)`, new Date().getHours());
+        if(!horaInicio) return;
+        let hInicial = parseInt(horaInicio);
+        if(isNaN(hInicial)) return;
         
-        document.getElementById('bannerEdicaoComanda').style.display = 'flex'; 
-        document.getElementById('nomeEdicaoComanda').innerText = comanda.Cliente;
+        let precoCalculado = 0;
+        let hAtual = hInicial;
         
-        let selectCli = document.getElementById('selectClienteVenda');
-        if(!Array.from(selectCli.options).some(opt => opt.value === comanda.Cliente)) { 
-            selectCli.add(new Option(comanda.Cliente, comanda.Cliente)); 
+        // Loop inteligente que calcula o valor hora a hora
+        for(let i = 0; i < horas; i++) {
+            if(hAtual >= 17 && hAtual <= 22) {
+                precoCalculado += 45; // Tarifa Noturna
+            } else {
+                precoCalculado += 35; // Tarifa Diurna (7h às 16h, ou madrugada)
+            }
+            hAtual++;
+            if(hAtual > 23) hAtual = 0;
         }
-        selectCli.value = comanda.Cliente;
-        
-        document.getElementById('btnSalvarComanda').innerText = "Gravar Alterações (F3)"; 
-        document.getElementById('btnSalvarComanda').classList.replace("btn-laranja", "btn-amarelo");
-        document.getElementById('btnSalvarComanda').disabled = false;
-        document.getElementById('btnFinalizarVenda').style.display = 'none'; // Impede vender direto enquanto edita a comanda
-        
-        atualizarCarrinho(); 
-        mudarTela('tela-caixa');
-    }
 
-    function cancelarEdicaoComanda() {
-        idComandaEmEdicao = null; carrinho = []; total = 0; 
-        document.getElementById('bannerEdicaoComanda').style.display = 'none';
-        document.getElementById('btnSalvarComanda').innerText = "Salvar na Comanda (F3)"; 
-        document.getElementById('btnSalvarComanda').classList.replace("btn-amarelo", "btn-laranja");
-        document.getElementById('btnFinalizarVenda').style.display = 'block'; // Mostra botão de venda novamente
-        document.getElementById('selectClienteVenda').value = "Consumidor Final"; 
+        let confirma = confirm(`Início: ${hInicial}h | Duração: ${horas}h\nTotal Calculado: R$ ${precoCalculado.toFixed(2)}\n\nConfirmar adição ao carrinho?`);
+        if(!confirma) return;
+
+        carrinho.push({ codigo: 'SERVICO', nome: `${nomeQuadra} (${horas}h a partir das ${hInicial}h)`, preco: precoCalculado, qtd: 1 }); 
+        total += precoCalculado; 
+        atualizarCarrinho(); 
+    }
+    
+    // --- LÓGICA DE DESCONTOS ---
+    function aplicarDescontoCaixa() {
+        if(carrinho.length === 0) return alert("Adicione produtos primeiro!");
+        let descStr = prompt("Digite o valor do desconto (Ex: 10,00):", "0,00");
+        if(!descStr) return;
+        let valDesc = parseFloat(descStr.replace(',', '.'));
+        if(isNaN(valDesc) || valDesc <= 0) return;
+        if(valDesc > total) return alert("O desconto não pode ser maior que o total da compra!");
+
+        carrinho.push({ codigo: 'DESC', nome: 'Desconto Aplicado', preco: -valDesc, qtd: 1 });
+        total -= valDesc;
         atualizarCarrinho();
     }
 
-    function acaoBotaoComanda() {
-        if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!");
-        if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); }
+    async function aplicarDescontoComanda(idComanda, cliente, totalAtual) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        let descStr = prompt(`Comanda de ${cliente}: R$ ${totalAtual.toFixed(2)}\n\nDigite o valor do DESCONTO (Ex: 10,00):`, "0,00");
+        if(!descStr) return;
+        let valDesc = parseFloat(descStr.replace(',', '.'));
+        if(isNaN(valDesc) || valDesc <= 0) return;
+        if(valDesc > totalAtual) return alert("O desconto não pode ser maior que a comanda!");
+
+        document.getElementById('status-bar').innerText = "Aplicando Desconto...";
+        await reqPOST({ acao: "desconto_comanda", id_comanda: idComanda, valor_desconto: valDesc });
+        alert(`Desconto de R$ ${valDesc.toFixed(2)} aplicado com sucesso!`);
+        recarregarDadosSilencioso();
     }
 
-    async function atualizarComandaExistente() {
-        let clienteSel = document.getElementById('selectClienteVenda').value;
-        document.getElementById('status-bar').innerText = "A Atualizar Comanda...";
-        await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho });
-        alert("Comanda atualizada com sucesso!");
-        cancelarEdicaoComanda(); recarregarDadosSilencioso();
-    }
-
-    // --- CAIXA: QUADRAS E CARRINHO ---
-    function adicionarQuadra(nomeQuadra) { let horas = prompt(`Quantas horas para a ${nomeQuadra}?`, "1"); if(!horas) return; let valor = prompt(`Valor TOTAL a cobrar?`, "80.00"); if(!valor) return; let precoObj = parseFloat(valor.replace(',','.')); carrinho.push({ codigo: 'SERVICO', nome: `${nomeQuadra} (${parseInt(horas)}h)`, preco: precoObj, qtd: 1 }); total += precoObj; atualizarCarrinho(); }
-    
     document.getElementById('codigoInput').addEventListener('keypress', function(e) { if (e.key === 'Enter' && this.value.trim() !== "") { e.preventDefault(); processarEntradaCodigo(this.value.trim()); this.value = ""; } });
     
     function processarEntradaCodigo(termo) { 
@@ -660,6 +662,7 @@
     function atualizarCarrinho() { 
         document.getElementById('listaCarrinho').innerHTML = carrinho.map((i, index) => `<tr><td>${i.codigo}</td><td>${i.nome}</td><td>${i.qtd}</td><td>R$ ${i.preco.toFixed(2)}</td><td>R$ ${(i.preco * i.qtd).toFixed(2)}</td><td><button type="button" class="btn-vermelho" style="padding: 5px 10px; font-size:12px;" onclick="removerItemCarrinho(${index})">X</button></td></tr>`).join(''); 
         document.getElementById('valorTotal').innerText = total.toFixed(2); 
+        document.getElementById('btnDescontoCaixa').disabled = carrinho.length === 0;
     }
 
     function alternarCamera(alvoId) { inputCameraAlvo = alvoId; let divCamera = document.getElementById('leitorCamera'); if (divCamera.style.display === "block") fecharCamera(); else abrirCamera(); }
@@ -680,10 +683,10 @@
             try { itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `${i.qtd}x ${i.nome}`).join(', '); } catch(e) {} 
             let valor = parseFloat(c.Total.toString().replace(',','.')) || 0; 
             
-            // O botão de Editar agora passa apenas o ID da Comanda! Seguro e à prova de bugs.
             return `<tr><td>#${c.ID_Comanda}</td><td style="font-weight:bold;">${c.Cliente}</td><td>${itensStr}</td><td style="color:#10b981; font-weight:bold;">R$ ${valor.toFixed(2)}</td>
             <td style="display:flex; gap:5px; flex-wrap:wrap;">
                 <button type="button" class="btn-azul" style="padding: 8px 12px; margin-bottom:2px;" onclick="editarComanda('${c.ID_Comanda}')">✏️ Editar</button>
+                <button type="button" style="padding: 8px 12px; margin-bottom:2px; background-color:#8b5cf6; color:white; border:none; border-radius:5px; font-weight:bold;" onclick="aplicarDescontoComanda('${c.ID_Comanda}', '${c.Cliente}', ${valor})">-% Desc</button>
                 <button type="button" class="btn-amarelo" style="padding: 8px 12px; margin-bottom:2px;" onclick="iniciarPagamentoParcial('${c.ID_Comanda}', '${c.Cliente}', ${valor})">Pgto Parcial</button>
                 <button type="button" class="btn-verde" style="padding: 8px 12px; margin-bottom:2px;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${c.Cliente}', '${encodeURIComponent(JSON.stringify(itensObj))}', ${valor})">Cobrar Todo</button>
                 <button type="button" class="btn-vermelho" style="padding: 8px 12px;" onclick="excluirComanda('${c.ID_Comanda}')">X (Zerar)</button>
@@ -697,7 +700,7 @@
         if(promptVal === null) return;
         let valorA_Pagar = parseFloat(promptVal.replace(',','.'));
         if(!valorA_Pagar || isNaN(valorA_Pagar) || valorA_Pagar <= 0) return;
-        if(valorA_Pagar >= totalVal) return alert("O valor digitado liquida ou passa do total da comanda. Para isso, feche este aviso e use o botão verde 'Cobrar Todo'.");
+        if(valorA_Pagar >= totalVal) return alert("O valor digitado liquida ou passa do total da comanda. Para isso, use o botão verde 'Cobrar Todo'.");
 
         abrirModalPagamento(valorA_Pagar, { tipo: 'comanda_parcial', id_comanda: idComanda, cliente: cliente, valorTotal: valorA_Pagar });
     }
@@ -709,6 +712,55 @@
         if(numPessoas > 1) alert(`🎾 DIVIDIDO PARA ${numPessoas} PESSOAS\n💰 CADA UM PAGA: R$ ${(totalVal / numPessoas).toFixed(2)}\n\nAvance para registar as formas de pagamento até liquidar a conta.`);
         
         abrirModalPagamento(totalVal, { tipo: 'comanda', id_comanda: idComanda, cliente: cliente, itensJsonStr: itensJsonStr, totalSalvo: totalVal, valorTotal: totalVal, msgExtra: msgDescricaoExtra });
+    }
+
+    // --- EDIÇÃO DE COMANDAS ---
+    function editarComanda(idComanda) {
+        let comanda = bancoComandas.find(c => String(c.ID_Comanda) === String(idComanda));
+        if(!comanda) return alert("Comanda não encontrada!");
+
+        idComandaEmEdicao = idComanda; 
+        try { carrinho = JSON.parse(comanda.Itens_JSON); } catch(e) { carrinho = []; }
+        total = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
+        
+        document.getElementById('bannerEdicaoComanda').style.display = 'flex'; 
+        document.getElementById('nomeEdicaoComanda').innerText = comanda.Cliente;
+        
+        let selectCli = document.getElementById('selectClienteVenda');
+        if(!Array.from(selectCli.options).some(opt => opt.value === comanda.Cliente)) { 
+            selectCli.add(new Option(comanda.Cliente, comanda.Cliente)); 
+        }
+        selectCli.value = comanda.Cliente;
+        
+        document.getElementById('btnSalvarComanda').innerText = "Gravar Alterações (F3)"; 
+        document.getElementById('btnSalvarComanda').classList.replace("btn-laranja", "btn-amarelo");
+        document.getElementById('btnSalvarComanda').disabled = false;
+        document.getElementById('btnFinalizarVenda').style.display = 'none';
+        
+        atualizarCarrinho(); mudarTela('tela-caixa');
+    }
+
+    function cancelarEdicaoComanda() {
+        idComandaEmEdicao = null; carrinho = []; total = 0; 
+        document.getElementById('bannerEdicaoComanda').style.display = 'none';
+        document.getElementById('btnSalvarComanda').innerText = "Salvar na Comanda (F3)"; 
+        document.getElementById('btnSalvarComanda').classList.replace("btn-amarelo", "btn-laranja");
+        document.getElementById('btnFinalizarVenda').style.display = 'block'; 
+        document.getElementById('selectClienteVenda').value = "Consumidor Final"; 
+        atualizarCarrinho();
+    }
+
+    function acaoBotaoComanda() {
+        if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!");
+        if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); }
+    }
+
+    async function atualizarComandaExistente() {
+        let clienteSel = document.getElementById('selectClienteVenda').value;
+        document.getElementById('status-bar').innerText = "A Atualizar Comanda...";
+        await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho });
+        alert("Comanda atualizada com sucesso!");
+        cancelarEdicaoComanda(); recarregarDadosSilencioso();
     }
 
     async function excluirComanda(idComanda) { if(confirm("ATENÇÃO: Deseja excluir a comanda e devolver TODOS os itens ao estoque sem cobrar?")) { await reqPOST({ acao: "excluir_comanda", id_comanda: idComanda }); recarregarDadosSilencioso(); } }
