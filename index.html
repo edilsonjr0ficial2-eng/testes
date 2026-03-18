@@ -413,18 +413,14 @@
 
 <div id="modalComandas" class="modal-overlay">
     <div class="modal-box" style="max-width: 700px; width: 95%; padding: 0; overflow: hidden; border-radius: 8px;">
-        
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; background: #fff;">
             <h3 style="margin: 0; color: #0f172a; font-size: 18px;">Buscar Venda / Comanda ou Mesa</h3>
             <button style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer; padding: 0;" onclick="fecharModalComandas()">×</button>
         </div>
-        
         <div style="padding: 20px; text-align: left; background: #fff;">
             <label style="font-weight: bold; color: #475569; display: block; margin-bottom: 5px; font-size: 14px;">Número:</label>
             <input type="text" id="buscaComandaInput" placeholder="Digite ou bipe o número da comanda..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; margin-bottom: 20px; outline: none;" oninput="filtrarModalComandas()">
-            
             <h4 style="margin: 0 0 10px 0; color: #334155; font-size: 14px;">Vendas / Comandas em Andamento</h4>
-            
             <div class="table-responsive" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 4px;">
                 <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
                     <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
@@ -436,25 +432,12 @@
                             <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="listaComandasModal">
-                    </tbody>
+                    <tbody id="listaComandasModal"></tbody>
                 </table>
             </div>
-            
-            <div style="display: flex; justify-content: center; align-items: center; margin-top: 15px; gap: 5px;">
-                <button style="padding: 5px 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 4px; cursor: pointer; color: #64748b;">&lt;</button>
-                <button style="padding: 5px 12px; border: none; background: #3b82f6; color: #fff; border-radius: 4px; font-weight: bold;">1</button>
-                <button style="padding: 5px 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 4px; cursor: pointer; color: #64748b;">&gt;</button>
-            </div>
         </div>
-
         <div style="padding: 15px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-            <button type="button" style="background: #22c55e; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;" onclick="criarNovaComandaModal()">
-                <span style="font-size:16px;">📂</span> Abrir Comanda
-            </button>
-            <button type="button" style="background: #3b82f6; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;" onclick="alert('Funcionalidade de associar na próxima versão!')">
-                <span style="font-size:16px;">🔗</span> Associar Comandas
-            </button>
+            <button type="button" style="background: #22c55e; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;" onclick="criarNovaComandaModal()"><span style="font-size:16px;">📂</span> Abrir Comanda</button>
             <button type="button" style="background: #64748b; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="fecharModalComandas()">Cancelar</button>
         </div>
     </div>
@@ -474,26 +457,68 @@
 </div>
 
 <div id="modalPagamento" class="modal-overlay">
-    <div class="modal-box" style="max-width: 400px;">
-        <h3 id="pagTituloModal" style="margin-bottom: 5px; color: #0f172a;">Caixa de Pagamento</h3>
-        <div style="font-size: 32px; font-weight: bold; margin-bottom: 5px; color: #10b981;">R$ <span id="pagTotalLabel">0.00</span></div>
-        <div style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Líquido Real Estimado: <b>R$ <span id="pagLiquidoLabel">0.00</span></b></div>
+    <div class="modal-box" style="max-width: 450px; padding: 0; border-radius: 8px; overflow: hidden; background: #f8fafc;">
         
-        <div class="linha-pag"><label>👤 Quem Paga:</label><input type="text" id="pagNomePagador" placeholder="Nome (Ex: João)" autocomplete="off"></div>
-        <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 15px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #e2e8f0;">
+            <h3 id="tituloModalPagamento" style="margin: 0; color: #0f172a; font-size: 18px;">Formas de pagamento</h3>
+            <button style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer; padding: 0;" onclick="fecharModalPagamento()">×</button>
+        </div>
+        
+        <div style="padding: 20px; text-align: left;">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('dinheiro', 'Dinheiro', '💵')">Dinheiro</button>
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('debito', 'Cartão de Débito', '💳')">Cartão de Débito</button>
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('credito', 'Cartão de Crédito', '💳')">Cartão de Crédito</button>
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('pix', 'Pix', '💠')">Pix</button>
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer; grid-column: span 2;" onclick="addFormaPagamento('vr', 'Vale Refeição', '🎫')">Vale Refeição</button>
+            </div>
 
-        <div class="linha-pag"><label>💠 Pix:</label><input type="text" inputmode="decimal" id="pagPix" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
-        <div class="linha-pag"><label>💳 Crédito:</label><input type="text" inputmode="decimal" id="pagCredito" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
-        <div class="linha-pag"><label>💳 Débito:</label><input type="text" inputmode="decimal" id="pagDebito" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
-        <div class="linha-pag"><label>💵 Espécie:</label><input type="text" inputmode="decimal" id="pagEspecie" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
+            <div id="boxNomePagador" style="display: none; margin-bottom: 20px;">
+                <label style="font-weight:bold; color:#475569; font-size:13px; display:block; margin-bottom:5px;">Nome de quem está pagando (Parcial):</label>
+                <input type="text" id="pagNomePagador" placeholder="Ex: João" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:4px; font-size:14px; outline:none;">
+            </div>
 
-        <div style="margin: 20px 0; font-size: 18px; font-weight: bold;">
-            <div id="boxStatusPagamento" style="color: #dc2626;">Falta: R$ <span id="pagRestanteLabel">0.00</span></div>
+            <div style="background:#fff; border:1px solid #e2e8f0; padding:15px; border-radius:6px; margin-bottom:20px; font-size:14px; color:#475569;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span>Subtotal</span>
+                    <span style="font-weight:bold; color:#111;">R$ <span id="pagSubtotalVal">0.00</span></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #e2e8f0;">
+                    <span style="color:#3b82f6;">Taxa de Serviço</span>
+                    <span style="color:#3b82f6; font-weight:bold;">+ R$ <span id="pagTaxaVal">0.00</span></span>
+                </div>
+                
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:16px; font-weight:bold; color:#111;">
+                    <span>Total</span>
+                    <span>R$ <span id="pagTotalVal">0.00</span></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold; color:#22c55e;">
+                    <span>Pago</span>
+                    <span>R$ <span id="pagPagoVal">0.00</span></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-weight:bold; color:#dc2626;">
+                    <span>Restante</span>
+                    <span>R$ <span id="pagRestanteVal">0.00</span></span>
+                </div>
+            </div>
+
+            <div id="listaPagamentosAtivos" style="margin-bottom: 20px;"></div>
+
+            <div style="display:flex; align-items:center; justify-content:center; gap:10px; font-size:14px; color:#64748b; margin-bottom:10px;">
+                <span>Dividir a conta por:</span>
+                <input type="number" id="pagDividirInput" value="1" min="1" style="width:50px; padding:6px; border:1px solid #cbd5e1; border-radius:4px; text-align:center; outline:none;" oninput="calcularDivisao()">
+                <span style="color:#3b82f6; font-weight:bold;">R$ <span id="pagDivisaoResult">0.00</span> pra cada</span>
+            </div>
         </div>
 
-        <div style="display:flex; gap:10px;">
-            <button type="button" class="btn-vermelho" style="flex:1;" onclick="fecharModalPagamento()">Cancelar</button>
-            <button type="button" class="btn-verde" style="flex:1;" id="btnConfirmarPagamento" onclick="confirmarPagamentoMisto()" disabled>Receber</button>
+        <div style="padding: 15px 20px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+            <button type="button" id="btnFin1" style="flex:1; background:#22c55e; color:#fff; border:none; padding:14px; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="confirmarPagamentoMisto(false)" disabled>
+                ✓ Finalizar
+            </button>
+            <button type="button" id="btnFin2" style="flex:2; background:#22c55e; color:#fff; border:none; padding:14px; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="confirmarPagamentoMisto(true)" disabled>
+                🖨️ Finalizar e imprimir <span style="font-size:10px; opacity:0.8;">F6</span>
+            </button>
         </div>
     </div>
 </div>
@@ -502,12 +527,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
     
     // TAXAS DE PAGAMENTO
-    const TAXAS_CARTAO = {
-        credito: 0.03,  
-        debito: 0.015,  
-        pix: 0,
-        especie: 0
-    };
+    const TAXAS_CARTAO = { credito: 0.03, debito: 0.015, pix: 0, especie: 0, vr: 0 };
 
     let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
     let turnoAtual = null, carrinho = [], total = 0, leitorHtml5 = null;
@@ -516,7 +536,8 @@
     let chartFat = null, chartProd = null;
     let acaoPagamentoPendente = null;
     let idComandaEmEdicao = null;
-    let pagamentosComandaAtual = 0; // Armazena total já pago da comanda ativa
+    let pagamentosComandaAtual = 0; 
+    let pagamentosAtivos = []; // NOVO ARRAY PARA PAGAMENTOS DA TELA
 
     function formatarDataExibicao(dataStr) {
         if (!dataStr) return ""; let str = String(dataStr);
@@ -679,59 +700,133 @@
         chartProd = new Chart(document.getElementById('graficoProdutos'), { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
+    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO ---
     function abrirModalPagamento(valorTotal, acaoObj) {
-        document.getElementById('pagTotalLabel').innerText = valorTotal.toFixed(2);
-        ['pagPix','pagCredito','pagDebito','pagEspecie', 'pagNomePagador'].forEach(id => document.getElementById(id).value = "");
-        acaoPagamentoPendente = acaoObj; 
-        if(acaoObj.tipo === 'comanda_parcial') { document.getElementById('pagTituloModal').innerText = "Pagamento Parcial"; } else { document.getElementById('pagTituloModal').innerText = "Caixa de Pagamento"; }
-        calcularRestantePagamento(); document.getElementById('modalPagamento').style.display = 'flex'; document.getElementById('pagNomePagador').focus();
+        pagamentosAtivos = [];
+        acaoPagamentoPendente = acaoObj;
+        
+        document.getElementById('pagSubtotalVal').innerText = valorTotal.toFixed(2);
+        document.getElementById('pagTaxaVal').innerText = "0.00";
+        document.getElementById('pagTotalVal').innerText = valorTotal.toFixed(2);
+        document.getElementById('pagDividirInput').value = "1";
+        
+        if(acaoObj.tipo === 'comanda_parcial') { 
+            document.getElementById('boxNomePagador').style.display = 'block'; 
+            document.getElementById('pagNomePagador').value = "";
+            document.getElementById('tituloModalPagamento').innerText = "Pagamento Parcial";
+        } else { 
+            document.getElementById('boxNomePagador').style.display = 'none'; 
+            document.getElementById('tituloModalPagamento').innerText = "Formas de pagamento";
+        }
+        
+        renderizarPagamentosAtivos();
+        document.getElementById('modalPagamento').style.display = 'flex'; 
     }
     
-    function fecharModalPagamento() { document.getElementById('modalPagamento').style.display = 'none'; acaoPagamentoPendente = null; }
-
-    function calcularRestantePagamento() {
-        if(!acaoPagamentoPendente) return;
-        let totalRequerido = acaoPagamentoPendente.valorTotal; 
-        let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0; let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
-        let d = parseFloat(document.getElementById('pagDebito').value.replace(',', '.')) || 0; let e = parseFloat(document.getElementById('pagEspecie').value.replace(',', '.')) || 0;
-        let totalPagoAgora = p + c + d + e; 
-        
-        let liquido = p + e + (c - (c * TAXAS_CARTAO.credito)) + (d - (d * TAXAS_CARTAO.debito));
-        document.getElementById('pagLiquidoLabel').innerText = liquido.toFixed(2);
-
-        let box = document.getElementById('boxStatusPagamento'); 
-        let falta = totalRequerido - totalPagoAgora;
-        
-        if (falta > 0.01) { box.style.color = "#dc2626"; box.innerHTML = `Falta: R$ <span id="pagRestanteLabel">${falta.toFixed(2)}</span>`; document.getElementById('btnConfirmarPagamento').disabled = true; 
-        } else if (falta < -0.01) { box.style.color = "#eab308"; box.innerHTML = `Troco: R$ <span id="pagRestanteLabel">${Math.abs(falta).toFixed(2)}</span>`; document.getElementById('btnConfirmarPagamento').disabled = false; 
-        } else { box.style.color = "#16a34a"; box.innerHTML = `Exato: R$ <span id="pagRestanteLabel">0.00</span>`; document.getElementById('btnConfirmarPagamento').disabled = false; }
+    function fecharModalPagamento() { 
+        document.getElementById('modalPagamento').style.display = 'none'; 
+        acaoPagamentoPendente = null; 
     }
 
-    function confirmarPagamentoMisto() {
-        let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0; let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
-        let d = parseFloat(document.getElementById('pagDebito').value.replace(',', '.')) || 0; let e = parseFloat(document.getElementById('pagEspecie').value.replace(',', '.')) || 0;
+    function addFormaPagamento(tipo, nome, icone) {
+        let totalRequerido = parseFloat(document.getElementById('pagTotalVal').innerText.replace(',','.'));
+        let totalPago = pagamentosAtivos.reduce((sum, p) => sum + p.valor, 0);
+        let falta = totalRequerido - totalPago;
+        let valorSugerido = falta > 0 ? falta : 0;
+        
+        pagamentosAtivos.push({ id: Date.now(), tipo: tipo, nome: nome, icone: icone, valor: valorSugerido });
+        renderizarPagamentosAtivos();
+    }
+
+    function atualizarValorPag(index, val) {
+        pagamentosAtivos[index].valor = parseFloat(val.replace(',', '.')) || 0;
+        calcularResumoPag();
+    }
+
+    function removerPag(index) {
+        pagamentosAtivos.splice(index, 1);
+        renderizarPagamentosAtivos();
+    }
+
+    function renderizarPagamentosAtivos() {
+        let html = pagamentosAtivos.map((p, i) => `
+            <div style="display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:10px; font-weight:bold; color:#334155;">
+                    <span style="font-size:18px;">${p.icone}</span> ${p.nome}
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="text" inputmode="decimal" value="${p.valor ? p.valor.toFixed(2) : ''}" oninput="atualizarValorPag(${i}, this.value)" style="width:100px; text-align:right; font-weight:bold; font-size:16px; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none;">
+                    <button type="button" onclick="removerPag(${i})" style="background:#ef4444; color:white; border:none; border-radius:4px; width:32px; height:32px; font-weight:bold; cursor:pointer;">X</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('listaPagamentosAtivos').innerHTML = html;
+        calcularResumoPag();
+    }
+
+    function calcularResumoPag() {
+        let totalRequerido = parseFloat(document.getElementById('pagTotalVal').innerText.replace(',','.')) || 0;
+        let totalPago = pagamentosAtivos.reduce((sum, p) => sum + p.valor, 0);
+        let restante = totalRequerido - totalPago;
+
+        document.getElementById('pagPagoVal').innerText = totalPago.toFixed(2);
+        
+        let restEl = document.getElementById('pagRestanteVal');
+        if (restante > 0.01) {
+            restEl.innerText = restante.toFixed(2);
+            restEl.style.color = "#dc2626";
+            document.getElementById('btnFin1').disabled = true;
+            document.getElementById('btnFin2').disabled = true;
+        } else if (restante < -0.01) {
+            restEl.innerText = "Troco: " + Math.abs(restante).toFixed(2);
+            restEl.style.color = "#eab308";
+            document.getElementById('btnFin1').disabled = false;
+            document.getElementById('btnFin2').disabled = false;
+        } else {
+            restEl.innerText = "0.00";
+            restEl.style.color = "#16a34a";
+            document.getElementById('btnFin1').disabled = false;
+            document.getElementById('btnFin2').disabled = false;
+        }
+
+        calcularDivisao();
+    }
+
+    function calcularDivisao() {
+        let total = parseFloat(document.getElementById('pagTotalVal').innerText.replace(',','.')) || 0;
+        let pessoas = parseInt(document.getElementById('pagDividirInput').value) || 1;
+        if(pessoas < 1) pessoas = 1;
+        document.getElementById('pagDivisaoResult').innerText = (total / pessoas).toFixed(2);
+    }
+
+    function confirmarPagamentoMisto(imprimirRecibo) {
+        if (pagamentosAtivos.length === 0) return alert("Adicione pelo menos uma forma de pagamento!");
+        
         let pagNome = document.getElementById('pagNomePagador').value.trim() || "Não informado";
-        let totalPago = p + c + d + e; let formas = [];
-        if(p > 0) formas.push(`Pix: ${p.toFixed(2)}`); if(c > 0) formas.push(`Crédito: ${c.toFixed(2)}`);
-        if(d > 0) formas.push(`Débito: ${d.toFixed(2)}`); if(e > 0) formas.push(`Espécie: ${e.toFixed(2)}`);
+        let totalPago = pagamentosAtivos.reduce((sum, p) => sum + p.valor, 0);
+        let formasStr = pagamentosAtivos.map(p => `${p.nome}: ${p.valor.toFixed(2)}`).join(" + ");
         
         let acaoSegura = acaoPagamentoPendente;
-        document.getElementById('btnConfirmarPagamento').innerText = "Aguarde..."; document.getElementById('btnConfirmarPagamento').disabled = true;
+        document.getElementById('btnFin1').innerText = "Aguarde..."; 
+        document.getElementById('btnFin1').disabled = true;
+        document.getElementById('btnFin2').disabled = true;
         
-        executarAcaoPagamento(acaoSegura, formas.join(" + "), totalPago, pagNome).then(() => {
-            document.getElementById('btnConfirmarPagamento').innerText = "Receber"; fecharModalPagamento(); 
+        executarAcaoPagamento(acaoSegura, formasStr, totalPago, pagNome, imprimirRecibo).then(() => {
+            document.getElementById('btnFin1').innerText = "✓ Finalizar"; 
+            fecharModalPagamento(); 
         });
     }
 
-    async function executarAcaoPagamento(acao, formaPagStr, totalPagoFinal, pagadorNome) {
+    async function executarAcaoPagamento(acao, formaPagStr, totalPagoFinal, pagadorNome, imprimirRecibo) {
         if(!acao) return;
         if(acao.tipo === 'venda_direta') {
             document.getElementById('btnFinalizarVenda').innerText = "Gravando..."; document.getElementById('btnFinalizarVenda').disabled = true;
             await reqPOST({ acao: "venda", cliente: acao.cliente, total: acao.totalSalvo, carrinho: acao.carrinhoSalvo, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr });
             limparCarrinhoNovaVenda(); recarregarDadosSilencioso();
             document.getElementById('btnFinalizarVenda').innerHTML = '💵 Pagamento <span style="font-size:11px; opacity:0.8;">F6</span>'; document.getElementById('btnFinalizarVenda').disabled = false;
-            if(confirm("Imprimir recibo térmico?")) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
-            if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
+            
+            if(imprimirRecibo) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
+            
         } 
         else if (acao.tipo === 'comanda') {
             await reqPOST({ acao: "cobrar_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr + acao.msgExtra });
@@ -741,16 +836,14 @@
             let iArr = comandaImpressao ? JSON.parse(comandaImpressao.Itens_JSON) : [];
             
             limparCarrinhoNovaVenda();
-
-            if(confirm("Imprimir recibo térmico?")) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
-            if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
+            if(imprimirRecibo) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
         }
         else if (acao.tipo === 'comanda_parcial') {
             await reqPOST({ acao: "pagamento_parcial_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr, valor_pago: totalPagoFinal });
             recarregarDadosSilencioso();
             pagamentosComandaAtual += totalPagoFinal;
             atualizarCarrinho();
-            alert(`Pagamento parcial de R$ ${totalPagoFinal.toFixed(2)} recebido de ${pagadorNome}!\nA comanda continua em aberto com o restante do saldo.`);
+            alert(`Pagamento parcial de R$ ${totalPagoFinal.toFixed(2)} recebido!`);
         }
     }
 
@@ -762,7 +855,8 @@
             let saldoDevedor = total - pagamentosComandaAtual;
             if (saldoDevedor < 0) saldoDevedor = 0;
             let itensJsonStr = encodeURIComponent(JSON.stringify(carrinho));
-            iniciarCobrancaComanda(idComandaEmEdicao, clienteSel, itensJsonStr, saldoDevedor);
+            
+            abrirModalPagamento(saldoDevedor, { tipo: 'comanda', id_comanda: idComandaEmEdicao, cliente: clienteSel, itensJsonStr: itensJsonStr, totalSalvo: saldoDevedor, valorTotal: saldoDevedor, msgExtra: "" });
         } else {
             abrirModalPagamento(total, { tipo: 'venda_direta', cliente: clienteSel, carrinhoSalvo: [...carrinho], totalSalvo: total, valorTotal: total });
         }
@@ -777,7 +871,7 @@
         let saldoDevedor = total - pagamentosComandaAtual;
         if (saldoDevedor <= 0) return alert("Esta comanda não tem saldo devedor para abater!");
         
-        iniciarPagamentoParcial(idComandaEmEdicao, clienteSel, saldoDevedor);
+        abrirModalPagamento(saldoDevedor, { tipo: 'comanda_parcial', id_comanda: idComandaEmEdicao, cliente: clienteSel, valorTotal: saldoDevedor });
     }
 
     function limparCarrinhoNovaVenda() {
@@ -815,25 +909,6 @@
 
         carrinho.push({ codigo: 'DESC', nome: 'Desconto Aplicado', preco: -valDesc, qtd: 1 });
         total -= valDesc; atualizarCarrinho();
-    }
-
-    async function aplicarDescontoComanda(idComanda, cliente, totalAtual) {
-        if(!turnoAtual) return alert("Abra o caixa!");
-        let descStr = prompt(`Comanda de ${cliente}: R$ ${totalAtual.toFixed(2)}\n\nDigite o valor do DESCONTO (Ex: 10,00):`, "0,00");
-        if(!descStr) return; let valDesc = parseFloat(descStr.replace(',', '.')); if(isNaN(valDesc) || valDesc <= 0) return;
-        if(valDesc > totalAtual) return alert("O desconto não pode ser maior que a comanda!");
-
-        await reqPOST({ acao: "desconto_comanda", id_comanda: idComanda, valor_desconto: valDesc });
-        alert(`Desconto aplicado com sucesso!`); recarregarDadosSilencioso();
-    }
-
-    async function removerPagamentoParcial(idComanda, idTransacao) {
-        verificarPermissaoGerente('Cancelar Pagamento Parcial', async () => {
-            if(confirm("Deseja cancelar este pagamento parcial?\n\nO valor voltará para a dívida da comanda e o registro será apagado do Livro de Caixa.")) {
-                await reqPOST({ acao: "remover_pagamento_parcial", id_comanda: idComanda, id_transacao: idTransacao });
-                recarregarDadosSilencioso();
-            }
-        });
     }
 
     document.getElementById('codigoInput').addEventListener('keypress', function(e) { if (e.key === 'Enter' && this.value.trim() !== "") { e.preventDefault(); processarEntradaCodigo(this.value.trim()); this.value = ""; } });
@@ -879,7 +954,7 @@
     function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { alert("Sem acesso à câmara."); divCamera.style.display = "none"; }); }
     function fecharCamera() { if(leitorHtml5) leitorHtml5.stop().then(() => { document.getElementById('leitorCamera').style.display = "none"; }).catch(e=>e); }
 
-    // --- LÓGICA DO MODAL DE COMANDAS ---
+    // --- LÓGICA DO MODAL DE BUSCA DE COMANDAS ---
     function abrirModalComandas() { 
         renderizarTabelaModalComandas(bancoComandas);
         document.getElementById('buscaComandaInput').value = "";
@@ -1000,37 +1075,10 @@
                 </div>
                 <div style="text-align: right; margin-bottom: 15px;">${valorExibicaoHtml}</div>
                 <div class="comanda-actions">
-                    <button type="button" class="btn-azul" onclick="editarComanda('${c.ID_Comanda}')">✏️ Editar</button>
-                    <button type="button" class="btn-amarelo" onclick="iniciarPagamentoParcial('${c.ID_Comanda}', '${clienteEscapado}', ${saldoDevedor})">💳 Parcial</button>
-                    <button type="button" style="background-color:#8b5cf6; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="verificarPermissaoGerente('Aplicar Desconto', () => aplicarDescontoComanda('${c.ID_Comanda}', '${clienteEscapado}', ${saldoDevedor}))">-% Desc</button>
-                    <button type="button" class="btn-vermelho" onclick="verificarPermissaoGerente('Zerar Comanda', () => excluirComanda('${c.ID_Comanda}'))">🗑️ Cancelar</button>
-                    <button type="button" class="btn-verde" style="grid-column: span 2;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${clienteEscapado}', '${encodeURIComponent(JSON.stringify(itensObj))}', ${saldoDevedor})">💰 Cobrar Todo</button>
+                    <button type="button" class="btn-azul" style="grid-column: span 2;" onclick="mudarTela('tela-caixa'); editarComanda('${c.ID_Comanda}')">📂 Abrir no Caixa</button>
                 </div>
             </div>`; 
         }).join(''); 
-    }
-
-    function iniciarPagamentoParcial(idComanda, cliente, totalVal) {
-        if(!turnoAtual) return alert("Abra o caixa!");
-        let promptVal = prompt(`A comanda de ${cliente} tem saldo de R$ ${totalVal.toFixed(2)}.\n\nQuanto ele vai adiantar (pagar agora)?`, "0,00");
-        if(promptVal === null) return;
-        let valorA_Pagar = parseFloat(promptVal.replace(',','.'));
-        if(!valorA_Pagar || isNaN(valorA_Pagar) || valorA_Pagar <= 0) return;
-        if(valorA_Pagar >= totalVal) {
-            alert("O valor digitado liquida ou passa do total da comanda. Para isso, use o botão verde 'Cobrar Todo'.");
-            return;
-        }
-        abrirModalPagamento(valorA_Pagar, { tipo: 'comanda_parcial', id_comanda: idComanda, cliente: cliente, valorTotal: valorA_Pagar });
-    }
-
-    function iniciarCobrancaComanda(idComanda, cliente, itensJsonStr, totalVal) {
-        if(!turnoAtual) return alert("Abra o caixa!");
-        
-        let numPessoas = parseInt(prompt("Dividir a conta para quantas pessoas? (Deixe 1 para não dividir)", "1")) || 1;
-        let msgDescricaoExtra = numPessoas > 1 ? ` (Dividido para ${numPessoas})` : "";
-        if(numPessoas > 1) alert(`🎾 DIVIDIDO PARA ${numPessoas} PESSOAS\n💰 CADA UM PAGA: R$ ${(totalVal / numPessoas).toFixed(2)}\n\nAvance para registrar as formas de pagamento até liquidar a conta.`);
-        
-        abrirModalPagamento(totalVal, { tipo: 'comanda', id_comanda: idComanda, cliente: cliente, totalSalvo: totalVal, valorTotal: totalVal, msgExtra: msgDescricaoExtra });
     }
 
     function editarComanda(idComanda) {
@@ -1050,7 +1098,7 @@
         let selectCli = document.getElementById('selectClienteVenda'); if(!Array.from(selectCli.options).some(opt => opt.value === comanda.Cliente)) { selectCli.add(new Option(comanda.Cliente, comanda.Cliente)); }
         selectCli.value = comanda.Cliente; document.getElementById('btnSalvarComanda').innerHTML = '💾 Gravar Alterações <span style="font-size:11px; opacity:0.8;">F5</span>'; document.getElementById('btnSalvarComanda').style.background = "#eab308"; document.getElementById('btnSalvarComanda').disabled = false; 
         
-        atualizarCarrinho(); mudarTela('tela-caixa');
+        atualizarCarrinho(); 
     }
 
     function cancelarEdicaoComanda() {
@@ -1194,7 +1242,14 @@
             if(e.key==='F3'){e.preventDefault();abrirModalComandas();} 
             if(e.key==='F2'){e.preventDefault();limparCarrinhoNovaVenda();} 
             if(e.key==='F5'){e.preventDefault();acaoBotaoComanda();} 
-            if(e.key==='F6'){e.preventDefault();iniciarPagamentoCaixa();} 
+            if(e.key==='F6'){
+                e.preventDefault();
+                if(document.getElementById('modalPagamento').style.display === 'flex') {
+                    if(!document.getElementById('btnFin2').disabled) confirmarPagamentoMisto(true);
+                } else {
+                    iniciarPagamentoCaixa();
+                }
+            } 
         } 
     });
 </script>
