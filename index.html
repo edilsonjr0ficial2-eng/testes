@@ -98,8 +98,6 @@
         /* MODAIS */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background: #fff; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;}
-        .lista-comandas-modal { max-height: 300px; overflow-y: auto; margin: 20px 0; text-align: left; -webkit-overflow-scrolling: touch; }
-        .btn-comanda-item { display: block; width: 100%; margin-bottom: 10px; padding: 15px; background: #f1f5f9; color: #333; border: 1px solid #cbd5e1; text-align: left; font-size: 16px; border-radius: 5px; }
 
         .linha-pag { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap:wrap;}
         .linha-pag label { width: 120px; text-align: left; font-weight: bold; color: #475569; }
@@ -420,12 +418,51 @@
 </div>
 
 <div id="modalComandas" class="modal-overlay">
-    <div class="modal-box">
-        <h3>Adicionar a qual Comanda?</h3>
-        <button type="button" class="btn-verde" style="width: 100%; font-size: 16px; margin-bottom: 15px;" onclick="criarNovaComandaModal()">+ Criar Nova Comanda</button>
-        <p style="text-align: left; font-weight: bold; margin-bottom: 5px; color: #666;">Ou adicione a uma existente:</p>
-        <div class="lista-comandas-modal" id="listaComandasModal"></div>
-        <button type="button" class="btn-vermelho" style="width: 100%; margin-top: 10px;" onclick="fecharModalComandas()">Cancelar</button>
+    <div class="modal-box" style="max-width: 700px; width: 95%; padding: 0; overflow: hidden; border-radius: 8px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; background: #fff;">
+            <h3 style="margin: 0; color: #0f172a; font-size: 18px;">Buscar Venda / Comanda ou Mesa</h3>
+            <button style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer; padding: 0;" onclick="fecharModalComandas()">×</button>
+        </div>
+        
+        <div style="padding: 20px; text-align: left; background: #fff;">
+            <label style="font-weight: bold; color: #475569; display: block; margin-bottom: 5px; font-size: 14px;">Número:</label>
+            <input type="text" id="buscaComandaInput" placeholder="Digite ou bipe o número da comanda..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; margin-bottom: 20px; outline: none;" oninput="filtrarModalComandas()">
+            
+            <h4 style="margin: 0 0 10px 0; color: #334155; font-size: 14px;">Vendas / Comandas em Andamento</h4>
+            
+            <div class="table-responsive" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 4px;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
+                    <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
+                        <tr>
+                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Nº Comanda</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Cliente</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Data/Hora</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Total</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaComandasModal">
+                        </tbody>
+                </table>
+            </div>
+            
+            <div style="display: flex; justify-content: center; align-items: center; margin-top: 15px; gap: 5px;">
+                <button style="padding: 5px 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 4px; cursor: pointer; color: #64748b;">&lt;</button>
+                <button style="padding: 5px 12px; border: none; background: #3b82f6; color: #fff; border-radius: 4px; font-weight: bold;">1</button>
+                <button style="padding: 5px 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 4px; cursor: pointer; color: #64748b;">&gt;</button>
+            </div>
+        </div>
+
+        <div style="padding: 15px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <button type="button" style="background: #22c55e; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;" onclick="criarNovaComandaModal()">
+                <span style="font-size:16px;">📂</span> Abrir Comanda
+            </button>
+            <button type="button" style="background: #3b82f6; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;" onclick="alert('Funcionalidade de associar na próxima versão!')">
+                <span style="font-size:16px;">🔗</span> Associar Comandas
+            </button>
+            <button type="button" style="background: #64748b; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="fecharModalComandas()">Cancelar</button>
+        </div>
     </div>
 </div>
 
@@ -470,10 +507,10 @@
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
     
-    // TAXAS DE PAGAMENTO (Configure conforme sua maquininha)
+    // TAXAS DE PAGAMENTO
     const TAXAS_CARTAO = {
-        credito: 0.03,  // 3%
-        debito: 0.015,  // 1.5%
+        credito: 0.03,  
+        debito: 0.015,  
         pix: 0,
         especie: 0
     };
@@ -705,7 +742,6 @@
             await reqPOST({ acao: "cobrar_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr + acao.msgExtra });
             recarregarDadosSilencioso();
             
-            // Puxa os itens originais pelo ID pra impressão e envio
             let comandaImpressao = bancoComandas.find(c => String(c.ID_Comanda) === String(acao.id_comanda));
             let iArr = comandaImpressao ? JSON.parse(comandaImpressao.Itens_JSON) : [];
             
@@ -811,43 +847,85 @@
     function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { alert("Sem acesso à câmara."); divCamera.style.display = "none"; }); }
     function fecharCamera() { if(leitorHtml5) leitorHtml5.stop().then(() => { document.getElementById('leitorCamera').style.display = "none"; }).catch(e=>e); }
 
-    function abrirModalComandas() { let lista = document.getElementById('listaComandasModal'); lista.innerHTML = bancoComandas.length === 0 ? "<p>Nenhuma comanda aberta.</p>" : bancoComandas.map(c => `<button type="button" class="btn-comanda-item" onclick="adicionarNaComandaExistente('${c.ID_Comanda}', '${c.Cliente}')">👤 ${c.Cliente} (Comanda #${c.ID_Comanda})</button>`).join(''); document.getElementById('modalComandas').style.display = 'flex'; }
-    function fecharModalComandas() { document.getElementById('modalComandas').style.display = 'none'; }
-    async function criarNovaComandaModal() { fecharModalComandas(); let nome = prompt("Nome do Cliente para a NOVA comanda?"); if(!nome) return; await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda criada!"); limparCarrinhoNovaVenda(); recarregarDadosSilencioso(); }
-    async function adicionarNaComandaExistente(idComanda, nomeCli) { fecharModalComandas(); await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho, operador: operadorAtual }); alert(`Itens adicionados!`); limparCarrinhoNovaVenda(); recarregarDadosSilencioso(); }
+    // --- NOVA LÓGICA DO MODAL DE COMANDAS ---
+    function abrirModalComandas() { 
+        renderizarTabelaModalComandas(bancoComandas);
+        document.getElementById('buscaComandaInput').value = "";
+        document.getElementById('modalComandas').style.display = 'flex'; 
+        setTimeout(() => document.getElementById('buscaComandaInput').focus(), 100);
+    }
     
-    // --- NOVO VISUAL DAS COMANDAS COM SOLUÇÃO DE BUG DOS BOTÕES ---
-    function iniciarPagamentoParcial(idComanda, cliente, totalVal) {
-        if(!turnoAtual) return alert("Abra o caixa!");
-        let promptVal = prompt(`A comanda de ${cliente} tem saldo de R$ ${totalVal.toFixed(2)}.\n\nQuanto ele vai adiantar (pagar agora)?`, "0,00");
-        if(promptVal === null) return;
-        let valorA_Pagar = parseFloat(promptVal.replace(',','.'));
-        if(!valorA_Pagar || isNaN(valorA_Pagar) || valorA_Pagar <= 0) return;
-        if(valorA_Pagar >= totalVal) {
-            alert("O valor digitado liquida ou passa do total da comanda. Para isso, use o botão verde 'Cobrar Todo'.");
-            return;
+    function fecharModalComandas() { document.getElementById('modalComandas').style.display = 'none'; }
+    
+    function renderizarTabelaModalComandas(comandas) {
+        let lista = document.getElementById('listaComandasModal'); 
+        if(comandas.length === 0) { 
+            lista.innerHTML = "<tr><td colspan='5' style='text-align: center; padding: 20px;'>Nenhuma comanda em andamento.</td></tr>"; 
+            return; 
+        } 
+        
+        lista.innerHTML = comandas.map(c => { 
+            let valor = parseFloat(c.Total.toString().replace(',','.')) || 0; 
+            let clienteEscapado = c.Cliente ? c.Cliente.replace(/'/g, "\\'") : "";
+            
+            let btnSelecionar = `<button onclick="selecionarComandaModal('${c.ID_Comanda}', '${clienteEscapado}')" style="background:transparent; border:none; color:#3b82f6; cursor:pointer; font-size:16px; padding:0 5px;" title="Selecionar / Abrir">📂</button>`;
+            let btnApagar = `<button onclick="verificarPermissaoGerente('Zerar Comanda', () => { excluirComanda('${c.ID_Comanda}'); fecharModalComandas(); })" style="background:transparent; border:none; color:#ef4444; cursor:pointer; font-size:16px; padding:0 5px;" title="Apagar">🗑️</button>`;
+
+            return `
+            <tr style="border-bottom: 1px solid #e2e8f0; transition: 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 10px;">${c.ID_Comanda}</td>
+                <td style="padding: 10px;">${c.Cliente || 'Sem cliente'}</td>
+                <td style="padding: 10px; color: #64748b;">Em andamento</td>
+                <td style="padding: 10px;">R$ ${valor.toFixed(2)}</td>
+                <td style="padding: 10px;">${btnSelecionar} ${btnApagar}</td>
+            </tr>`; 
+        }).join('');
+    }
+
+    function filtrarModalComandas() {
+        let termo = document.getElementById('buscaComandaInput').value.toLowerCase();
+        let filtradas = bancoComandas.filter(c => 
+            String(c.ID_Comanda).toLowerCase().includes(termo) || 
+            String(c.Cliente).toLowerCase().includes(termo)
+        );
+        renderizarTabelaModalComandas(filtradas);
+    }
+
+    function selecionarComandaModal(idComanda, nomeCli) {
+        if(carrinho.length > 0) {
+            adicionarNaComandaExistente(idComanda, nomeCli);
+        } else {
+            fecharModalComandas();
+            editarComanda(idComanda);
         }
-        abrirModalPagamento(valorA_Pagar, { tipo: 'comanda_parcial', id_comanda: idComanda, cliente: cliente, valorTotal: valorA_Pagar });
     }
 
-    function iniciarCobrancaComanda(idComanda, cliente, totalVal) {
-        if(!turnoAtual) return alert("Abra o caixa!");
-        
-        let numPessoas = parseInt(prompt("Dividir a conta para quantas pessoas? (Deixe 1 para não dividir)", "1")) || 1;
-        let msgDescricaoExtra = numPessoas > 1 ? ` (Dividido para ${numPessoas})` : "";
-        if(numPessoas > 1) alert(`🎾 DIVIDIDO PARA ${numPessoas} PESSOAS\n💰 CADA UM PAGA: R$ ${(totalVal / numPessoas).toFixed(2)}\n\nAvance para registrar as formas de pagamento até liquidar a conta.`);
-        
-        abrirModalPagamento(totalVal, { tipo: 'comanda', id_comanda: idComanda, cliente: cliente, totalSalvo: totalVal, valorTotal: totalVal, msgExtra: msgDescricaoExtra });
+    async function criarNovaComandaModal() { 
+        fecharModalComandas(); 
+        let nome = prompt("Nome do Cliente para a NOVA comanda?"); 
+        if(!nome) return; 
+        await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho, operador: operadorAtual }); 
+        alert("Comanda criada!"); 
+        limparCarrinhoNovaVenda(); 
+        recarregarDadosSilencioso(); 
     }
-
+    
+    async function adicionarNaComandaExistente(idComanda, nomeCli) { 
+        fecharModalComandas(); 
+        await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho, operador: operadorAtual }); 
+        alert(`Itens adicionados!`); 
+        limparCarrinhoNovaVenda(); 
+        recarregarDadosSilencioso(); 
+    }
+    
+    // --- NOVO VISUAL LADO A LADO DAS COMANDAS ---
     function atualizarTabelaComandas() { 
         let grid = document.getElementById('listaComandasGrid'); 
         if(bancoComandas.length === 0) { grid.innerHTML = `<div style="text-align: center; width:100%; color:#64748b; padding: 20px;">Nenhuma comanda aberta no momento.</div>`; return; } 
-        
         grid.innerHTML = bancoComandas.map(c => { 
             if(!c.ID_Comanda) return ''; 
-            let itensStr = ""; 
-            try { let itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `• ${i.qtd}x ${i.nome}`).join('<br>'); } catch(e) {} 
+            let itensStr = "", itensObj = []; 
+            try { itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `• ${i.qtd}x ${i.nome}`).join('<br>'); } catch(e) {} 
             
             let pagamentosHtml = "";
             let totalJaPago = 0; 
@@ -877,7 +955,6 @@
                 valorExibicaoHtml = `<div class="comanda-valor">R$ ${valorTotal.toFixed(2)}</div>`;
             }
             
-            // Garantindo que nomes com aspas não quebrem o código HTML do botão
             let clienteEscapado = c.Cliente ? c.Cliente.replace(/'/g, "\\'") : "";
             
             return `
@@ -896,10 +973,33 @@
                     <button type="button" class="btn-amarelo" onclick="iniciarPagamentoParcial('${c.ID_Comanda}', '${clienteEscapado}', ${saldoDevedor})">💳 Parcial</button>
                     <button type="button" style="background-color:#8b5cf6; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="verificarPermissaoGerente('Aplicar Desconto', () => aplicarDescontoComanda('${c.ID_Comanda}', '${clienteEscapado}', ${saldoDevedor}))">-% Desc</button>
                     <button type="button" class="btn-vermelho" onclick="verificarPermissaoGerente('Zerar Comanda', () => excluirComanda('${c.ID_Comanda}'))">🗑️ Cancelar</button>
-                    <button type="button" class="btn-verde" style="grid-column: span 2;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${clienteEscapado}', ${saldoDevedor})">💰 Cobrar Todo</button>
+                    <button type="button" class="btn-verde" style="grid-column: span 2;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${clienteEscapado}', '${encodeURIComponent(JSON.stringify(itensObj))}', ${saldoDevedor})">💰 Cobrar Todo</button>
                 </div>
             </div>`; 
         }).join(''); 
+    }
+
+    function iniciarPagamentoParcial(idComanda, cliente, totalVal) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        let promptVal = prompt(`A comanda de ${cliente} tem saldo de R$ ${totalVal.toFixed(2)}.\n\nQuanto ele vai adiantar (pagar agora)?`, "0,00");
+        if(promptVal === null) return;
+        let valorA_Pagar = parseFloat(promptVal.replace(',','.'));
+        if(!valorA_Pagar || isNaN(valorA_Pagar) || valorA_Pagar <= 0) return;
+        if(valorA_Pagar >= totalVal) {
+            alert("O valor digitado liquida ou passa do total da comanda. Para isso, use o botão verde 'Cobrar Todo'.");
+            return;
+        }
+        abrirModalPagamento(valorA_Pagar, { tipo: 'comanda_parcial', id_comanda: idComanda, cliente: cliente, valorTotal: valorA_Pagar });
+    }
+
+    function iniciarCobrancaComanda(idComanda, cliente, itensJsonStr, totalVal) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        
+        let numPessoas = parseInt(prompt("Dividir a conta para quantas pessoas? (Deixe 1 para não dividir)", "1")) || 1;
+        let msgDescricaoExtra = numPessoas > 1 ? ` (Dividido para ${numPessoas})` : "";
+        if(numPessoas > 1) alert(`🎾 DIVIDIDO PARA ${numPessoas} PESSOAS\n💰 CADA UM PAGA: R$ ${(totalVal / numPessoas).toFixed(2)}\n\nAvance para registrar as formas de pagamento até liquidar a conta.`);
+        
+        abrirModalPagamento(totalVal, { tipo: 'comanda', id_comanda: idComanda, cliente: cliente, itensJsonStr: itensJsonStr, totalSalvo: totalVal, valorTotal: totalVal, msgExtra: msgDescricaoExtra });
     }
 
     function editarComanda(idComanda) {
