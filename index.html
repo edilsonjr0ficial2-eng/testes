@@ -166,7 +166,9 @@
     <div class="menu-item" onclick="mudarTela('tela-estoque', this)"><i>📦</i> <span>Estoque</span></div>
     <div class="menu-item" id="menu-usuarios" onclick="mudarTela('tela-usuarios', this)" style="display: none;"><i>⚙️</i> <span>Usuários</span></div>
     
-    <div style="flex: 1;"></div> <div class="menu-item" style="color: #ef4444; margin-top: 20px; border-top: 1px solid #334155;" onclick="fazerLogout()"><i>🚪</i> <span>Sair do Sistema</span></div>
+    <div style="flex: 1;"></div> 
+    
+    <div class="menu-item" style="color: #ef4444; margin-top: 20px; border-top: 1px solid #334155;" onclick="fazerLogout()"><i>🚪</i> <span>Sair do Sistema</span></div>
 </div>
 
 <div class="main-content">
@@ -520,7 +522,7 @@
             if (opSalvo && userFound) {
                 operadorAtual = nomeSalvo;
                 cargoAtual = cargoSalvo || userFound.Cargo || "Operador";
-                if(opSalvo === "edilson") cargoAtual = "Gerente"; // Master admin
+                if(opSalvo === "edilson") cargoAtual = "Gerente"; 
 
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('operadorLogadoText').innerHTML = "Operador:<br>" + operadorAtual;
@@ -701,7 +703,12 @@
         } 
         else if (acao.tipo === 'comanda') {
             await reqPOST({ acao: "cobrar_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr + acao.msgExtra });
-            let iArr = JSON.parse(decodeURIComponent(acao.itensJsonStr)); recarregarDadosSilencioso();
+            recarregarDadosSilencioso();
+            
+            // Puxa os itens originais pelo ID pra impressão e envio
+            let comandaImpressao = bancoComandas.find(c => String(c.ID_Comanda) === String(acao.id_comanda));
+            let iArr = comandaImpressao ? JSON.parse(comandaImpressao.Itens_JSON) : [];
+            
             if(confirm("Imprimir recibo térmico?")) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
             if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
         }
@@ -809,13 +816,38 @@
     async function criarNovaComandaModal() { fecharModalComandas(); let nome = prompt("Nome do Cliente para a NOVA comanda?"); if(!nome) return; await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda criada!"); limparCarrinhoNovaVenda(); recarregarDadosSilencioso(); }
     async function adicionarNaComandaExistente(idComanda, nomeCli) { fecharModalComandas(); await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho, operador: operadorAtual }); alert(`Itens adicionados!`); limparCarrinhoNovaVenda(); recarregarDadosSilencioso(); }
     
+    // --- NOVO VISUAL DAS COMANDAS COM SOLUÇÃO DE BUG DOS BOTÕES ---
+    function iniciarPagamentoParcial(idComanda, cliente, totalVal) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        let promptVal = prompt(`A comanda de ${cliente} tem saldo de R$ ${totalVal.toFixed(2)}.\n\nQuanto ele vai adiantar (pagar agora)?`, "0,00");
+        if(promptVal === null) return;
+        let valorA_Pagar = parseFloat(promptVal.replace(',','.'));
+        if(!valorA_Pagar || isNaN(valorA_Pagar) || valorA_Pagar <= 0) return;
+        if(valorA_Pagar >= totalVal) {
+            alert("O valor digitado liquida ou passa do total da comanda. Para isso, use o botão verde 'Cobrar Todo'.");
+            return;
+        }
+        abrirModalPagamento(valorA_Pagar, { tipo: 'comanda_parcial', id_comanda: idComanda, cliente: cliente, valorTotal: valorA_Pagar });
+    }
+
+    function iniciarCobrancaComanda(idComanda, cliente, totalVal) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        
+        let numPessoas = parseInt(prompt("Dividir a conta para quantas pessoas? (Deixe 1 para não dividir)", "1")) || 1;
+        let msgDescricaoExtra = numPessoas > 1 ? ` (Dividido para ${numPessoas})` : "";
+        if(numPessoas > 1) alert(`🎾 DIVIDIDO PARA ${numPessoas} PESSOAS\n💰 CADA UM PAGA: R$ ${(totalVal / numPessoas).toFixed(2)}\n\nAvance para registrar as formas de pagamento até liquidar a conta.`);
+        
+        abrirModalPagamento(totalVal, { tipo: 'comanda', id_comanda: idComanda, cliente: cliente, totalSalvo: totalVal, valorTotal: totalVal, msgExtra: msgDescricaoExtra });
+    }
+
     function atualizarTabelaComandas() { 
         let grid = document.getElementById('listaComandasGrid'); 
         if(bancoComandas.length === 0) { grid.innerHTML = `<div style="text-align: center; width:100%; color:#64748b; padding: 20px;">Nenhuma comanda aberta no momento.</div>`; return; } 
+        
         grid.innerHTML = bancoComandas.map(c => { 
             if(!c.ID_Comanda) return ''; 
-            let itensStr = "", itensObj = []; 
-            try { itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `• ${i.qtd}x ${i.nome}`).join('<br>'); } catch(e) {} 
+            let itensStr = ""; 
+            try { let itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `• ${i.qtd}x ${i.nome}`).join('<br>'); } catch(e) {} 
             
             let pagamentosHtml = "";
             let totalJaPago = 0; 
@@ -845,6 +877,9 @@
                 valorExibicaoHtml = `<div class="comanda-valor">R$ ${valorTotal.toFixed(2)}</div>`;
             }
             
+            // Garantindo que nomes com aspas não quebrem o código HTML do botão
+            let clienteEscapado = c.Cliente ? c.Cliente.replace(/'/g, "\\'") : "";
+            
             return `
             <div class="comanda-card">
                 <div class="comanda-header">
@@ -858,10 +893,10 @@
                 <div style="text-align: right; margin-bottom: 15px;">${valorExibicaoHtml}</div>
                 <div class="comanda-actions">
                     <button type="button" class="btn-azul" onclick="editarComanda('${c.ID_Comanda}')">✏️ Editar</button>
-                    <button type="button" class="btn-amarelo" onclick="iniciarPagamentoParcial('${c.ID_Comanda}', '${c.Cliente}', ${saldoDevedor})">💳 Parcial</button>
-                    <button type="button" style="background-color:#8b5cf6; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="verificarPermissaoGerente('Aplicar Desconto', () => aplicarDescontoComanda('${c.ID_Comanda}', '${c.Cliente}', ${saldoDevedor}))">-% Desc</button>
+                    <button type="button" class="btn-amarelo" onclick="iniciarPagamentoParcial('${c.ID_Comanda}', '${clienteEscapado}', ${saldoDevedor})">💳 Parcial</button>
+                    <button type="button" style="background-color:#8b5cf6; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="verificarPermissaoGerente('Aplicar Desconto', () => aplicarDescontoComanda('${c.ID_Comanda}', '${clienteEscapado}', ${saldoDevedor}))">-% Desc</button>
                     <button type="button" class="btn-vermelho" onclick="verificarPermissaoGerente('Zerar Comanda', () => excluirComanda('${c.ID_Comanda}'))">🗑️ Cancelar</button>
-                    <button type="button" class="btn-verde" style="grid-column: span 2;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${c.Cliente}', '${encodeURIComponent(JSON.stringify(itensObj))}', ${saldoDevedor})">💰 Cobrar Todo</button>
+                    <button type="button" class="btn-verde" style="grid-column: span 2;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${clienteEscapado}', ${saldoDevedor})">💰 Cobrar Todo</button>
                 </div>
             </div>`; 
         }).join(''); 
