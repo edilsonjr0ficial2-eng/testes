@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistema de Gestão Arena</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
         
@@ -54,17 +53,12 @@
         .main-content { flex: 1; padding: 15px; overflow-y: auto; position: relative; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; }
         .tela { display: none; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex: 1; }
         .tela.ativa { display: block; }
-        #tela-caixa.ativa, #tela-livro.ativa { display: flex !important; flex-direction: column; background: transparent; padding: 0; box-shadow: none;}
+        #tela-caixa.ativa, #tela-livro.ativa, #tela-relatorios.ativa { display: flex !important; flex-direction: column; background: transparent; padding: 0; box-shadow: none;}
 
         h1 { color: #333; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; font-size: 24px; }
         
         #alerta-estoque { display: none; background: #fef2f2; border: 2px solid #f87171; padding: 15px; margin-bottom: 20px; border-radius: 8px; color: #b91c1c; }
         
-        .dashboard-cards { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
-        .card { flex: 1; min-width: 200px; background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; }
-        .card h3 { margin: 0; color: #64748b; font-size: 16px; }
-        .card .valor { font-size: 28px; font-weight: bold; color: #0f172a; margin-top: 10px; }
-
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; min-width: 500px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
@@ -81,8 +75,6 @@
         .btn-amarelo { background-color: #eab308; color: black; } .btn-amarelo:hover:not(:disabled) { background-color: #ca8a04; }
         
         #status-bar { background: #e0f2fe; color: #0369a1; padding: 10px; text-align: center; font-weight: bold; border-radius: 5px; margin-bottom: 20px; }
-        .val-entrada { color: #16a34a; font-weight: bold; }
-        .val-saida { color: #dc2626; font-weight: bold; }
         
         .botoes-quadra { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .btn-quadra { flex: 1; background-color: #14b8a6; font-size: 16px; padding: 15px; display: flex; justify-content: center; align-items: center; gap: 8px;}
@@ -112,7 +104,7 @@
         .comanda-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .comanda-actions button { padding: 10px 5px; font-size: 13px; width: 100%; }
 
-        /* ESTILOS LIVRO DE CAIXA (NOVO VISUAL) */
+        /* ESTILOS LIVRO DE CAIXA E RELATÓRIOS */
         .livro-resumo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .livro-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; display: flex; align-items: center; gap: 15px; }
         .livro-icon-box { width: 50px; height: 50px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 22px; flex-shrink: 0; }
@@ -120,6 +112,13 @@
         .livro-card-text p { margin: 5px 0 0 0; font-size: 20px; font-weight: bold; color: #0f172a; }
         .pill-btn { background: #fff; border: 1px solid #cbd5e1; color: #475569; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .pill-btn.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+
+        .relatorios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .relatorio-card { background: #fff; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #e2e8f0; transition: 0.2s; }
+        .relatorio-card:hover { border-color: #3b82f6; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .rel-icon { background: #eff6ff; color: #3b82f6; width: 50px; height: 50px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; }
+        .rel-text h4 { margin: 0; font-size: 15px; color: #0f172a; }
+        .rel-text p { margin: 5px 0 0 0; font-size: 12px; color: #64748b; line-height: 1.4; }
 
         @media (max-width: 768px) {
             body { flex-direction: column; padding-left: 0; } 
@@ -162,53 +161,31 @@
     <div id="operadorLogadoText">Operador: Nenhum</div>
     <div id="cargoLogadoText">Cargo: Nenhum</div>
     
-    <div class="menu-item ativo" onclick="mudarTela('tela-dashboard', this)"><i>📊</i> <span>Dashboard</span></div>
-    <div class="menu-item" onclick="mudarTela('tela-caixa', this)"><i>🛒</i> <span>Caixa</span></div>
+    <div class="menu-item ativo" onclick="mudarTela('tela-caixa', this)"><i>🛒</i> <span>Caixa</span></div>
     <div class="menu-item" onclick="mudarTela('tela-comandas', this)"><i>📝</i> <span>Comandas</span></div>
     <div class="menu-item" onclick="mudarTela('tela-clientes', this)"><i>👥</i> <span>Clientes</span></div>
     <div class="menu-item" onclick="mudarTela('tela-livro', this)"><i>📠</i> <span>Controle de Caixa</span></div>
     <div class="menu-item" onclick="mudarTela('tela-estoque', this)"><i>📦</i> <span>Estoque</span></div>
     <div class="menu-item" id="menu-usuarios" onclick="mudarTela('tela-usuarios', this)" style="display: none;"><i>⚙️</i> <span>Usuários</span></div>
+    <div class="menu-item" onclick="mudarTela('tela-relatorios', this)"><i>📈</i> <span>Relatórios</span></div>
     
     <div style="flex: 1;"></div> 
     <div class="menu-item" style="color: #ef4444; margin-top: 20px; border-top: 1px solid #334155;" onclick="fazerLogout()"><i>🚪</i> <span>Sair do Sistema</span></div>
 </div>
 
 <div class="main-content">
-    <div id="status-bar">Sistema Online</div>
+    <div id="status-bar" style="display:none;">Sistema Online</div>
 
-    <div id="tela-dashboard" class="tela ativa">
-        <h1>Visão Geral da Arena</h1>
-        <div id="alerta-estoque"></div>
-        <div class="dashboard-cards">
-            <div class="card" id="card-status-caixa" style="background: #e0f2fe; border-color: #7dd3fc;">
-                <h3>Status do Caixa</h3>
-                <div class="valor" id="texto-status-caixa" style="color: #0369a1;">FECHADO</div>
-                <button type="button" id="btnAcaoCaixa" class="btn-azul" style="margin-top: 15px; width: 100%;" onclick="acaoCaixa()">Abrir Caixa</button>
-            </div>
-            <div class="card"><h3>Vendas Hoje</h3><div class="valor" id="dash-vendas">R$ 0,00</div></div>
-            <div class="card"><h3>Saldo Atual na Gaveta</h3><div class="valor" id="dash-saldo">R$ 0,00</div></div>
-        </div>
-        <div style="display:flex; gap:20px; flex-wrap:wrap; margin-top: 20px;">
-            <div style="flex:2; min-width:300px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-top:0; color:#475569; text-align:center;">📊 Faturamento (Últimos 7 Dias)</h3>
-                <canvas id="graficoFaturamento" height="100"></canvas>
-            </div>
-            <div style="flex:1; min-width:250px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-top:0; color:#475569; text-align:center;">🏆 Top 5 Produtos</h3>
-                <canvas id="graficoProdutos" height="200"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div id="tela-caixa" class="tela">
-        <div id="alerta-caixa" style="margin-bottom: 5px; padding: 10px; flex-shrink: 0;">⚠️ O CAIXA ESTÁ FECHADO! Vá ao Dashboard para Abrir o Caixa.</div>
+    <div id="tela-caixa" class="tela ativa" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+        
+        <div id="alerta-caixa" style="margin-bottom: 5px; padding: 10px; flex-shrink: 0;">⚠️ O CAIXA ESTÁ FECHADO! Vá em Controle de Caixa para abrir o turno.</div>
         <div id="bannerEdicaoComanda" style="display:none; background:#fef3c7; border:1px solid #f59e0b; padding:8px; margin-bottom:5px; border-radius:5px; color:#b45309; font-weight:bold; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; flex-shrink: 0;">
             <span>✏️ A editar a Comanda de <span id="nomeEdicaoComanda"></span></span>
             <button type="button" class="btn-vermelho" style="padding:4px 8px; font-size:12px;" onclick="cancelarEdicaoComanda()">X Cancelar Edição</button>
         </div>
 
         <div style="background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; flex: 1; min-height: 0;">
+            
             <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9;">
                 <h2 style="margin:0; color:#111; font-size:20px; display:flex; align-items:center; gap:8px;">Nova Venda <span style="font-size:16px; color:#94a3b8;">💬</span></h2>
                 <div style="display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 12px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
@@ -314,6 +291,7 @@
                     💵 Pagamento <span style="font-size:11px; opacity:0.8;">F6</span>
                 </button>
             </div>
+
         </div>
     </div>
 
@@ -375,9 +353,9 @@
                     <button style="background: #f59e0b; color: #fff; padding: 10px 15px;" onclick="abrirModalMovimentacao('Saida')">- Adicionar Saída</button>
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <button style="background: #ef4444; color: #fff; padding: 10px 15px;" onclick="acaoCaixa()">🛑 Fechar Caixa</button>
+                    <button id="btnAcaoCaixa" style="padding: 10px 15px;" onclick="acaoCaixa()">🛑 Fechar Caixa</button>
                     <button style="background: #0ea5e9; color: #fff; padding: 10px 15px;" onclick="window.print()">🖨️ Imprimir</button>
-                    <button style="background: #0ea5e9; color: #fff; padding: 10px 15px;" onclick="alert('Relatório de fluxo detalhado na próxima versão!')">📉 Rel. Fluxo de Caixa</button>
+                    <button style="background: #0ea5e9; color: #fff; padding: 10px 15px;" onclick="alert('Relatório detalhado nas opções de Relatórios!')">📉 Rel. Fluxo de Caixa</button>
                 </div>
             </div>
         </div>
@@ -414,8 +392,7 @@
                             <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: center;">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="listaCaixa">
-                        </tbody>
+                    <tbody id="listaCaixa"></tbody>
                 </table>
             </div>
         </div>
@@ -461,6 +438,76 @@
         </div>
         <div class="table-responsive">
             <table><thead><tr><th>Usuário de Acesso</th><th>Cargo</th><th>Ação</th></tr></thead><tbody id="listaUsuariosGestao"></tbody></table>
+        </div>
+    </div>
+
+    <div id="tela-relatorios" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <h2 style="margin: 0 0 20px 0; color: #1e293b; display: flex; align-items: center; gap: 10px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">📈 Relatórios</h2>
+        
+        <div class="relatorios-grid">
+            <div class="relatorio-card" onclick="alert('Em breve!')">
+                <div class="rel-icon">🛒</div>
+                <div class="rel-text">
+                    <h4>Relatório de Vendas</h4>
+                    <p>Visualize o desempenho das vendas</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="alert('Em breve!')">
+                <div class="rel-icon">📦</div>
+                <div class="rel-text">
+                    <h4>Relatório de Estoque</h4>
+                    <p>Acompanhe o status do estoque</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="alert('Em breve!')">
+                <div class="rel-icon">⚠️</div>
+                <div class="rel-text">
+                    <h4>Relatório de Estoque Mínimo</h4>
+                    <p>Produtos abaixo do estoque mínimo</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="alert('Em breve!')">
+                <div class="rel-icon">📉</div>
+                <div class="rel-text">
+                    <h4>Produtos Mais/Menos Vendidos</h4>
+                    <p>Análise dos produtos com maior ou menor saída</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="alert('Em breve!')">
+                <div class="rel-icon">💲</div>
+                <div class="rel-text">
+                    <h4>Relatório Fluxo de Caixa</h4>
+                    <p>Confira todas as entradas e saídas de dinheiro</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="alert('Em breve!')">
+                <div class="rel-icon">📈</div>
+                <div class="rel-text">
+                    <h4>Relatório de Lucro nas Vendas</h4>
+                    <p>Análise de custos e lucros por venda</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="alert('Em breve!')">
+                <div class="rel-icon">💳</div>
+                <div class="rel-text">
+                    <h4>Vendas por Forma de Pagamento</h4>
+                    <p>Análise das vendas por método de pagamento</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="alert('Em breve!')">
+                <div class="rel-icon">🛵</div>
+                <div class="rel-text">
+                    <h4>Taxas por Entregador</h4>
+                    <p>Análise das entregas e taxas por entregador</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="alert('Em breve!')">
+                <div class="rel-icon">🤵</div>
+                <div class="rel-text">
+                    <h4>Taxas por Garçom</h4>
+                    <p>Análise dos atendimentos e taxas por garçom</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -614,19 +661,17 @@
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
     
-    // TAXAS DE PAGAMENTO
     const TAXAS_CARTAO = { credito: 0.03, debito: 0.015, pix: 0, especie: 0 };
 
     let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
     let turnoAtual = null, carrinho = [], total = 0, leitorHtml5 = null;
     let inputCameraAlvo = "codigoInput", idEditandoEstoque = null, operadorAtual = "", cargoAtual = "";
     
-    let chartFat = null, chartProd = null;
     let acaoPagamentoPendente = null;
     let idComandaEmEdicao = null;
     let pagamentosComandaAtual = 0; 
     let pagamentosAtivos = []; 
-    let filtroLivroTipo = 'Todos'; // Controle do filtro do livro de caixa
+    let filtroLivroTipo = 'Todos'; 
 
     function formatarDataExibicao(dataStr) {
         if (!dataStr) return ""; let str = String(dataStr);
@@ -672,12 +717,12 @@
                 
                 if(cargoAtual === "Gerente" || opSalvo === "edilson") document.getElementById('menu-usuarios').style.display = 'flex';
                 
-                let tabSalva = localStorage.getItem('arena_tab') || 'tela-dashboard';
+                let tabSalva = localStorage.getItem('arena_tab') || 'tela-caixa';
                 mudarTela(tabSalva, document.querySelector(`.menu-item[onclick*="${tabSalva}"]`));
             } else {
                 localStorage.removeItem('arena_operador');
                 document.getElementById('caixa-login-loading').style.display = 'none'; document.getElementById('caixa-login-inputs').style.display = 'block';
-                mudarTela('tela-dashboard', null); document.getElementById('status-login').innerText = "✅ Conectado! Pode fazer login."; document.getElementById('status-login').style.color = "#10b981";
+                mudarTela('tela-caixa', null); document.getElementById('status-login').innerText = "✅ Conectado! Pode fazer login."; document.getElementById('status-login').style.color = "#10b981";
                 ['loginUsuario', 'loginSenha', 'btnEntrar'].forEach(id => document.getElementById(id).disabled = false);
             }
             atualizarTodasAsTelas();
@@ -741,7 +786,6 @@
     function atualizarTodasAsTelas() {
         atualizarInterfaceTurno(); atualizarTabelaEstoque(); atualizarTabelaComandas(); 
         atualizarDashboardECaixa(); atualizarListasClientes(); atualizarListaUsuarios();
-        desenharGraficos();
     }
 
     function mudarTela(idTela, elementoMenu) {
@@ -751,7 +795,7 @@
         let painel = document.getElementById(idTela);
         painel.classList.add('ativa');
         
-        if(idTela === 'tela-caixa' || idTela === 'tela-livro') {
+        if(idTela === 'tela-caixa' || idTela === 'tela-livro' || idTela === 'tela-relatorios') {
             document.getElementById('status-bar').style.display = 'none';
         } else {
             document.getElementById('status-bar').style.display = 'block';
@@ -760,33 +804,6 @@
         if(elementoMenu) elementoMenu.classList.add('ativo'); else { let el = document.querySelector(`.menu-item[onclick*="${idTela}"]`); if(el) el.classList.add('ativo'); }
         localStorage.setItem('arena_tab', idTela);
         if(leitorHtml5) fecharCamera(); if(idTela === 'tela-caixa' && turnoAtual) document.getElementById('codigoInput').focus();
-    }
-
-    function desenharGraficos() {
-        let labelsDias = [], dadosFaturamento = [];
-        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); labelsDias.push(d.toLocaleDateString('pt-BR').substring(0,5)); dadosFaturamento.push(0); }
-        let hjFormatDateArray = [];
-        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); hjFormatDateArray.push(d.toLocaleDateString('pt-BR')); }
-
-        bancoCaixaGlobal.forEach(m => {
-            if(m.Tipo === "Entrada" && (m.Descricao.includes("Venda") || m.Descricao.includes("Pgto Comanda"))) {
-                let dStr = m.Data_Hora.split(/[\s,T]+/)[0]; let idx = hjFormatDateArray.indexOf(dStr);
-                if(idx !== -1) dadosFaturamento[idx] += parseFloat(m.Valor.toString().replace(',','.')) || 0;
-            }
-        });
-
-        if(chartFat) chartFat.destroy();
-        chartFat = new Chart(document.getElementById('graficoFaturamento'), { type: 'bar', data: { labels: labelsDias, datasets: [{ label: 'Receita (R$)', data: dadosFaturamento, backgroundColor: '#0ea5e9', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
-
-        let contagemProdutos = {};
-        bancoVendas.forEach(v => {
-            if(!v.Itens_Vendidos) return; let itensStr = v.Itens_Vendidos.split('(')[0];
-            itensStr.split(',').forEach(item => { let match = item.trim().match(/(\d+)x\s(.+)/); if(match) { let qtd = parseInt(match[1]); let nome = match[2].trim(); if(nome !== "SERVICO" && !nome.includes("Quadra") && nome !== "Desconto Aplicado" && nome !== "Desconto Especial") { contagemProdutos[nome] = (contagemProdutos[nome] || 0) + qtd; } } });
-        });
-
-        let prodOrder = Object.keys(contagemProdutos).map(k => ({nome: k, qtd: contagemProdutos[k]})).sort((a,b) => b.qtd - a.qtd).slice(0, 5);
-        if(chartProd) chartProd.destroy();
-        chartProd = new Chart(document.getElementById('graficoProdutos'), { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
     function abrirModalPagamento(valorTotal, acaoObj) {
@@ -1042,7 +1059,6 @@
     function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { alert("Sem acesso à câmara."); divCamera.style.display = "none"; }); }
     function fecharCamera() { if(leitorHtml5) leitorHtml5.stop().then(() => { document.getElementById('leitorCamera').style.display = "none"; }).catch(e=>e); }
 
-    // --- LÓGICA DO MODAL DE BUSCA DE COMANDAS ---
     function abrirModalComandas() { 
         renderizarTabelaModalComandas(bancoComandas);
         document.getElementById('buscaComandaInput').value = "";
@@ -1233,7 +1249,6 @@
     }
     async function removerProduto(id) { if(confirm("Apagar produto?")) { await reqPOST({ acao: "remover", id: id }); recarregarDadosSilencioso(); } }
 
-    // --- NOVA LÓGICA: LIVRO DE CAIXA ---
     function setFiltroLivro(tipo) {
         filtroLivroTipo = tipo;
         document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('active'));
@@ -1249,7 +1264,6 @@
             if(!m.ID_Transacao) return; 
             let v = parseFloat(m.Valor.toString().replace(',','.'))||0; 
             
-            // Lógica para os Cards do Livro de Caixa (Turno Atual)
             if(turnoAtual && m.ID_Transacao >= turnoAtual.ID_Turno) { 
                 if(m.Descricao && m.Descricao.toLowerCase().includes('troco inicial')) {
                     abertura += v;
@@ -1260,7 +1274,6 @@
                 }
             } 
             
-            // Lógica Vendas Hoje Dashboard
             if(m.Data_Hora && m.Data_Hora.includes(hj) && m.Tipo==="Entrada" && (m.Descricao.includes("Venda") || m.Descricao.includes("Pgto Comanda"))) { 
                 vHoje+=v; 
             } 
@@ -1268,24 +1281,30 @@
         
         let saldoAtual = abertura + entradas - saidas;
 
-        // Atualiza Dashboard
-        document.getElementById('dash-saldo').innerText = "R$ " + saldoAtual.toFixed(2); 
-        document.getElementById('dash-vendas').innerText = "R$ " + vHoje.toFixed(2); 
-
         // Atualiza Livro de Caixa Cards
-        document.getElementById('resumoLivroAbertura').innerText = "R$ " + abertura.toFixed(2);
-        document.getElementById('resumoLivroEntradas').innerText = "R$ " + entradas.toFixed(2);
-        document.getElementById('resumoLivroSaidas').innerText = "R$ " + saidas.toFixed(2);
-        document.getElementById('resumoLivroSaldo').innerText = "R$ " + saldoAtual.toFixed(2);
+        let elAbertura = document.getElementById('resumoLivroAbertura');
+        if(elAbertura) elAbertura.innerText = "R$ " + abertura.toFixed(2);
         
-        if (turnoAtual) {
-            document.getElementById('lblAberturaCaixa').innerText = "Aberto em: " + formatarDataExibicao(turnoAtual.Data_Hora) + " por " + turnoAtual.Operador;
-            document.getElementById('lblStatusCaixaLivro').innerHTML = '<span style="width:8px; height:8px; background:#22c55e; border-radius:50%; display:inline-block;"></span> Caixa Aberto';
-            document.getElementById('lblStatusCaixaLivro').style.color = "#22c55e";
-        } else {
-            document.getElementById('lblAberturaCaixa').innerText = "Caixa não está aberto.";
-            document.getElementById('lblStatusCaixaLivro').innerHTML = '<span style="width:8px; height:8px; background:#ef4444; border-radius:50%; display:inline-block;"></span> Caixa Fechado';
-            document.getElementById('lblStatusCaixaLivro').style.color = "#ef4444";
+        let elEntradas = document.getElementById('resumoLivroEntradas');
+        if(elEntradas) elEntradas.innerText = "R$ " + entradas.toFixed(2);
+        
+        let elSaidas = document.getElementById('resumoLivroSaidas');
+        if(elSaidas) elSaidas.innerText = "R$ " + saidas.toFixed(2);
+        
+        let elSaldo = document.getElementById('resumoLivroSaldo');
+        if(elSaldo) elSaldo.innerText = "R$ " + saldoAtual.toFixed(2);
+        
+        let lblAbertura = document.getElementById('lblAberturaCaixa');
+        let lblStatusLivro = document.getElementById('lblStatusCaixaLivro');
+
+        if (turnoAtual && lblAbertura && lblStatusLivro) {
+            lblAbertura.innerText = "Aberto em: " + formatarDataExibicao(turnoAtual.Data_Hora) + " por " + turnoAtual.Operador;
+            lblStatusLivro.innerHTML = '<span style="width:8px; height:8px; background:#22c55e; border-radius:50%; display:inline-block;"></span> Caixa Aberto';
+            lblStatusLivro.style.color = "#22c55e";
+        } else if (lblAbertura && lblStatusLivro) {
+            lblAbertura.innerText = "Caixa não está aberto.";
+            lblStatusLivro.innerHTML = '<span style="width:8px; height:8px; background:#ef4444; border-radius:50%; display:inline-block;"></span> Caixa Fechado';
+            lblStatusLivro.style.color = "#ef4444";
         }
 
         let itensBaixos = bancoDeProdutos.filter(p => p.ID_Produto && p.ID_Produto !== 'SERVICO' && parseInt(p.Quantidade) <= parseInt(p.Estoque_Minimo || 0));
@@ -1296,29 +1315,29 @@
     }
 
     function filtrarLivroCaixa() {
-        let dIni = document.getElementById('filtroDataInicio').value ? new Date(document.getElementById('filtroDataInicio').value + "T00:00:00") : null; 
-        let dFim = document.getElementById('filtroDataFim').value ? new Date(document.getElementById('filtroDataFim').value + "T23:59:59") : null;
-        let buscaTexto = document.getElementById('buscaLivroInput').value.toLowerCase();
+        let dIni = document.getElementById('filtroDataInicio') ? (document.getElementById('filtroDataInicio').value ? new Date(document.getElementById('filtroDataInicio').value + "T00:00:00") : null) : null; 
+        let dFim = document.getElementById('filtroDataFim') ? (document.getElementById('filtroDataFim').value ? new Date(document.getElementById('filtroDataFim').value + "T23:59:59") : null) : null;
+        let buscaInput = document.getElementById('buscaLivroInput');
+        let buscaTexto = buscaInput ? buscaInput.value.toLowerCase() : "";
         let htmlTabela = ""; 
+
+        let listaCaixa = document.getElementById('listaCaixa');
+        if(!listaCaixa) return;
 
         bancoCaixaGlobal.slice().reverse().forEach(m => {
             if(!m.ID_Transacao) return;
             
-            // Filtro por Data
             let recordDate = parseDataBR(m.Data_Hora);
             if (dIni && recordDate < dIni) return; 
             if (dFim && recordDate > dFim) return;
             
-            // Filtro por Tipo (Pills)
             if (filtroLivroTipo !== 'Todos' && m.Tipo !== filtroLivroTipo) return;
 
-            // Filtro por Texto (Search)
             if (buscaTexto && !m.Descricao.toLowerCase().includes(buscaTexto) && !m.Operador.toLowerCase().includes(buscaTexto)) return;
 
             let v = parseFloat(m.Valor.toString().replace(',','.'))||0; 
             let hData = formatarDataExibicao(m.Data_Hora);
             
-            // Styling columns based on the print design
             let corTipo = m.Tipo === 'Entrada' ? '#22c55e' : '#ef4444';
             let txtTipo = m.Tipo.toUpperCase();
             if(m.Descricao.toLowerCase().includes('troco inicial')) {
@@ -1339,12 +1358,15 @@
             </tr>`; 
         });
 
-        document.getElementById('listaCaixa').innerHTML = htmlTabela; 
+        listaCaixa.innerHTML = htmlTabela; 
     }
 
-    document.getElementById('buscaLivroInput').addEventListener('input', filtrarLivroCaixa);
-    document.getElementById('filtroDataInicio').addEventListener('change', filtrarLivroCaixa);
-    document.getElementById('filtroDataFim').addEventListener('change', filtrarLivroCaixa);
+    let buscaLivroInput = document.getElementById('buscaLivroInput');
+    if(buscaLivroInput) buscaLivroInput.addEventListener('input', filtrarLivroCaixa);
+    let filtroDataInicio = document.getElementById('filtroDataInicio');
+    if(filtroDataInicio) filtroDataInicio.addEventListener('change', filtrarLivroCaixa);
+    let filtroDataFim = document.getElementById('filtroDataFim');
+    if(filtroDataFim) filtroDataFim.addEventListener('change', filtrarLivroCaixa);
 
     function abrirModalMovimentacao(tipo) {
         if(!turnoAtual) return alert("Você precisa abrir o caixa primeiro!");
@@ -1416,7 +1438,31 @@
         } 
     }
     
-    function atualizarInterfaceTurno() { let s = turnoAtual ? ["#10b981", "ABERTO", "Fechar Caixa", "btn-vermelho", "none", false] : ["#ef4444", "FECHADO", "Abrir Caixa", "btn-verde", "block", true]; document.getElementById('card-status-caixa').style.borderColor = s[0]; document.getElementById('texto-status-caixa').style.color = s[0]; document.getElementById('texto-status-caixa').innerText = s[1]; document.getElementById('btnAcaoCaixa').innerText = s[2]; document.getElementById('btnAcaoCaixa').className = s[3]; document.getElementById('alerta-caixa').style.display = s[4]; ['codigoInput','btnCamera','btnSalvarComanda','btnFinalizarVenda'].forEach(id => document.getElementById(id).disabled = s[5]); }
+    function atualizarInterfaceTurno() { 
+        let s = turnoAtual ? 
+            ["#22c55e", "Caixa Aberto", "🛑 Fechar Caixa", "btn-vermelho", "none", false] : 
+            ["#ef4444", "Caixa Fechado", "🟢 Abrir Caixa", "btn-verde", "block", true]; 
+        
+        let lblStatus = document.getElementById('lblStatusCaixaLivro');
+        if(lblStatus) {
+            lblStatus.innerHTML = `<span style="width:8px; height:8px; background:${s[0]}; border-radius:50%; display:inline-block;"></span> ${s[1]}`;
+            lblStatus.style.color = s[0];
+        }
+        
+        let btnAcao = document.getElementById('btnAcaoCaixa');
+        if(btnAcao) {
+            btnAcao.innerHTML = s[2];
+            btnAcao.className = s[3];
+        }
+        
+        let alertaCaixa = document.getElementById('alerta-caixa');
+        if(alertaCaixa) alertaCaixa.style.display = s[4]; 
+        
+        ['codigoInput','btnCamera','btnSalvarComanda','btnFinalizarVenda','btnRegistrarLivro'].forEach(id => {
+            let el = document.getElementById(id);
+            if(el) el.disabled = s[5];
+        }); 
+    }
 
     function atualizarListaUsuarios() { let tbody = document.getElementById('listaUsuariosGestao'); tbody.innerHTML = ""; bancoUsuarios.forEach(u => { if(!u.Login) return; let btnApagar = String(u.Login).toLowerCase() === 'edilson' ? `<span style="color:#94a3b8; font-size:12px;">Admin Fixo</span>` : `<button type="button" class="btn-vermelho" onclick="removerUsuarioSistema('${u.Login}')">Excluir</button>`; tbody.innerHTML += `<tr><td style="font-weight:bold;">${u.Login}</td><td>${u.Cargo || 'Operador'}</td><td>${btnApagar}</td></tr>`; }); }
     async function adicionarUsuarioSistema() { let l = document.getElementById('novoUserLogin').value.trim(); let s = document.getElementById('novoUserSenha').value.trim(); let c = document.getElementById('novoUserCargo').value; if(!l || !s) return alert("Preencha Login e Senha!"); if(bancoUsuarios.find(u => String(u.Login).toLowerCase() === l.toLowerCase())) return alert("Login já existe!"); await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; recarregarDadosSilencioso(); }
