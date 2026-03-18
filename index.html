@@ -32,7 +32,9 @@
 
         .sidebar { width: 250px; background-color: #1e293b; color: white; display: flex; flex-direction: column; padding-top: 20px; transition: 0.3s; flex-shrink: 0; }
         .sidebar h2 { text-align: center; margin-bottom: 5px; font-size: 22px; color: #38bdf8; }
-        #operadorLogadoText { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
+        #operadorLogadoText { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 5px; }
+        #cargoLogadoText { text-align: center; color: #fbbf24; font-size: 12px; margin-bottom: 25px; font-weight: bold; }
+
         .menu-item { padding: 15px 20px; cursor: pointer; font-size: 16px; border-left: 4px solid transparent; transition: 0.3s; }
         .menu-item:hover { background-color: #334155; }
         .menu-item.ativo { background-color: #0f172a; border-left-color: #38bdf8; font-weight: bold; }
@@ -104,7 +106,7 @@
         @media (max-width: 768px) {
             body { flex-direction: column; } 
             .sidebar { width: 100vw; padding-top: 0; flex-direction: row; overflow-x: auto; white-space: nowrap; align-items: center; justify-content: flex-start; flex-shrink: 0; border-bottom: 1px solid #0f172a; -webkit-overflow-scrolling: touch;}
-            .sidebar::-webkit-scrollbar { display: none; } .sidebar h2, #operadorLogadoText { display: none; }
+            .sidebar::-webkit-scrollbar { display: none; } .sidebar h2, #operadorLogadoText, #cargoLogadoText { display: none; }
             .menu-item { padding: 15px; font-size: 15px; border-left: none; border-bottom: 4px solid transparent; flex: 0 0 auto; }
             .menu-item.ativo { border-left-color: transparent; border-bottom-color: #38bdf8; background-color: transparent; color: #38bdf8; }
             .main-content { padding: 15px; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; } 
@@ -138,6 +140,7 @@
 <div class="sidebar">
     <h2>🎯 Arena Vitale</h2>
     <div id="operadorLogadoText">Operador: Nenhum</div>
+    <div id="cargoLogadoText">Cargo: Nenhum</div>
     <div class="menu-item ativo" onclick="mudarTela('tela-dashboard', this)">📊 Dashboard</div>
     <div class="menu-item" onclick="mudarTela('tela-caixa', this)">🛒 Caixa</div>
     <div class="menu-item" onclick="mudarTela('tela-comandas', this)">📝 Comandas</div>
@@ -213,7 +216,7 @@
         <div style="text-align: right; font-size: 24px; font-weight: bold; color: #10b981; margin: 20px 0;">Total: R$ <span id="valorTotal">0.00</span></div>
         
         <div class="botoes-caixa">
-            <button type="button" class="btn-vermelho" id="btnDescontoCaixa" style="flex: 0 0 auto; background-color:#8b5cf6;" onclick="aplicarDescontoCaixa()" disabled>-% Desc</button>
+            <button type="button" class="btn-vermelho" id="btnDescontoCaixa" style="flex: 0 0 auto; background-color:#8b5cf6;" onclick="verificarPermissaoGerente('Aplicar Desconto', aplicarDescontoCaixa)" disabled>-% Desc</button>
             <button type="button" class="btn-laranja" id="btnSalvarComanda" style="flex: 1;" onclick="acaoBotaoComanda()" disabled>Salvar na Comanda (F3)</button>
             <button type="button" class="btn-azul" id="btnFinalizarVenda" style="flex: 1;" onclick="iniciarVendaDireta()" disabled>Cobrar Direto (F2)</button>
         </div>
@@ -278,7 +281,7 @@
     <div id="tela-estoque" class="tela">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <h1>Gestão de Estoque</h1>
-            <button type="button" class="btn-azul" onclick="abrirModalHistorico()">📜 Ver Histórico de Stock</button>
+            <button type="button" class="btn-azul" onclick="abrirModalHistorico()">📜 Ver Histórico de Movimentações</button>
         </div>
         <div class="form-grupo">
             <div style="flex-direction: row; gap: 5px;">
@@ -301,14 +304,20 @@
     </div>
 
     <div id="tela-usuarios" class="tela">
-        <h1>Gestão de Operadores</h1>
+        <h1>Gestão de Operadores e Permissões</h1>
         <div class="form-grupo">
             <div><label>Novo Usuário</label><input type="text" id="novoUserLogin" placeholder="Ex: paulo" autocomplete="off"></div>
             <div><label>Senha</label><input type="text" id="novoUserSenha" placeholder="Ex: 123456" autocomplete="off"></div>
+            <div><label>Cargo/Permissão</label>
+                <select id="novoUserCargo">
+                    <option value="Operador">Operador (Restrito)</option>
+                    <option value="Gerente">Gerente (Acesso Total)</option>
+                </select>
+            </div>
             <button type="button" class="btn-verde" style="margin-bottom: 2px;" onclick="adicionarUsuarioSistema()" id="btnAdicionarUser">Criar Operador</button>
         </div>
         <div class="table-responsive">
-            <table><thead><tr><th>Usuário de Acesso</th><th>Ação</th></tr></thead><tbody id="listaUsuariosGestao"></tbody></table>
+            <table><thead><tr><th>Usuário de Acesso</th><th>Cargo</th><th>Ação</th></tr></thead><tbody id="listaUsuariosGestao"></tbody></table>
         </div>
     </div>
 </div>
@@ -339,7 +348,8 @@
 <div id="modalPagamento" class="modal-overlay">
     <div class="modal-box" style="max-width: 400px;">
         <h3 id="pagTituloModal" style="margin-bottom: 5px; color: #0f172a;">Caixa de Pagamento</h3>
-        <div style="font-size: 32px; font-weight: bold; margin-bottom: 20px; color: #10b981;">R$ <span id="pagTotalLabel">0.00</span></div>
+        <div style="font-size: 32px; font-weight: bold; margin-bottom: 5px; color: #10b981;">R$ <span id="pagTotalLabel">0.00</span></div>
+        <div style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Líquido Real Estimado: <b>R$ <span id="pagLiquidoLabel">0.00</span></b></div>
         
         <div class="linha-pag"><label>👤 Quem Paga:</label><input type="text" id="pagNomePagador" placeholder="Nome (Ex: João)" autocomplete="off"></div>
         <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 15px 0;">
@@ -363,9 +373,17 @@
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
     
+    // TAXAS DE PAGAMENTO (Configure conforme sua maquininha)
+    const TAXAS_CARTAO = {
+        credito: 0.03,  // 3%
+        debito: 0.015,  // 1.5%
+        pix: 0,
+        especie: 0
+    };
+
     let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
     let turnoAtual = null, carrinho = [], total = 0, leitorHtml5 = null;
-    let inputCameraAlvo = "codigoInput", idEditandoEstoque = null, operadorAtual = "";
+    let inputCameraAlvo = "codigoInput", idEditandoEstoque = null, operadorAtual = "", cargoAtual = "";
     
     let chartFat = null, chartProd = null;
     let acaoPagamentoPendente = null;
@@ -401,11 +419,20 @@
             turnoAtual = (dados.turnos || []).find(t => t.Status === "Aberto");
             
             let opSalvo = localStorage.getItem('arena_operador'); let nomeSalvo = localStorage.getItem('arena_operador_nome');
+            let cargoSalvo = localStorage.getItem('arena_operador_cargo');
             
-            if (opSalvo && bancoUsuarios.find(u => String(u.Login).toLowerCase() === opSalvo)) {
-                operadorAtual = nomeSalvo; document.getElementById('tela-login').style.display = 'none';
+            let userFound = bancoUsuarios.find(u => String(u.Login).toLowerCase() === opSalvo);
+            if (opSalvo && userFound) {
+                operadorAtual = nomeSalvo;
+                cargoAtual = cargoSalvo || userFound.Cargo || "Operador";
+                if(opSalvo === "edilson") cargoAtual = "Gerente"; // Master admin
+
+                document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('operadorLogadoText').innerText = "Operador: " + operadorAtual;
-                if(opSalvo === "edilson") document.getElementById('menu-usuarios').style.display = 'block';
+                document.getElementById('cargoLogadoText').innerText = "Permissão: " + cargoAtual;
+                
+                if(cargoAtual === "Gerente" || opSalvo === "edilson") document.getElementById('menu-usuarios').style.display = 'block';
+                
                 let tabSalva = localStorage.getItem('arena_tab') || 'tela-dashboard';
                 mudarTela(tabSalva, document.querySelector(`.menu-item[onclick*="${tabSalva}"]`));
             } else {
@@ -421,16 +448,46 @@
     function fazerLogin() {
         let userTyped = document.getElementById('loginUsuario').value.trim().toLowerCase(); let passTyped = document.getElementById('loginSenha').value.trim();
         let userEncontrado = bancoUsuarios.find(u => String(u.Login).toLowerCase() === userTyped && String(u.Senha) === passTyped);
+        
         if(userEncontrado) {
             operadorAtual = userTyped.charAt(0).toUpperCase() + userTyped.slice(1);
-            localStorage.setItem('arena_operador', userTyped); localStorage.setItem('arena_operador_nome', operadorAtual);
-            document.getElementById('tela-login').style.display = 'none'; document.getElementById('operadorLogadoText').innerText = "Operador: " + operadorAtual;
-            if(userTyped === "edilson") document.getElementById('menu-usuarios').style.display = 'block'; else document.getElementById('menu-usuarios').style.display = 'none';
+            cargoAtual = userEncontrado.Cargo || "Operador";
+            if(userTyped === "edilson") cargoAtual = "Gerente";
+
+            localStorage.setItem('arena_operador', userTyped); 
+            localStorage.setItem('arena_operador_nome', operadorAtual);
+            localStorage.setItem('arena_operador_cargo', cargoAtual);
+
+            document.getElementById('tela-login').style.display = 'none'; 
+            document.getElementById('operadorLogadoText').innerText = "Operador: " + operadorAtual;
+            document.getElementById('cargoLogadoText').innerText = "Permissão: " + cargoAtual;
+            
+            if(cargoAtual === "Gerente" || userTyped === "edilson") document.getElementById('menu-usuarios').style.display = 'block'; else document.getElementById('menu-usuarios').style.display = 'none';
             if(turnoAtual) document.getElementById('codigoInput').focus();
         } else { document.getElementById('msg-login').style.display = 'block'; }
     }
     
-    function fazerLogout() { localStorage.removeItem('arena_operador'); localStorage.removeItem('arena_operador_nome'); location.reload(); }
+    function fazerLogout() { localStorage.clear(); location.reload(); }
+
+    // --- SISTEMA DE PERMISSÕES GERENCIAIS ---
+    function verificarPermissaoGerente(acaoNome, callback) {
+        if(cargoAtual === "Gerente" || operadorAtual.toLowerCase() === "edilson") {
+            callback(); // Permite direto se já for gerente ou mestre
+        } else {
+            let senhaMestre = prompt(`🛡️ ACESSO RESTRITO\nA ação [${acaoNome}] requer aprovação. Digite a senha de um Gerente:`);
+            if(senhaMestre === null) return;
+            
+            let gerenteEncontrado = bancoUsuarios.find(u => 
+                (u.Cargo === 'Gerente' || String(u.Login).toLowerCase() === 'edilson') && String(u.Senha) === senhaMestre
+            );
+
+            if(gerenteEncontrado) {
+                callback();
+            } else {
+                alert("❌ Senha incorreta ou usuário não é gerente!");
+            }
+        }
+    }
 
     async function recarregarDadosSilencioso() {
         document.getElementById('status-bar').innerText = "Sincronizando...";
@@ -501,7 +558,14 @@
         let totalRequerido = acaoPagamentoPendente.valorTotal; 
         let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0; let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
         let d = parseFloat(document.getElementById('pagDebito').value.replace(',', '.')) || 0; let e = parseFloat(document.getElementById('pagEspecie').value.replace(',', '.')) || 0;
-        let totalPagoAgora = p + c + d + e; let box = document.getElementById('boxStatusPagamento'); let falta = totalRequerido - totalPagoAgora;
+        let totalPagoAgora = p + c + d + e; 
+        
+        // CALCULA O LÍQUIDO REAL COM TAXAS
+        let liquido = p + e + (c - (c * TAXAS_CARTAO.credito)) + (d - (d * TAXAS_CARTAO.debito));
+        document.getElementById('pagLiquidoLabel').innerText = liquido.toFixed(2);
+
+        let box = document.getElementById('boxStatusPagamento'); 
+        let falta = totalRequerido - totalPagoAgora;
         
         if (falta > 0.01) { box.style.color = "#dc2626"; box.innerHTML = `Falta: R$ <span id="pagRestanteLabel">${falta.toFixed(2)}</span>`; document.getElementById('btnConfirmarPagamento').disabled = true; 
         } else if (falta < -0.01) { box.style.color = "#eab308"; box.innerHTML = `Troco: R$ <span id="pagRestanteLabel">${Math.abs(falta).toFixed(2)}</span>`; document.getElementById('btnConfirmarPagamento').disabled = false; 
@@ -597,11 +661,13 @@
 
     // --- FUNÇÃO PARA REMOVER PAGAMENTO PARCIAL ---
     async function removerPagamentoParcial(idComanda, idTransacao) {
-        if(confirm("Deseja cancelar este pagamento parcial?\n\nO valor voltará para a dívida da comanda e o registro será apagado do Livro de Caixa.")) {
-            document.getElementById('status-bar').innerText = "Removendo pagamento...";
-            await reqPOST({ acao: "remover_pagamento_parcial", id_comanda: idComanda, id_transacao: idTransacao });
-            recarregarDadosSilencioso();
-        }
+        verificarPermissaoGerente('Cancelar Pagamento Parcial', async () => {
+            if(confirm("Deseja cancelar este pagamento parcial?\n\nO valor voltará para a dívida da comanda e o registro será apagado do Livro de Caixa.")) {
+                document.getElementById('status-bar').innerText = "Removendo pagamento...";
+                await reqPOST({ acao: "remover_pagamento_parcial", id_comanda: idComanda, id_transacao: idTransacao });
+                recarregarDadosSilencioso();
+            }
+        });
     }
 
     document.getElementById('codigoInput').addEventListener('keypress', function(e) { if (e.key === 'Enter' && this.value.trim() !== "") { e.preventDefault(); processarEntradaCodigo(this.value.trim()); this.value = ""; } });
@@ -636,7 +702,7 @@
     async function criarNovaComandaModal() { fecharModalComandas(); let nome = prompt("Nome do Cliente para a NOVA comanda?"); if(!nome) return; document.getElementById('status-bar').innerText = "Abrindo Comanda..."; await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda criada!"); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
     async function adicionarNaComandaExistente(idComanda, nomeCli) { fecharModalComandas(); document.getElementById('status-bar').innerText = "Adicionando itens..."; await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho, operador: operadorAtual }); alert(`Itens adicionados!`); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
     
-    // --- NOVO VISUAL LADO A LADO DAS COMANDAS ---
+    // --- NOVO VISUAL LADO A LADO DAS COMANDAS COM CORREÇÃO DE SALDO ---
     function atualizarTabelaComandas() { 
         let grid = document.getElementById('listaComandasGrid'); 
         if(bancoComandas.length === 0) { grid.innerHTML = `<div style="text-align: center; width:100%; color:#64748b; padding: 20px;">Nenhuma comanda aberta no momento.</div>`; return; } 
@@ -646,11 +712,14 @@
             try { itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `• ${i.qtd}x ${i.nome}`).join('<br>'); } catch(e) {} 
             
             let pagamentosHtml = "";
+            let totalJaPago = 0; // Variável para somar o que já foi pago
+
             if(c.Pagamentos_JSON) {
                 try {
                     let pags = JSON.parse(c.Pagamentos_JSON);
                     if(pags.length > 0) {
                         let strPags = pags.map(p => {
+                            totalJaPago += parseFloat(p.valor) || 0; // Somando os parciais
                             let btnExcluir = p.id_transacao ? `<button type="button" onclick="removerPagamentoParcial('${c.ID_Comanda}', '${p.id_transacao}')" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:14px; padding:0; margin-left:5px;" title="Remover Pagamento">❌</button>` : '';
                             return `<b>${p.nome}</b> (R$ ${p.valor.toFixed(2)})${btnExcluir}`;
                         }).join(' | ');
@@ -659,7 +728,17 @@
                 } catch(e){}
             }
 
-            let valor = parseFloat(c.Total.toString().replace(',','.')) || 0; 
+            let valorTotal = parseFloat(c.Total.toString().replace(',','.')) || 0; 
+            let saldoDevedor = valorTotal - totalJaPago; // Calculando o que falta
+            
+            // Lógica visual para mostrar o que falta se tiver pagamento parcial
+            let valorExibicaoHtml = "";
+            if (totalJaPago > 0) {
+                valorExibicaoHtml = `<div style="font-size: 14px; color: #64748b; text-decoration: line-through;">Total: R$ ${valorTotal.toFixed(2)}</div>
+                                     <div style="font-size: 20px; font-weight: bold; color: #dc2626;">Falta: R$ ${saldoDevedor.toFixed(2)}</div>`;
+            } else {
+                valorExibicaoHtml = `<div class="comanda-valor">R$ ${valorTotal.toFixed(2)}</div>`;
+            }
             
             return `
             <div class="comanda-card">
@@ -671,13 +750,13 @@
                     <div class="itens">${itensStr}</div>
                     ${pagamentosHtml}
                 </div>
-                <div class="comanda-valor">R$ ${valor.toFixed(2)}</div>
+                <div style="text-align: right; margin-bottom: 15px;">${valorExibicaoHtml}</div>
                 <div class="comanda-actions">
                     <button type="button" class="btn-azul" onclick="editarComanda('${c.ID_Comanda}')">✏️ Editar</button>
-                    <button type="button" class="btn-amarelo" onclick="iniciarPagamentoParcial('${c.ID_Comanda}', '${c.Cliente}', ${valor})">💳 Parcial</button>
-                    <button type="button" style="background-color:#8b5cf6; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="aplicarDescontoComanda('${c.ID_Comanda}', '${c.Cliente}', ${valor})">-% Desc</button>
-                    <button type="button" class="btn-vermelho" onclick="excluirComanda('${c.ID_Comanda}')">🗑️ Cancelar</button>
-                    <button type="button" class="btn-verde" style="grid-column: span 2;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${c.Cliente}', '${encodeURIComponent(JSON.stringify(itensObj))}', ${valor})">💰 Cobrar Todo</button>
+                    <button type="button" class="btn-amarelo" onclick="iniciarPagamentoParcial('${c.ID_Comanda}', '${c.Cliente}', ${saldoDevedor})">💳 Parcial</button>
+                    <button type="button" style="background-color:#8b5cf6; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="verificarPermissaoGerente('Aplicar Desconto', () => aplicarDescontoComanda('${c.ID_Comanda}', '${c.Cliente}', ${saldoDevedor}))">-% Desc</button>
+                    <button type="button" class="btn-vermelho" onclick="verificarPermissaoGerente('Zerar Comanda', () => excluirComanda('${c.ID_Comanda}'))">🗑️ Cancelar</button>
+                    <button type="button" class="btn-verde" style="grid-column: span 2;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${c.Cliente}', '${encodeURIComponent(JSON.stringify(itensObj))}', ${saldoDevedor})">💰 Cobrar Todo</button>
                 </div>
             </div>`; 
         }).join(''); 
@@ -720,7 +799,13 @@
 
     function acaoBotaoComanda() { if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!"); if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); } }
     async function atualizarComandaExistente() { let clienteSel = document.getElementById('selectClienteVenda').value; document.getElementById('status-bar').innerText = "A Atualizar Comanda..."; await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda atualizada!"); cancelarEdicaoComanda(); recarregarDadosSilencioso(); }
-    async function excluirComanda(idComanda) { if(confirm("ATENÇÃO: Deseja excluir a comanda e devolver TODOS os itens ao estoque sem cobrar?")) { await reqPOST({ acao: "excluir_comanda", id_comanda: idComanda, operador: operadorAtual }); recarregarDadosSilencioso(); } }
+    
+    async function excluirComanda(idComanda) { 
+        if(confirm("ATENÇÃO: Deseja excluir a comanda e devolver TODOS os itens ao estoque sem cobrar?")) { 
+            await reqPOST({ acao: "excluir_comanda", id_comanda: idComanda, operador: operadorAtual }); 
+            recarregarDadosSilencioso(); 
+        } 
+    }
 
     // --- ESTOQUE (ENTRADA MANUAL E HISTÓRICO) ---
     function abrirModalHistorico() {
@@ -793,7 +878,15 @@
     }
 
     function limparFiltroCaixa() { document.getElementById('filtroDataInicio').value = ""; document.getElementById('filtroDataFim').value = ""; filtrarLivroCaixa(); }
-    async function excluirItemCaixa(idTrans) { if(confirm("Apagar este registro do Caixa?")) { await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans, operador: operadorAtual }); recarregarDadosSilencioso(); } }
+    
+    function excluirItemCaixa(idTrans) { 
+        verificarPermissaoGerente('Cancelar Movimentação Caixa', async () => {
+            if(confirm("Apagar este registro do Caixa?")) { 
+                await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans, operador: operadorAtual }); 
+                recarregarDadosSilencioso(); 
+            }
+        });
+    }
     
     async function registrarCaixa() { 
         let t = document.getElementById('tipoMovimento').value, d = document.getElementById('descMovimento').value;
@@ -827,8 +920,8 @@
     
     function atualizarInterfaceTurno() { let s = turnoAtual ? ["#10b981", "ABERTO", "Fechar Caixa", "btn-vermelho", "none", false] : ["#ef4444", "FECHADO", "Abrir Caixa", "btn-verde", "block", true]; document.getElementById('card-status-caixa').style.borderColor = s[0]; document.getElementById('texto-status-caixa').style.color = s[0]; document.getElementById('texto-status-caixa').innerText = s[1]; document.getElementById('btnAcaoCaixa').innerText = s[2]; document.getElementById('btnAcaoCaixa').className = s[3]; document.getElementById('alerta-caixa').style.display = s[4]; ['codigoInput','btnCamera','btnSalvarComanda','btnFinalizarVenda','btnRegistrarLivro'].forEach(id => document.getElementById(id).disabled = s[5]); }
 
-    function atualizarListaUsuarios() { let tbody = document.getElementById('listaUsuariosGestao'); tbody.innerHTML = ""; bancoUsuarios.forEach(u => { if(!u.Login) return; let btnApagar = String(u.Login).toLowerCase() === 'edilson' ? `<span style="color:#94a3b8; font-size:12px;">Admin Fixo</span>` : `<button type="button" class="btn-vermelho" onclick="removerUsuarioSistema('${u.Login}')">Excluir</button>`; tbody.innerHTML += `<tr><td style="font-weight:bold;">${u.Login}</td><td>${btnApagar}</td></tr>`; }); }
-    async function adicionarUsuarioSistema() { let l = document.getElementById('novoUserLogin').value.trim(); let s = document.getElementById('novoUserSenha').value.trim(); if(!l || !s) return alert("Preencha Login e Senha!"); if(bancoUsuarios.find(u => String(u.Login).toLowerCase() === l.toLowerCase())) return alert("Login já existe!"); document.getElementById('btnAdicionarUser').innerText = "Gravando..."; await reqPOST({ acao: "adicionar_usuario", login: l, senha: s }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; document.getElementById('btnAdicionarUser').innerText = "Criar Operador"; recarregarDadosSilencioso(); }
+    function atualizarListaUsuarios() { let tbody = document.getElementById('listaUsuariosGestao'); tbody.innerHTML = ""; bancoUsuarios.forEach(u => { if(!u.Login) return; let btnApagar = String(u.Login).toLowerCase() === 'edilson' ? `<span style="color:#94a3b8; font-size:12px;">Admin Fixo</span>` : `<button type="button" class="btn-vermelho" onclick="removerUsuarioSistema('${u.Login}')">Excluir</button>`; tbody.innerHTML += `<tr><td style="font-weight:bold;">${u.Login}</td><td>${u.Cargo || 'Operador'}</td><td>${btnApagar}</td></tr>`; }); }
+    async function adicionarUsuarioSistema() { let l = document.getElementById('novoUserLogin').value.trim(); let s = document.getElementById('novoUserSenha').value.trim(); let c = document.getElementById('novoUserCargo').value; if(!l || !s) return alert("Preencha Login e Senha!"); if(bancoUsuarios.find(u => String(u.Login).toLowerCase() === l.toLowerCase())) return alert("Login já existe!"); document.getElementById('btnAdicionarUser').innerText = "Gravando..."; await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; document.getElementById('btnAdicionarUser').innerText = "Criar Operador"; recarregarDadosSilencioso(); }
     async function removerUsuarioSistema(login) { if(confirm(`Remover acesso de ${login}?`)) { await reqPOST({ acao: "remover_usuario", login: login }); recarregarDadosSilencioso(); } }
 
     async function adicionarCliente() { let id = document.getElementById('novoIdCli').value, nome = document.getElementById('novoNomeCli').value, tel = document.getElementById('novoTelCli').value; if(!id || !nome) return alert("Preencha ID e Nome!"); await reqPOST({ acao: "adicionar_cliente", id: id, nome: nome, telefone: tel }); recarregarDadosSilencioso(); }
