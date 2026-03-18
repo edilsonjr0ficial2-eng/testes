@@ -457,21 +457,20 @@
 </div>
 
 <div id="modalPagamento" class="modal-overlay">
-    <div class="modal-box" style="max-width: 450px; padding: 0; border-radius: 8px; overflow: hidden; background: #f8fafc;">
+    <div class="modal-box" style="max-width: 450px; padding: 0; border-radius: 8px; overflow: hidden; background: #f8fafc; display: flex; flex-direction: column; max-height: 90vh;">
         
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #e2e8f0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;">
             <h3 id="tituloModalPagamento" style="margin: 0; color: #0f172a; font-size: 18px;">Formas de pagamento</h3>
             <button style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer; padding: 0;" onclick="fecharModalPagamento()">×</button>
         </div>
         
-        <div style="padding: 20px; text-align: left;">
+        <div style="padding: 20px; text-align: left; overflow-y: auto; flex: 1;">
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
                 <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('dinheiro', 'Dinheiro', '💵')">Dinheiro</button>
                 <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('debito', 'Cartão de Débito', '💳')">Cartão de Débito</button>
                 <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('credito', 'Cartão de Crédito', '💳')">Cartão de Crédito</button>
                 <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('pix', 'Pix', '💠')">Pix</button>
-                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer; grid-column: span 2;" onclick="addFormaPagamento('vr', 'Vale Refeição', '🎫')">Vale Refeição</button>
             </div>
 
             <div id="boxNomePagador" style="display: none; margin-bottom: 20px;">
@@ -512,7 +511,7 @@
             </div>
         </div>
 
-        <div style="padding: 15px 20px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+        <div style="padding: 15px 20px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; flex-shrink: 0;">
             <button type="button" id="btnFin1" style="flex:1; background:#22c55e; color:#fff; border:none; padding:14px; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="confirmarPagamentoMisto(false)" disabled>
                 ✓ Finalizar
             </button>
@@ -527,7 +526,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
     
     // TAXAS DE PAGAMENTO
-    const TAXAS_CARTAO = { credito: 0.03, debito: 0.015, pix: 0, especie: 0, vr: 0 };
+    const TAXAS_CARTAO = { credito: 0.03, debito: 0.015, pix: 0, especie: 0 };
 
     let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
     let turnoAtual = null, carrinho = [], total = 0, leitorHtml5 = null;
@@ -537,7 +536,7 @@
     let acaoPagamentoPendente = null;
     let idComandaEmEdicao = null;
     let pagamentosComandaAtual = 0; 
-    let pagamentosAtivos = []; // NOVO ARRAY PARA PAGAMENTOS DA TELA
+    let pagamentosAtivos = []; 
 
     function formatarDataExibicao(dataStr) {
         if (!dataStr) return ""; let str = String(dataStr);
@@ -700,7 +699,6 @@
         chartProd = new Chart(document.getElementById('graficoProdutos'), { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
-    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO ---
     function abrirModalPagamento(valorTotal, acaoObj) {
         pagamentosAtivos = [];
         acaoPagamentoPendente = acaoObj;
