@@ -1,705 +1,928 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-
-    <title>Arena Vitale | Beach Tennis</title>
-    <link rel="icon" href="logo.jpg" type="image/jpeg">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistema de Gestão Arena</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --bg-color: #000; --card-color: #111; --primary: #FFD700; --text-color: #fff; --hover: #E6C300; --instagram: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; padding-top: 80px; }
-        .secao-conteudo { display: none; min-height: 80vh; padding: 40px 20px; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .navbar { position: fixed; top: 0; left: 0; width: 100%; background-color: rgba(0, 0, 0, 0.95); border-bottom: 2px solid var(--primary); z-index: 2000; padding: 10px 0; backdrop-filter: blur(5px); display: none; }
-        .nav-container { max-width: 1300px; margin: auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
-        .nav-logo-img { max-height: 50px; width: auto; display: block; cursor: pointer; }
-        .nav-links { list-style: none; display: flex; gap: 15px; align-items: center;} 
-        .nav-links a { text-decoration: none; color: white; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; transition: 0.3s; cursor: pointer; white-space: nowrap; }
-        .nav-links a:hover { color: var(--primary); }
-        .hamburger { display: none; font-size: 1.8rem; color: var(--primary); cursor: pointer; }
-        .auth-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('quadra1.jpeg'); background-size: cover; background-position: center; position: fixed; top: 0; left: 0; width: 100%; z-index: 3000; }
-        .auth-box { background: rgba(17, 17, 17, 0.95); padding: 30px; border-radius: 20px; border: 2px solid var(--primary); width: 100%; max-width: 400px; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
-        .auth-logo { max-width: 150px; margin-bottom: 20px; }
-        .auth-title { color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; text-transform: uppercase; }
-        .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; background: #222; border: 1px solid #444; color: white; border-radius: 50px; text-align: center; font-size: 1rem; }
-        .auth-input:focus { border-color: var(--primary); outline: none; }
-        .auth-btn { width: 100%; padding: 15px; background: var(--primary); color: black; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-bottom: 10px; transition: 0.3s; }
-        .auth-btn:hover { background: var(--hover); transform: scale(1.02); }
-        .auth-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
-        .auth-link { color: #ccc; font-size: 0.9rem; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
-        .auth-link:hover { color: var(--primary); }
-        .floating-clock { position: fixed; top: 95px; right: 20px; background-color: rgba(0, 0, 0, 0.8); border: 2px solid var(--primary); color: var(--primary); padding: 5px 15px; border-radius: 50px; font-size: 1rem; font-weight: 900; z-index: 1000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); display: none; }
-        .btn-refresh-float { position: fixed; top: 140px; right: 20px; background: rgba(0,0,0,0.8); border: 2px solid var(--primary); color: var(--primary); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; z-index: 1000; transition: 0.5s; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); display: none; }
-        .btn-refresh-float:hover { transform: rotate(360deg); background: var(--primary); color: black; }
-        #tela-inicial { display: none; height: 90vh; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; overflow: hidden; position: relative; }
-        #tela-inicial::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('quadra1.jpeg'); background-size: cover; background-position: center; filter: blur(6px) brightness(0.6); transform: scale(1.1); z-index: 1; }
-        #tela-inicial > * { position: relative; z-index: 2; }
-        .hero-logo { max-width: 90%; width: 600px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0,0,0,0.8)); }
-        .weather-widget { background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary); padding: 8px 20px; border-radius: 50px; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); font-weight: bold; color: var(--primary); }
-        .hero p { font-size: 1.2rem; color: #ddd; margin-bottom: 30px; max-width: 600px; text-shadow: 1px 1px 5px black; }
-        .btn-main { background-color: var(--primary); color: black; padding: 18px 40px; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; border: none; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-        .btn-main:hover { transform: scale(1.05); background-color: var(--hover); }
-        .section-title { font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 10px; text-align: center; width: 100%; }
-        .agenda-box { background: var(--card-color); padding: 20px; border-radius: 15px; max-width: 600px; margin: auto; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .court-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 20px; }
-        .btn-court { background: #222; color: white; border: 2px solid #444; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 1rem; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .btn-court:hover { border-color: var(--primary); }
-        .btn-court.active { background: var(--primary); border-color: var(--primary); color: black; }
-        .btn-court.active::after { content: '✔'; font-weight: bold; }
-        .day-navigation { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #222; padding: 10px; border-radius: 10px; }
-        .nav-btn { background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; padding: 0 15px; }
-        .current-date-display { font-size: 1.1rem; font-weight: bold; color: white; text-transform: capitalize; }
-        .duration-selector { margin-bottom: 20px; }
-        .btn-duration { background: #222; color: white; border: 1px solid #444; padding: 8px 15px; margin: 2px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 0.9rem; }
-        .btn-duration.active { background: var(--primary); border-color: var(--primary); color: black; }
-        .custom-time-box { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; }
-        .custom-input { width: 60px; padding: 5px; border-radius: 5px; border: 1px solid #555; background: #222; color: white; text-align: center; font-weight: bold; }
-        .custom-input:focus { border-color: var(--primary); outline: none; }
-        .price-display { margin-top: 15px; font-size: 1.1rem; font-weight: bold; color: var(--primary); background: #222; padding: 10px; border-radius: 8px; border: 1px solid var(--primary); display: block; }
-        .promo-alert { display: none; background: rgba(255, 215, 0, 0.1); border: 1px dashed var(--primary); color: var(--primary); padding: 10px; margin-top: 15px; border-radius: 8px; font-size: 0.9rem; text-align: center; }
-        .time-selector-container { margin-top: 20px; text-align: left; }
-        .time-select { width: 100%; padding: 15px; font-size: 1rem; background: #222; color: white; border: 1px solid #555; border-radius: 10px; margin-top: 5px; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFD700" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); background-repeat: no-repeat; background-position: right 10px top 50%; }
-        .btn-agendar-final { margin-top: 20px; background: var(--primary); color: black; padding: 15px; width: 100%; font-weight: 900; font-size: 1.2rem; border: none; border-radius: 50px; cursor: pointer; text-transform: uppercase; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: none; }
-        .btn-agendar-final:hover { transform: scale(1.02); background: var(--hover); }
-        .map-btn { margin-top: 25px; padding: 15px 30px; border: 2px solid var(--primary); color: var(--primary); text-decoration: none; border-radius: 50px; display: inline-block; transition: 0.3s; font-weight: bold; font-size: 1.1rem; }
-        .map-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
-        .fidelidade-box { background: var(--card-color); border: 2px solid var(--primary); padding: 30px; border-radius: 20px; max-width: 500px; margin: auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .fidelidade-box p { color: #ccc; margin-bottom: 20px; font-size: 1.1rem; }
-        .stamp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 25px; }
-        .stamp-box { background: #222; border: 2px dashed #555; border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #555; font-weight: 900; margin: auto; transition: 0.3s; }
-        .stamp-box.stamped { background: var(--primary); border-color: var(--primary); color: black; box-shadow: 0 0 15px rgba(255,215,0,0.5); transform: scale(1.1); animation: popIn 0.4s ease; }
-        @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1.1); } }
-        .fidelidade-nota { margin-top: 25px; font-size: 0.85rem; color: #888; border-top: 1px solid #333; padding-top: 15px;}
-        .btn-resgate { background: #25D366; color: white; width: 100%; padding: 15px; border-radius: 50px; font-weight: 900; border: none; font-size: 1.1rem; margin-top: 20px; cursor: pointer; display: none; transition: 0.3s; box-shadow: 0 0 15px rgba(37, 211, 102, 0.3); text-transform: uppercase; }
-        .btn-resgate:hover { background: #1ebe57; transform: scale(1.02); }
-        .wa-float { position: fixed; bottom: 30px; right: 30px; background-color: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 100; transition: 0.3s; display: none; }
-        .wa-float:hover { transform: scale(1.1); }
-        .ig-float { position: fixed; bottom: 100px; right: 30px; background: var(--instagram); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 100; transition: 0.3s; display: none; text-decoration: none; }
-        .ig-float i { color: white; font-size: 30px; }
-        .ig-float:hover { transform: scale(1.1); }
-        .chat-float-btn { position: fixed; bottom: 170px; right: 30px; background-color: var(--primary); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 100; transition: 0.3s; cursor: pointer; color: black; font-size: 24px; display: none; border: none; outline: none; }
-        .chat-float-btn:hover { transform: scale(1.1); background-color: var(--hover); }
-        .chatbot-window { position: fixed; bottom: 90px; right: 30px; width: 320px; height: 450px; background: var(--card-color); border: 2px solid var(--primary); border-radius: 15px; display: none; flex-direction: column; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); overflow: hidden; font-family: 'Montserrat', sans-serif; }
-        .chat-header { background: var(--primary); color: black; padding: 15px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
-        .chat-header span { cursor: pointer; font-size: 1.2rem; }
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; background: #0a0a0a; }
-        .msg-user { align-self: flex-end; background: #333; color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; max-width: 80%; word-wrap: break-word; }
-        .msg-bot { align-self: flex-start; background: var(--primary); color: black; padding: 10px 15px; border-radius: 15px 15px 15px 0; max-width: 80%; word-wrap: break-word; font-weight: 500;}
-        .chat-input-area { display: flex; padding: 10px; border-top: 1px solid #333; background: var(--card-color); }
-        .chat-input-area input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; outline: none; }
-        .chat-input-area input:focus { border-color: var(--primary); }
-        .chat-input-area button { background: var(--primary); color: black; border: none; padding: 10px 15px; margin-left: 8px; cursor: pointer; border-radius: 8px; font-weight: bold; transition: 0.2s; }
-        .chat-input-area button:hover { background: var(--hover); }
-        .typing-indicator { font-size: 0.8rem; color: #888; align-self: flex-start; margin-left: 5px; display: none; }
-        footer { margin-top: 50px; padding: 20px; background-color: black; font-size: 0.9rem; color: #777; border-top: 1px solid #222; text-align: center; display: none;}
-        footer p { margin: 5px 0; }
-        .loading-msg { color: var(--primary); font-size: 0.9rem; margin-bottom: 10px; display: none; font-weight: bold; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; max-width: 1000px; margin: auto; }
-        .gallery-item { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; border: 2px solid transparent; transition: 0.3s; filter: grayscale(30%); }
-        .gallery-item:hover { filter: grayscale(0%); border-color: var(--primary); transform: scale(1.02); }
-        .partners-container { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 40px; padding: 20px; }
-        .partner-link { text-decoration: none; display: inline-block; }
-        .partner-logo { max-width: 140px; max-height: 80px; filter: grayscale(100%) brightness(1.2); opacity: 0.6; transition: all 0.3s ease; cursor: pointer; }
-        .partner-logo:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card-color); padding: 25px; border-radius: 15px; width: 95%; max-width: 450px; text-align: left; border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); max-height: 90vh; overflow-y: auto; }
-        .modal-content h3 { color: var(--primary); margin-bottom: 15px; text-align: center; }
-        .terms-box { background: #111; padding: 15px; border: 1px solid var(--primary); border-radius: 8px; margin: 15px 0; font-size: 0.8rem; color: #ccc; line-height: 1.6; }
-        .terms-box strong { color: var(--primary); }
-        .checkbox-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 0.9rem; }
-        .checkbox-container input { width: auto; accent-color: var(--primary); }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-cancel { background: #333; color: white; border: none; padding: 12px; border-radius: 8px; flex: 1; cursor: pointer; }
-        .btn-confirm { background: var(--primary); color: black; border: none; padding: 12px; border-radius: 8px; flex: 1; cursor: pointer; font-weight: bold; }
-        .scoreboard-container { background: var(--card-color); padding: 20px; border-radius: 20px; max-width: 600px; margin: auto; border: 2px solid var(--primary); position: relative; }
-        .mode-switch { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .score-box { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .team-score { flex: 1; text-align: center; background: #222; padding: 15px; border-radius: 15px; border: 1px solid #444; }
-        .team-score input { width: 100%; background: transparent; border: none; color: var(--primary); text-align: center; font-size: 1.2rem; margin-bottom: 10px; font-weight: bold; }
-        .points-display { font-size: 3.5rem; font-weight: 900; color: var(--primary); line-height: 1; margin: 10px 0; cursor: pointer; user-select: none; }
-        .btn-point { background: #333; color: var(--primary); border: 2px solid var(--primary); width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
-        .btn-point:hover { background: var(--primary); color: black; }
-        .games-display { font-size: 0.9rem; color: #aaa; margin-top: 5px; }
-        .games-count { font-size: 1.5rem; color: white; font-weight: bold; }
-        .reset-btn { margin-top: 20px; background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; }
-        .reset-btn:hover { background: var(--primary); color: black; }
-        .faq-item { background: #222; margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #444; }
-        .faq-item summary { padding: 15px; cursor: pointer; font-weight: bold; color: white; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-        .faq-item summary:hover { background: #333; }
-        .faq-item summary::after { content: '+'; color: var(--primary); font-size: 1.5rem; font-weight: bold; }
-        .faq-item[open] summary::after { content: '-'; }
-        .faq-item p { padding: 15px; color: #ccc; border-top: 1px solid #444; font-size: 0.95rem; line-height: 1.5; margin-bottom: 0; background: #1a1a1a; }
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: auto; }
-        .card { background-color: var(--card-color); padding: 30px; border-radius: 15px; border: 1px solid #333; transition: 0.3s; }
-        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 5px 15px rgba(255, 215, 0, 0.1); }
-        .card h3 { font-size: 1.5rem; margin-bottom: 10px; color: var(--primary); }
-
-        @media (max-width: 600px) { 
-            .hero h1 { font-size: 3rem; } 
-            .chatbot-window { width: 90%; right: 5%; bottom: 80px;}
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background-color: #f4f7f6; display: flex; height: 100vh; height: 100dvh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+        
+        @media screen { #cupao-impressao { display: none; } }
+        @media print { 
+            body * { visibility: hidden; display: none !important; } 
+            #cupao-impressao, #cupao-impressao * { visibility: visible; display: block !important; } 
+            #cupao-impressao { position: absolute; left: 0; top: 0; width: 58mm; padding: 0; margin: 0; font-family: monospace; font-size: 12px; color: #000; } 
         }
-        @media (max-width: 1100px) { 
-            .nav-links { position: absolute; top: 100%; left: 0; width: 100%; background-color: #111; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; border-bottom: 1px solid var(--primary); display: none; }
-            .nav-links a { font-size: 1rem; } 
-            .nav-links.active { display: flex; }
-            .hamburger { display: block; }
+
+        #tela-login { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 999999; flex-direction: column; }
+        .login-box { background: #fff; padding: 40px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .login-box h2 { color: #0f172a; margin-top: 0; margin-bottom: 10px; }
+        .login-box input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; }
+        .login-box button { width: 100%; padding: 15px; background: #0ea5e9; color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; -webkit-appearance: none; appearance: none; }
+        .login-box button:hover:not(:disabled) { background: #0284c7; }
+        .login-box button:disabled { background: #94a3b8; cursor: not-allowed; }
+        #msg-login { color: #ef4444; font-weight: bold; margin-bottom: 15px; display: none; }
+        #status-login { color: #0ea5e9; font-weight: bold; margin-bottom: 15px; }
+        
+        #caixa-login-loading { display: none; color: white; text-align: center; }
+        #caixa-login-loading h2 { color: #38bdf8; margin-bottom: 5px; }
+
+        .sidebar { width: 250px; background-color: #1e293b; color: white; display: flex; flex-direction: column; padding-top: 20px; transition: 0.3s; flex-shrink: 0; }
+        .sidebar h2 { text-align: center; margin-bottom: 5px; font-size: 22px; color: #38bdf8; }
+        #operadorLogadoText { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 5px; }
+        #cargoLogadoText { text-align: center; color: #fbbf24; font-size: 12px; margin-bottom: 25px; font-weight: bold; }
+        
+        .menu-item { padding: 15px 20px; cursor: pointer; font-size: 16px; border-left: 4px solid transparent; transition: 0.3s; }
+        .menu-item:hover { background-color: #334155; }
+        .menu-item.ativo { background-color: #0f172a; border-left-color: #38bdf8; font-weight: bold; }
+        #menu-usuarios { color: #eab308; } 
+        
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; -webkit-overflow-scrolling: touch; }
+        .tela { display: none; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .tela.ativa { display: block; }
+        h1 { color: #333; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; font-size: 24px; }
+        
+        #alerta-estoque { display: none; background: #fef2f2; border: 2px solid #f87171; padding: 15px; margin-bottom: 20px; border-radius: 8px; color: #b91c1c; }
+        
+        .dashboard-cards { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+        .card { flex: 1; min-width: 200px; background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; }
+        .card h3 { margin: 0; color: #64748b; font-size: 16px; }
+        .card .valor { font-size: 28px; font-weight: bold; color: #0f172a; margin-top: 10px; }
+
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; min-width: 500px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background-color: #f1f5f9; color: #475569; }
+        
+        .form-grupo { display: flex; gap: 15px; margin-bottom: 20px; align-items: flex-end; flex-wrap: wrap; }
+        .form-grupo div { flex: 1; display: flex; flex-direction: column; min-width: 120px; }
+        .form-grupo input, .form-grupo select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; background-color: #fff;}
+        
+        /* BOTÕES */
+        button { cursor: pointer; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; color: white; font-size: 15px; transition: 0.2s; -webkit-appearance: none; appearance: none; }
+        .btn-azul { background-color: #0ea5e9; } .btn-azul:hover:not(:disabled) { background-color: #0284c7; }
+        .btn-verde { background-color: #10b981; } .btn-verde:hover:not(:disabled) { background-color: #059669; }
+        .btn-vermelho { background-color: #ef4444; } .btn-vermelho:hover:not(:disabled) { background-color: #dc2626; }
+        .btn-laranja { background-color: #f97316; } .btn-laranja:hover:not(:disabled) { background-color: #ea580c; }
+        .btn-amarelo { background-color: #eab308; color: black; } .btn-amarelo:hover:not(:disabled) { background-color: #ca8a04; }
+        
+        #status-bar { background: #e0f2fe; color: #0369a1; padding: 10px; text-align: center; font-weight: bold; border-radius: 5px; margin-bottom: 20px; }
+        .botoes-caixa { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .val-entrada { color: #16a34a; font-weight: bold; }
+        .val-saida { color: #dc2626; font-weight: bold; }
+        
+        .botoes-quadra { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn-quadra { flex: 1; background-color: #14b8a6; font-size: 16px; padding: 15px; display: flex; justify-content: center; align-items: center; gap: 8px;}
+        .btn-quadra:hover { background-color: #0d9488; }
+        #leitorCamera { width: 100%; max-width: 500px; margin: 0 auto 20px; display: none; border: 2px solid #0ea5e9; border-radius: 8px; overflow: hidden; }
+        .btn-camera { background-color: #334155; font-size: 20px; padding: 10px 15px; width: auto; display: flex; align-items: center; justify-content: center; }
+        
+        #alerta-caixa { display: none; background: #fee2e2; color: #991b1b; padding: 15px; text-align: center; font-weight: bold; border-radius: 5px; margin-bottom: 20px; border: 2px solid #ef4444; }
+
+        /* MODAIS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: #fff; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;}
+        .lista-comandas-modal { max-height: 300px; overflow-y: auto; margin: 20px 0; text-align: left; -webkit-overflow-scrolling: touch; }
+        .btn-comanda-item { display: block; width: 100%; margin-bottom: 10px; padding: 15px; background: #f1f5f9; color: #333; border: 1px solid #cbd5e1; text-align: left; font-size: 16px; border-radius: 5px; }
+
+        .linha-pag { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap:wrap;}
+        .linha-pag label { width: 120px; text-align: left; font-weight: bold; color: #475569; }
+        .linha-pag input { flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; min-width:150px;}
+
+        /* ESTILOS COMANDAS GRID (Lado a Lado) */
+        .comandas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .comanda-card { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 5px solid #0ea5e9; display: flex; flex-direction: column; }
+        .comanda-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 10px; }
+        .comanda-header h3 { margin: 0; font-size: 18px; color: #0f172a; }
+        .comanda-header .id-comanda { font-size: 12px; color: #64748b; background: #f1f5f9; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
+        .comanda-body { flex: 1; font-size: 14px; color: #475569; margin-bottom: 15px; }
+        .comanda-body .itens { margin-bottom: 10px; line-height: 1.5; }
+        .comanda-valor { font-size: 20px; font-weight: bold; color: #10b981; text-align: right; margin-bottom: 15px; }
+        .comanda-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .comanda-actions button { padding: 10px 5px; font-size: 13px; width: 100%; }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; } 
+            .sidebar { width: 100vw; padding-top: 0; flex-direction: row; overflow-x: auto; white-space: nowrap; align-items: center; justify-content: flex-start; flex-shrink: 0; border-bottom: 1px solid #0f172a; -webkit-overflow-scrolling: touch;}
+            .sidebar::-webkit-scrollbar { display: none; } .sidebar h2, #operadorLogadoText, #cargoLogadoText { display: none; }
+            .menu-item { padding: 15px; font-size: 15px; border-left: none; border-bottom: 4px solid transparent; flex: 0 0 auto; }
+            .menu-item.ativo { border-left-color: transparent; border-bottom-color: #38bdf8; background-color: transparent; color: #38bdf8; }
+            .main-content { padding: 15px; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; } 
+            .tela { padding: 15px; }
+            .form-grupo div { min-width: 100%; } 
+            .botoes-caixa button, .btn-quadra { width: 100%; font-size: 16px; padding: 15px; margin-bottom: 5px; }
+            .linha-pag label { width:100%; margin-bottom:5px; }
+            .comandas-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div id="tela-auth" class="auth-container">
-        <div id="box-login" class="auth-box">
-            <img src="logo2.png" alt="Arena Vitale" class="auth-logo">
-            <h2 class="auth-title">Acesso ao Cliente</h2>
-            <input type="tel" id="loginPhone" class="auth-input" placeholder="Seu Telefone (Só números)">
-            <input type="password" id="loginPass" class="auth-input" placeholder="Sua Senha">
-            <button id="btnLogin" class="auth-btn" onclick="fazerLogin()">ENTRAR</button>
-            <div class="auth-link" onclick="mostrarCadastro()">Não tem conta? Cadastre-se</div>
-            <div class="auth-link" onclick="mostrarRecuperar()">Esqueci minha senha</div>
-        </div>
+<div id="tela-login">
+    <div class="login-box" id="caixa-login-inputs">
+        <h2>🔒 Acesso ao Sistema</h2>
+        <div id="status-login">Iniciando sistema...</div>
+        <div id="msg-login">Usuário ou senha incorretos!</div>
+        <input type="text" id="loginUsuario" placeholder="Usuário (Ex: edilson)" autocomplete="off" disabled>
+        <input type="password" id="loginSenha" placeholder="Senha" autocomplete="off" disabled>
+        <button type="button" id="btnEntrar" onclick="fazerLogin()" disabled>Entrar</button>
+    </div>
+    <div id="caixa-login-loading">
+        <h2>⏳ Preparando a Arena...</h2>
+        <p>A sincronizar os dados com o banco.</p>
+    </div>
+</div>
 
-        <div id="box-cadastro" class="auth-box" style="display:none;">
-            <img src="logo2.png" alt="Arena Vitale" class="auth-logo">
-            <h2 class="auth-title">Criar Conta</h2>
-            <input type="text" id="cadNome" class="auth-input" placeholder="Nome Completo">
-            <input type="tel" id="cadPhone" class="auth-input" placeholder="Telefone (DDD + 9 dígitos)">
-            <input type="password" id="cadPass" class="auth-input" placeholder="Crie uma Senha">
-            <button id="btnCadastrar" class="auth-btn" onclick="realizarCadastro()">CADASTRAR</button>
-            <div class="auth-link" onclick="mostrarLogin()">Voltar para Login</div>
-        </div>
+<div id="cupao-impressao"></div>
 
-        <div id="box-recuperar" class="auth-box" style="display:none;">
-            <img src="logo2.png" alt="Arena Vitale" class="auth-logo">
-            <h2 class="auth-title">Recuperar Senha</h2>
-            <p style="color:#ccc; margin-bottom:15px; font-size:0.9rem;">Enviaremos um código para seu número cadastrado.</p>
-            <div id="etapa1-rec">
-                <input type="tel" id="recPhone" class="auth-input" placeholder="Seu Telefone">
-                <button class="auth-btn" onclick="enviarCodigoRecuperacao()">ENVIAR CÓDIGO</button>
+<div class="sidebar">
+    <h2>🎯 Arena Vitale</h2>
+    <div id="operadorLogadoText">Operador: Nenhum</div>
+    <div id="cargoLogadoText">Cargo: Nenhum</div>
+    <div class="menu-item ativo" onclick="mudarTela('tela-dashboard', this)">📊 Dashboard</div>
+    <div class="menu-item" onclick="mudarTela('tela-caixa', this)">🛒 Caixa</div>
+    <div class="menu-item" onclick="mudarTela('tela-comandas', this)">📝 Comandas</div>
+    <div class="menu-item" onclick="mudarTela('tela-clientes', this)">👥 Clientes</div>
+    <div class="menu-item" onclick="mudarTela('tela-livro', this)">💵 Livro de Caixa</div>
+    <div class="menu-item" onclick="mudarTela('tela-estoque', this)">📦 Estoque</div>
+    <div class="menu-item" id="menu-usuarios" onclick="mudarTela('tela-usuarios', this)" style="display: none;">⚙️ Usuários</div>
+    <div class="menu-item" style="color: #ef4444; margin-top: 20px;" onclick="fazerLogout()">🚪 Sair do Sistema</div>
+</div>
+
+<div class="main-content">
+    <div id="status-bar">Sistema Online</div>
+
+    <div id="tela-dashboard" class="tela ativa">
+        <h1>Visão Geral da Arena</h1>
+        <div id="alerta-estoque"></div>
+        <div class="dashboard-cards">
+            <div class="card" id="card-status-caixa" style="background: #e0f2fe; border-color: #7dd3fc;">
+                <h3>Status do Caixa</h3>
+                <div class="valor" id="texto-status-caixa" style="color: #0369a1;">FECHADO</div>
+                <button type="button" id="btnAcaoCaixa" class="btn-azul" style="margin-top: 15px; width: 100%;" onclick="acaoCaixa()">Abrir Caixa</button>
             </div>
-            <div id="etapa2-rec" style="display:none;">
-                <input type="number" id="recCodigo" class="auth-input" placeholder="Código Recebido">
-                <input type="password" id="recNovaSenha" class="auth-input" placeholder="Nova Senha">
-                <button class="auth-btn" onclick="confirmarNovaSenha()">ALTERAR SENHA</button>
+            <div class="card"><h3>Vendas Hoje</h3><div class="valor" id="dash-vendas">R$ 0,00</div></div>
+            <div class="card"><h3>Saldo Atual na Gaveta</h3><div class="valor" id="dash-saldo">R$ 0,00</div></div>
+        </div>
+        <div style="display:flex; gap:20px; flex-wrap:wrap; margin-top: 20px;">
+            <div style="flex:2; min-width:300px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <h3 style="margin-top:0; color:#475569; text-align:center;">📊 Faturamento (Últimos 7 Dias)</h3>
+                <canvas id="graficoFaturamento" height="100"></canvas>
             </div>
-            <div class="auth-link" onclick="mostrarLogin()">Cancelar</div>
-        </div>
-    </div>
-
-    <header class="navbar" id="navPrincipal">
-        <div class="nav-container">
-            <a onclick="navegarPara('tela-inicial')" class="nav-logo"><img src="logo.jpg" alt="Arena Vitale" class="nav-logo-img"></a>
-            <div class="hamburger" onclick="toggleMenu()">☰</div>
-            <ul class="nav-links" id="navLinks">
-                <li><a onclick="navegarPara('tela-agendamento')">Agendar</a></li>
-                <li><a onclick="navegarPara('tela-fidelidade')" style="color: var(--primary);">Fidelidade ⭐</a></li>
-                <li><a onclick="navegarPara('tela-modalidades')">Nossas Modalidades</a></li>
-                <li><a onclick="navegarPara('tela-arena')">Conheça Nossa Arena</a></li>
-                <li><a onclick="navegarPara('tela-areia')">Nossa Areia</a></li>
-                <li><a onclick="navegarPara('tela-local')">Onde Estamos</a></li>
-                <li><a onclick="navegarPara('tela-placar')">Marcar Placar</a></li>
-                <li><a onclick="navegarPara('tela-parceiros')">Nossos Parceiros</a></li>
-                <li><a onclick="fazerLogout()" style="color:red;">SAIR</a></li>
-            </ul>
-        </div>
-    </header>
-
-    <div id="relogioFlutuante" class="floating-clock">--:--:--</div>
-    
-    <div class="btn-refresh-float" onclick="atualizarPagina()" title="Atualizar Dados">🔄</div>
-
-    <div id="tela-inicial">
-        <div class="weather-widget" id="weather-widget">
-            <i class="fas fa-sun" id="weather-icon"></i>
-            <span id="clima-temp">--°C</span>
-            <span id="clima-desc" style="font-weight:normal; font-size:0.9rem;">Russas-CE</span>
-        </div>
-        <img src="logo2.png" alt="Arena Vitale" class="hero-logo">
-        <p>A nova experiência do Beach Tennis de Russas e região.</p>
-        <button class="btn-main" onclick="navegarPara('tela-agendamento')">🔍 VERIFICAR HORÁRIOS</button>
-    </div>
-
-    <button class="chat-float-btn" onclick="toggleChat()" title="Falar com a IA">🤖</button>
-    
-    <div class="chatbot-window" id="chatbotWindow">
-        <div class="chat-header">
-            Areninha Vitalezinha 🎾
-            <span onclick="toggleChat()">✖</span>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <div class="msg-bot">Olá! Eu sou a Areninha Vitalezinha 🎾, a assistente da Arena Vitale. Posso tirar suas dúvidas sobre a arena e no final das nossas conversas sempre te conto uma curiosidade incrível sobre o Beach Tennis! Como posso ajudar hoje? 😊</div>
-        </div>
-        <div class="typing-indicator" id="typingIndicator">A Areninha está a digitar...</div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInput" placeholder="Escreva a sua dúvida..." onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
-            <button onclick="enviarMensagemChat()">➤</button>
-        </div>
-    </div>
-
-    <div id="tela-fidelidade" class="secao-conteudo">
-        <h2 class="section-title">Programa de Fidelidade ⭐</h2>
-        <div class="fidelidade-box">
-            <h3 style="color: var(--primary); margin-bottom: 10px;">Cartão VIP Arena Vitale</h3>
-            <p>Jogue connosco, acumule carimbos e ganhe prémios!</p>
-            <strong style="font-size: 1.2rem;">Complete 10 jogos e ganhe <span style="color: var(--primary);">1 hora grátis</span>!</strong>
-            
-            <div class="stamp-grid" id="stampGrid"></div>
-            
-            <button id="btnResgatar" class="btn-resgate" onclick="resgatarPremio()">🎁 Resgatar 1 Hora Grátis</button>
-
-            <div class="fidelidade-nota">
-                * Ganha 1 carimbo automático de cada vez que reserva uma quadra pelo site. Apresente este ecrã na receção para resgatar.
+            <div style="flex:1; min-width:250px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <h3 style="margin-top:0; color:#475569; text-align:center;">🏆 Top 5 Produtos</h3>
+                <canvas id="graficoProdutos" height="200"></canvas>
             </div>
         </div>
     </div>
 
-    <div id="tela-agendamento" class="secao-conteudo">
-        <h2 class="section-title">Agendamento</h2>
-        <div class="agenda-box">
-            <p class="duration-title" style="color:white; font-weight:bold;">1. Escolha a Quadra:</p>
-            <div class="court-selector">
-                <button class="btn-court active" onclick="mudarQuadra(1, this)"><span>Quadra Chicashoes</span></button>
-                <button class="btn-court" onclick="mudarQuadra(2, this)"><span>Quadra Padaria do Helder</span></button>
+    <div id="tela-caixa" class="tela">
+        <h1>Frente de Caixa</h1>
+        <div id="alerta-caixa">⚠️ O CAIXA ESTÁ FECHADO! Vá ao Dashboard para Abrir o Caixa.</div>
+        
+        <div id="bannerEdicaoComanda" style="display:none; background:#fef3c7; border:1px solid #f59e0b; padding:10px; margin-bottom:15px; border-radius:5px; color:#b45309; font-weight:bold; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <span>✏️ A editar a Comanda de <span id="nomeEdicaoComanda"></span></span>
+            <button type="button" class="btn-vermelho" style="padding:5px 10px; font-size:12px;" onclick="cancelarEdicaoComanda()">X Cancelar Edição</button>
+        </div>
+
+        <div class="botoes-quadra">
+            <button type="button" class="btn-quadra" onclick="adicionarQuadraInteligente('Quadra Chicashoes')">🎾 Quadra Chicashoes</button>
+            <button type="button" class="btn-quadra" onclick="adicionarQuadraInteligente('Quadra Padaria do Helder')">🎾 Quadra Padaria do Helder</button>
+        </div>
+
+        <div class="form-grupo" style="margin-bottom: 10px;">
+            <div style="flex: 1;"><label>Cliente (Opcional)</label><select id="selectClienteVenda"><option value="Consumidor Final">Consumidor Final</option></select></div>
+        </div>
+
+        <div id="leitorCamera"></div>
+
+        <div class="form-grupo" style="flex-direction: row; gap: 10px; flex-wrap: nowrap; align-items: stretch;">
+            <div style="flex: 0 0 70px; min-width: unset;">
+                <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:5px;">QTD</label>
+                <input type="number" id="qtdInput" value="1" min="1" style="height:45px; text-align:center; font-weight:bold; margin:0;">
             </div>
-            
-            <div class="day-navigation">
-                <button class="nav-btn" onclick="mudarDia(-1)">❮</button>
-                <div class="current-date-display" id="dateDisplay">A carregar...</div>
-                <button class="nav-btn" onclick="mudarDia(1)">❯</button>
+            <div style="flex: 1; min-width: unset;">
+                <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Produto ou Código</label>
+                <input type="text" id="codigoInput" placeholder="Bipe ou Digite" disabled autocomplete="off" style="height:45px; margin:0;">
             </div>
-            
-            <div class="time-selector-container" style="margin-top: 0; margin-bottom: 20px;">
-                <p class="duration-title" style="color:white; font-weight:bold;">2. Modalidade:</p>
-                <select id="selectModalidade" class="time-select" style="margin-top: 10px;">
-                    <option value="Beach Tennis" selected>🎾 Beach Tennis</option>
-                    <option value="Futevôlei">⚽ Futevôlei</option>
-                    <option value="Vôlei de Praia">🏐 Vôlei de Praia</option>
+            <button type="button" class="btn-camera" id="btnCamera" onclick="alternarCamera('codigoInput')" disabled style="height:45px; align-self:flex-end;">📷</button>
+        </div>
+
+        <div class="table-responsive">
+            <table><thead><tr><th>Código</th><th>Produto</th><th>Qtd</th><th>Preço Un.</th><th>Subtotal</th><th>Ação</th></tr></thead><tbody id="listaCarrinho"></tbody></table>
+        </div>
+        <div style="text-align: right; font-size: 24px; font-weight: bold; color: #10b981; margin: 20px 0;">Total: R$ <span id="valorTotal">0.00</span></div>
+        
+        <div class="botoes-caixa">
+            <button type="button" class="btn-vermelho" id="btnDescontoCaixa" style="flex: 0 0 auto; background-color:#8b5cf6;" onclick="verificarPermissaoGerente('Aplicar Desconto', aplicarDescontoCaixa)" disabled>-% Desc</button>
+            <button type="button" class="btn-laranja" id="btnSalvarComanda" style="flex: 1;" onclick="acaoBotaoComanda()" disabled>Salvar na Comanda (F3)</button>
+            <button type="button" class="btn-azul" id="btnFinalizarVenda" style="flex: 1;" onclick="iniciarVendaDireta()" disabled>Cobrar Direto (F2)</button>
+        </div>
+    </div>
+
+    <div id="tela-comandas" class="tela">
+        <h1>Comandas Abertas</h1>
+        <div class="comandas-grid" id="listaComandasGrid"></div>
+    </div>
+
+    <div id="tela-clientes" class="tela">
+        <h1>Gestão de Clientes</h1>
+        <div class="form-grupo">
+            <div><label>ID/Cartão</label><input type="text" id="novoIdCli" placeholder="Ex: 001" autocomplete="off"></div>
+            <div><label>Nome do Cliente</label><input type="text" id="novoNomeCli" autocomplete="off"></div>
+            <div><label>Telefone/WhatsApp</label><input type="text" id="novoTelCli" placeholder="Ex: 55889..." autocomplete="off"></div>
+            <button type="button" class="btn-verde" style="margin-bottom: 2px;" onclick="adicionarCliente()" id="btnAdicionarCli">Gravar Cliente</button>
+        </div>
+        <div class="table-responsive">
+            <table><thead><tr><th>ID</th><th>Nome</th><th>Telefone</th><th>Ação</th></tr></thead><tbody id="listaClientesGestao"></tbody></table>
+        </div>
+    </div>
+
+    <div id="tela-livro" class="tela">
+        <h1>Livro de Caixa</h1>
+        <div style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #cbd5e1;">
+            <h3 style="margin-top: 0; font-size: 16px; color: #334155;">📅 Filtrar por Período</h3>
+            <div class="form-grupo" style="margin-bottom: 0;">
+                <div><label>Data Início</label><input type="date" id="filtroDataInicio"></div>
+                <div><label>Data Fim</label><input type="date" id="filtroDataFim"></div>
+                <button type="button" class="btn-azul" onclick="filtrarLivroCaixa()" style="margin-bottom: 2px;">Buscar</button>
+                <button type="button" class="btn-amarelo" onclick="limparFiltroCaixa()" style="margin-bottom: 2px;">Limpar</button>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top: 15px; font-weight: bold; font-size: 14px; flex-wrap:wrap; gap:10px;">
+                <span style="color:#16a34a;">Entradas: <span id="resumo-filtro-entradas">R$ 0.00</span></span>
+                <span style="color:#dc2626;">Saídas: <span id="resumo-filtro-saidas">R$ 0.00</span></span>
+                <span style="color:#0f172a; font-size: 16px;">Saldo do Período: <span id="resumo-filtro-saldo">R$ 0.00</span></span>
+            </div>
+        </div>
+
+        <div class="form-grupo">
+            <div><label>Movimento</label><select id="tipoMovimento" onchange="mudarFormDespesa()"><option value="Entrada">Entrada</option><option value="Saida">Saída (Despesa)</option></select></div>
+            <div id="boxCategoriaDespesa" style="display: none;">
+                <label>Categoria</label>
+                <select id="categoriaDespesa">
+                    <option value="Fornecedores">Fornecedores (Estoque)</option>
+                    <option value="Funcionários">Funcionários</option>
+                    <option value="Manutenção">Manutenção/Limpeza</option>
+                    <option value="Contas">Contas de Consumo</option>
+                    <option value="Outros">Outros</option>
                 </select>
             </div>
+            <div><label>Descrição Extra</label><input type="text" id="descMovimento" placeholder="Ex: Compra de Água" autocomplete="off"></div>
+            <div><label>Valor (R$)</label><input type="text" inputmode="decimal" id="valorMovimento" placeholder="Ex: 5,50" autocomplete="off"></div>
+            <button type="button" class="btn-verde" id="btnRegistrarLivro" style="margin-bottom: 2px;" onclick="registrarCaixa()" disabled>Registrar</button>
+        </div>
+        <div class="table-responsive">
+            <table><thead><tr><th>Hora e Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Ação</th></tr></thead><tbody id="listaCaixa"></tbody></table>
+        </div>
+    </div>
 
-            <div class="duration-selector">
-                <p class="duration-title" style="color:white; font-weight:bold;">3. Tempo de jogo:</p>
-                <div style="display:flex; justify-content:center; flex-wrap:wrap;">
-                    <button class="btn-duration active" onclick="setDuracao(1, this)">1h</button>
-                    <button class="btn-duration" onclick="setDuracao(2, this)">2h</button>
-                    <button class="btn-duration" onclick="setDuracao(3, this)">3h</button>
+    <div id="tela-estoque" class="tela">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h1>Gestão de Estoque</h1>
+            <button type="button" class="btn-azul" onclick="abrirModalHistorico()">📜 Ver Histórico de Movimentações</button>
+        </div>
+        <div class="form-grupo">
+            <div style="flex-direction: row; gap: 5px;">
+                <div style="flex: 1;"><label>ID/Código</label><input type="text" id="novoId" placeholder="Bipe, digite ou câmera" autocomplete="off"></div>
+                <button type="button" class="btn-camera" style="margin-bottom: 0; align-self: flex-end;" onclick="alternarCamera('novoId')">📷</button>
+            </div>
+            <div><label>Nome do Produto</label><input type="text" id="novoNome" autocomplete="off"></div>
+            <div><label>Custo</label><input type="text" inputmode="decimal" id="novoCusto" placeholder="Ex: 2,50"></div>
+            <div><label>Venda</label><input type="text" inputmode="decimal" id="novoPreco" placeholder="Ex: 5,00"></div>
+            <div><label>Qtd</label><input type="number" id="novaQtd"></div>
+            <div><label>Estoque Mín.</label><input type="number" id="novoMinimo" placeholder="Ex: 10"></div>
+            <button type="button" class="btn-verde" style="margin-bottom: 2px;" onclick="salvarProdutoEstoque()" id="btnAdicionarEstoque">Salvar Produto</button>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead><tr><th>Código</th><th>Produto</th><th>Custo (R$)</th><th>Venda (R$)</th><th>Qtd</th><th>Mínimo</th><th>Ações</th></tr></thead>
+                <tbody id="listaGestao"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="tela-usuarios" class="tela">
+        <h1>Gestão de Operadores e Permissões</h1>
+        <div class="form-grupo">
+            <div><label>Novo Usuário</label><input type="text" id="novoUserLogin" placeholder="Ex: paulo" autocomplete="off"></div>
+            <div><label>Senha</label><input type="text" id="novoUserSenha" placeholder="Ex: 123456" autocomplete="off"></div>
+            <div><label>Cargo/Permissão</label>
+                <select id="novoUserCargo">
+                    <option value="Operador">Operador (Restrito)</option>
+                    <option value="Gerente">Gerente (Acesso Total)</option>
+                </select>
+            </div>
+            <button type="button" class="btn-verde" style="margin-bottom: 2px;" onclick="adicionarUsuarioSistema()" id="btnAdicionarUser">Criar Operador</button>
+        </div>
+        <div class="table-responsive">
+            <table><thead><tr><th>Usuário de Acesso</th><th>Cargo</th><th>Ação</th></tr></thead><tbody id="listaUsuariosGestao"></tbody></table>
+        </div>
+    </div>
+</div>
+
+<div id="modalComandas" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Adicionar a qual Comanda?</h3>
+        <button type="button" class="btn-verde" style="width: 100%; font-size: 16px; margin-bottom: 15px;" onclick="criarNovaComandaModal()">+ Criar Nova Comanda</button>
+        <p style="text-align: left; font-weight: bold; margin-bottom: 5px; color: #666;">Ou adicione a uma existente:</p>
+        <div class="lista-comandas-modal" id="listaComandasModal"></div>
+        <button type="button" class="btn-vermelho" style="width: 100%; margin-top: 10px;" onclick="fecharModalComandas()">Cancelar</button>
+    </div>
+</div>
+
+<div id="modalHistorico" class="modal-overlay">
+    <div class="modal-box" style="max-width: 800px; width: 95%;">
+        <h3 style="margin-top:0; color:#0f172a;">📜 Histórico de Movimentações (Estoque)</h3>
+        <div class="table-responsive" style="max-height: 400px;">
+            <table>
+                <thead><tr><th>Data/Hora</th><th>Operador</th><th>Produto</th><th>Qtd</th><th>Motivo</th></tr></thead>
+                <tbody id="listaHistoricoModal"></tbody>
+            </table>
+        </div>
+        <button type="button" class="btn-vermelho" style="width: 100%; margin-top: 15px;" onclick="fecharModalHistorico()">Fechar Histórico</button>
+    </div>
+</div>
+
+<div id="modalPagamento" class="modal-overlay">
+    <div class="modal-box" style="max-width: 400px;">
+        <h3 id="pagTituloModal" style="margin-bottom: 5px; color: #0f172a;">Caixa de Pagamento</h3>
+        <div style="font-size: 32px; font-weight: bold; margin-bottom: 5px; color: #10b981;">R$ <span id="pagTotalLabel">0.00</span></div>
+        <div style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Líquido Real Estimado: <b>R$ <span id="pagLiquidoLabel">0.00</span></b></div>
+        
+        <div class="linha-pag"><label>👤 Quem Paga:</label><input type="text" id="pagNomePagador" placeholder="Nome (Ex: João)" autocomplete="off"></div>
+        <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 15px 0;">
+
+        <div class="linha-pag"><label>💠 Pix:</label><input type="text" inputmode="decimal" id="pagPix" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
+        <div class="linha-pag"><label>💳 Crédito:</label><input type="text" inputmode="decimal" id="pagCredito" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
+        <div class="linha-pag"><label>💳 Débito:</label><input type="text" inputmode="decimal" id="pagDebito" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
+        <div class="linha-pag"><label>💵 Espécie:</label><input type="text" inputmode="decimal" id="pagEspecie" placeholder="0,00" oninput="calcularRestantePagamento()"></div>
+
+        <div style="margin: 20px 0; font-size: 18px; font-weight: bold;">
+            <div id="boxStatusPagamento" style="color: #dc2626;">Falta: R$ <span id="pagRestanteLabel">0.00</span></div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+            <button type="button" class="btn-vermelho" style="flex:1;" onclick="fecharModalPagamento()">Cancelar</button>
+            <button type="button" class="btn-verde" style="flex:1;" id="btnConfirmarPagamento" onclick="confirmarPagamentoMisto()" disabled>Receber</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
+    
+    // TAXAS DE PAGAMENTO (Configure conforme sua maquininha)
+    const TAXAS_CARTAO = {
+        credito: 0.03,  // 3%
+        debito: 0.015,  // 1.5%
+        pix: 0,
+        especie: 0
+    };
+
+    let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
+    let turnoAtual = null, carrinho = [], total = 0, leitorHtml5 = null;
+    let inputCameraAlvo = "codigoInput", idEditandoEstoque = null, operadorAtual = "", cargoAtual = "";
+    
+    let chartFat = null, chartProd = null;
+    let acaoPagamentoPendente = null;
+    let idComandaEmEdicao = null;
+
+    function formatarDataExibicao(dataStr) {
+        if (!dataStr) return ""; let str = String(dataStr);
+        if (str.includes('T')) { let d = new Date(str); let dia = String(d.getDate()).padStart(2, '0'); let mes = String(d.getMonth() + 1).padStart(2, '0'); let ano = d.getFullYear(); let hora = String(d.getHours()).padStart(2, '0'); let min = String(d.getMinutes()).padStart(2, '0'); return `${dia}/${mes}/${ano} ${hora}:${min}`; }
+        let limpa = str.replace(',', ''); let p = limpa.split(' '); if (p.length >= 2) return `${p[0]} ${p[1].substring(0,5)}`; return str;
+    }
+
+    function parseDataBR(dataStr) { 
+        if(!dataStr) return new Date(0); let str = String(dataStr);
+        if(str.includes('T')) return new Date(str); let partes = str.split(/[\s,]+/); let dma = partes[0].split('/'); if(dma.length === 3) return new Date(`${dma[2]}-${dma[1]}-${dma[0]}T12:00:00`); return new Date(0); 
+    }
+
+    async function reqPOST(dados) { return await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }); }
+
+    document.getElementById('loginSenha').addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); fazerLogin(); } });
+
+    window.onload = () => {
+        let opSalvo = localStorage.getItem('arena_operador');
+        if (opSalvo) { document.getElementById('caixa-login-inputs').style.display = 'none'; document.getElementById('caixa-login-loading').style.display = 'block'; }
+        carregarDadosIniciais();
+    };
+
+    async function carregarDadosIniciais() {
+        try {
+            const resposta = await fetch(API_URL); const dados = await resposta.json();
+            bancoDeProdutos = dados.produtos || []; bancoComandas = dados.comandas || [];
+            bancoCaixaGlobal = dados.caixa || []; bancoClientes = dados.clientes || [];
+            bancoUsuarios = dados.usuarios || []; bancoVendas = dados.vendas || []; bancoHistorico = dados.historico || [];
+            turnoAtual = (dados.turnos || []).find(t => t.Status === "Aberto");
+            
+            let opSalvo = localStorage.getItem('arena_operador'); let nomeSalvo = localStorage.getItem('arena_operador_nome');
+            let cargoSalvo = localStorage.getItem('arena_operador_cargo');
+            
+            let userFound = bancoUsuarios.find(u => String(u.Login).toLowerCase() === opSalvo);
+            if (opSalvo && userFound) {
+                operadorAtual = nomeSalvo;
+                cargoAtual = cargoSalvo || userFound.Cargo || "Operador";
+                if(opSalvo === "edilson") cargoAtual = "Gerente"; // Master admin
+
+                document.getElementById('tela-login').style.display = 'none';
+                document.getElementById('operadorLogadoText').innerText = "Operador: " + operadorAtual;
+                document.getElementById('cargoLogadoText').innerText = "Permissão: " + cargoAtual;
+                
+                if(cargoAtual === "Gerente" || opSalvo === "edilson") document.getElementById('menu-usuarios').style.display = 'block';
+                
+                let tabSalva = localStorage.getItem('arena_tab') || 'tela-dashboard';
+                mudarTela(tabSalva, document.querySelector(`.menu-item[onclick*="${tabSalva}"]`));
+            } else {
+                localStorage.removeItem('arena_operador');
+                document.getElementById('caixa-login-loading').style.display = 'none'; document.getElementById('caixa-login-inputs').style.display = 'block';
+                mudarTela('tela-dashboard', null); document.getElementById('status-login').innerText = "✅ Conectado! Pode fazer login."; document.getElementById('status-login').style.color = "#10b981";
+                ['loginUsuario', 'loginSenha', 'btnEntrar'].forEach(id => document.getElementById(id).disabled = false);
+            }
+            atualizarTodasAsTelas();
+        } catch (erro) { document.getElementById('caixa-login-loading').style.display = 'none'; document.getElementById('caixa-login-inputs').style.display = 'block'; document.getElementById('status-login').innerHTML = "Erro de conexão.<br>Recarregue a página."; document.getElementById('status-login').style.color = "#ef4444"; }
+    }
+
+    function fazerLogin() {
+        let userTyped = document.getElementById('loginUsuario').value.trim().toLowerCase(); let passTyped = document.getElementById('loginSenha').value.trim();
+        let userEncontrado = bancoUsuarios.find(u => String(u.Login).toLowerCase() === userTyped && String(u.Senha) === passTyped);
+        
+        if(userEncontrado) {
+            operadorAtual = userTyped.charAt(0).toUpperCase() + userTyped.slice(1);
+            cargoAtual = userEncontrado.Cargo || "Operador";
+            if(userTyped === "edilson") cargoAtual = "Gerente";
+
+            localStorage.setItem('arena_operador', userTyped); 
+            localStorage.setItem('arena_operador_nome', operadorAtual);
+            localStorage.setItem('arena_operador_cargo', cargoAtual);
+
+            document.getElementById('tela-login').style.display = 'none'; 
+            document.getElementById('operadorLogadoText').innerText = "Operador: " + operadorAtual;
+            document.getElementById('cargoLogadoText').innerText = "Permissão: " + cargoAtual;
+            
+            if(cargoAtual === "Gerente" || userTyped === "edilson") document.getElementById('menu-usuarios').style.display = 'block'; else document.getElementById('menu-usuarios').style.display = 'none';
+            if(turnoAtual) document.getElementById('codigoInput').focus();
+        } else { document.getElementById('msg-login').style.display = 'block'; }
+    }
+    
+    function fazerLogout() { localStorage.clear(); location.reload(); }
+
+    // --- SISTEMA DE PERMISSÕES GERENCIAIS ---
+    function verificarPermissaoGerente(acaoNome, callback) {
+        if(cargoAtual === "Gerente" || operadorAtual.toLowerCase() === "edilson") {
+            callback(); // Permite direto se já for gerente ou mestre
+        } else {
+            let senhaMestre = prompt(`🛡️ ACESSO RESTRITO\nA ação [${acaoNome}] requer aprovação. Digite a senha de um Gerente:`);
+            if(senhaMestre === null) return;
+            
+            let gerenteEncontrado = bancoUsuarios.find(u => 
+                (u.Cargo === 'Gerente' || String(u.Login).toLowerCase() === 'edilson') && String(u.Senha) === senhaMestre
+            );
+
+            if(gerenteEncontrado) {
+                callback();
+            } else {
+                alert("❌ Senha incorreta ou usuário não é gerente!");
+            }
+        }
+    }
+
+    async function recarregarDadosSilencioso() {
+        document.getElementById('status-bar').innerText = "Sincronizando...";
+        try {
+            const resposta = await fetch(API_URL); const dados = await resposta.json();
+            bancoDeProdutos = dados.produtos || []; bancoComandas = dados.comandas || [];
+            bancoCaixaGlobal = dados.caixa || []; bancoClientes = dados.clientes || []; bancoUsuarios = dados.usuarios || []; bancoVendas = dados.vendas || []; bancoHistorico = dados.historico || [];
+            turnoAtual = (dados.turnos || []).find(t => t.Status === "Aberto"); document.getElementById('status-bar').innerText = "Sistema Online";
+            atualizarTodasAsTelas();
+        } catch(e) { document.getElementById('status-bar').innerText = "Erro de conexão."; }
+    }
+
+    function atualizarTodasAsTelas() {
+        atualizarInterfaceTurno(); atualizarTabelaEstoque(); atualizarTabelaComandas(); 
+        atualizarDashboardECaixa(); atualizarListasClientes(); atualizarListaUsuarios();
+        desenharGraficos();
+    }
+
+    function mudarTela(idTela, elementoMenu) {
+        document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('ativo'));
+        document.getElementById(idTela).classList.add('ativa');
+        if(elementoMenu) elementoMenu.classList.add('ativo'); else { let el = document.querySelector(`.menu-item[onclick*="${idTela}"]`); if(el) el.classList.add('ativo'); }
+        localStorage.setItem('arena_tab', idTela);
+        if(leitorHtml5) fecharCamera(); if(idTela === 'tela-caixa' && turnoAtual) document.getElementById('codigoInput').focus();
+    }
+
+    function desenharGraficos() {
+        let labelsDias = [], dadosFaturamento = [];
+        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); labelsDias.push(d.toLocaleDateString('pt-BR').substring(0,5)); dadosFaturamento.push(0); }
+        let hjFormatDateArray = [];
+        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); hjFormatDateArray.push(d.toLocaleDateString('pt-BR')); }
+
+        bancoCaixaGlobal.forEach(m => {
+            if(m.Tipo === "Entrada" && (m.Descricao.includes("Venda") || m.Descricao.includes("Pgto Comanda"))) {
+                let dStr = m.Data_Hora.split(/[\s,T]+/)[0]; let idx = hjFormatDateArray.indexOf(dStr);
+                if(idx !== -1) dadosFaturamento[idx] += parseFloat(m.Valor.toString().replace(',','.')) || 0;
+            }
+        });
+
+        if(chartFat) chartFat.destroy();
+        chartFat = new Chart(document.getElementById('graficoFaturamento'), { type: 'bar', data: { labels: labelsDias, datasets: [{ label: 'Receita (R$)', data: dadosFaturamento, backgroundColor: '#0ea5e9', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
+
+        let contagemProdutos = {};
+        bancoVendas.forEach(v => {
+            if(!v.Itens_Vendidos) return; let itensStr = v.Itens_Vendidos.split('(')[0];
+            itensStr.split(',').forEach(item => { let match = item.trim().match(/(\d+)x\s(.+)/); if(match) { let qtd = parseInt(match[1]); let nome = match[2].trim(); if(nome !== "SERVICO" && !nome.includes("Quadra") && nome !== "Desconto Aplicado" && nome !== "Desconto Especial") { contagemProdutos[nome] = (contagemProdutos[nome] || 0) + qtd; } } });
+        });
+
+        let prodOrder = Object.keys(contagemProdutos).map(k => ({nome: k, qtd: contagemProdutos[k]})).sort((a,b) => b.qtd - a.qtd).slice(0, 5);
+        if(chartProd) chartProd.destroy();
+        chartProd = new Chart(document.getElementById('graficoProdutos'), { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+    }
+
+    // --- NOVA LÓGICA DO MODAL DE PAGAMENTO (Taxas e Múltiplos) ---
+    function abrirModalPagamento(valorTotal, acaoObj) {
+        document.getElementById('pagTotalLabel').innerText = valorTotal.toFixed(2);
+        ['pagPix','pagCredito','pagDebito','pagEspecie', 'pagNomePagador'].forEach(id => document.getElementById(id).value = "");
+        acaoPagamentoPendente = acaoObj; 
+        if(acaoObj.tipo === 'comanda_parcial') { document.getElementById('pagTituloModal').innerText = "Pagamento Parcial"; } else { document.getElementById('pagTituloModal').innerText = "Caixa de Pagamento"; }
+        calcularRestantePagamento(); document.getElementById('modalPagamento').style.display = 'flex'; document.getElementById('pagNomePagador').focus();
+    }
+    
+    function fecharModalPagamento() { document.getElementById('modalPagamento').style.display = 'none'; acaoPagamentoPendente = null; }
+
+    function calcularRestantePagamento() {
+        if(!acaoPagamentoPendente) return;
+        let totalRequerido = acaoPagamentoPendente.valorTotal; 
+        let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0; 
+        let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
+        let d = parseFloat(document.getElementById('pagDebito').value.replace(',', '.')) || 0; 
+        let e = parseFloat(document.getElementById('pagEspecie').value.replace(',', '.')) || 0;
+        
+        let totalPagoAgora = p + c + d + e; 
+        
+        // CALCULA O LÍQUIDO REAL COM TAXAS
+        let liquido = p + e + (c - (c * TAXAS_CARTAO.credito)) + (d - (d * TAXAS_CARTAO.debito));
+        document.getElementById('pagLiquidoLabel').innerText = liquido.toFixed(2);
+
+        let box = document.getElementById('boxStatusPagamento'); 
+        let falta = totalRequerido - totalPagoAgora;
+        
+        if (falta > 0.01) { box.style.color = "#dc2626"; box.innerHTML = `Falta: R$ <span id="pagRestanteLabel">${falta.toFixed(2)}</span>`; document.getElementById('btnConfirmarPagamento').disabled = true; 
+        } else if (falta < -0.01) { box.style.color = "#eab308"; box.innerHTML = `Troco: R$ <span id="pagRestanteLabel">${Math.abs(falta).toFixed(2)}</span>`; document.getElementById('btnConfirmarPagamento').disabled = false; 
+        } else { box.style.color = "#16a34a"; box.innerHTML = `Exato: R$ <span id="pagRestanteLabel">0.00</span>`; document.getElementById('btnConfirmarPagamento').disabled = false; }
+    }
+
+    function confirmarPagamentoMisto() {
+        let p = parseFloat(document.getElementById('pagPix').value.replace(',', '.')) || 0; let c = parseFloat(document.getElementById('pagCredito').value.replace(',', '.')) || 0;
+        let d = parseFloat(document.getElementById('pagDebito').value.replace(',', '.')) || 0; let e = parseFloat(document.getElementById('pagEspecie').value.replace(',', '.')) || 0;
+        let pagNome = document.getElementById('pagNomePagador').value.trim() || "Não informado";
+        let totalPago = p + c + d + e; let formas = [];
+        if(p > 0) formas.push(`Pix: ${p.toFixed(2)}`); if(c > 0) formas.push(`Crédito: ${c.toFixed(2)}`);
+        if(d > 0) formas.push(`Débito: ${d.toFixed(2)}`); if(e > 0) formas.push(`Espécie: ${e.toFixed(2)}`);
+        
+        let acaoSegura = acaoPagamentoPendente;
+        document.getElementById('btnConfirmarPagamento').innerText = "Aguarde..."; document.getElementById('btnConfirmarPagamento').disabled = true;
+        
+        executarAcaoPagamento(acaoSegura, formas.join(" + "), totalPago, pagNome).then(() => {
+            document.getElementById('btnConfirmarPagamento').innerText = "Receber"; fecharModalPagamento(); 
+        });
+    }
+
+    async function executarAcaoPagamento(acao, formaPagStr, totalPagoFinal, pagadorNome) {
+        if(!acao) return;
+        if(acao.tipo === 'venda_direta') {
+            document.getElementById('btnFinalizarVenda').innerText = "Gravando..."; document.getElementById('btnFinalizarVenda').disabled = true;
+            await reqPOST({ acao: "venda", cliente: acao.cliente, total: acao.totalSalvo, carrinho: acao.carrinhoSalvo, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr });
+            carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso();
+            document.getElementById('btnFinalizarVenda').innerText = "Cobrar Direto (F2)"; document.getElementById('btnFinalizarVenda').disabled = false;
+            if(confirm("Imprimir recibo térmico?")) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
+            if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
+        } 
+        else if (acao.tipo === 'comanda') {
+            document.getElementById('status-bar').innerText = "Recebendo...";
+            await reqPOST({ acao: "cobrar_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr + acao.msgExtra });
+            let iArr = JSON.parse(decodeURIComponent(acao.itensJsonStr)); recarregarDadosSilencioso();
+            if(confirm("Imprimir recibo térmico?")) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
+            if(confirm("Enviar por WhatsApp?")) enviarWhatsApp(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
+        }
+        else if (acao.tipo === 'comanda_parcial') {
+            document.getElementById('status-bar').innerText = "Recebendo Parcial...";
+            await reqPOST({ acao: "pagamento_parcial_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr, valor_pago: totalPagoFinal });
+            recarregarDadosSilencioso();
+            alert(`Pagamento parcial de R$ ${totalPagoFinal.toFixed(2)} recebido de ${pagadorNome}!\nA comanda continua em aberto com o restante do saldo.`);
+        }
+    }
+
+    function iniciarVendaDireta() {
+        if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!");
+        let clienteSel = document.getElementById('selectClienteVenda').value;
+        abrirModalPagamento(total, { tipo: 'venda_direta', cliente: clienteSel, carrinhoSalvo: [...carrinho], totalSalvo: total, valorTotal: total });
+    }
+
+    function adicionarQuadraInteligente(nomeQuadra) { 
+        let horasStr = prompt(`Quantas horas o cliente vai jogar na ${nomeQuadra}?`, "1"); 
+        if(!horasStr) return; let horas = parseInt(horasStr); if(isNaN(horas) || horas <= 0) return;
+
+        let horaInicio = prompt(`A que horas começa o jogo?\n(Digite apenas a hora inicial. Exemplo: 16 ou 19)`, new Date().getHours());
+        if(!horaInicio) return; let hInicial = parseInt(horaInicio); if(isNaN(hInicial)) return;
+        
+        let precoCalculado = 0; let hAtual = hInicial;
+        for(let i = 0; i < horas; i++) {
+            if(hAtual >= 17 && hAtual <= 22) { precoCalculado += 45; } else { precoCalculado += 35; }
+            hAtual++; if(hAtual > 23) hAtual = 0;
+        }
+
+        if(!confirm(`Início: ${hInicial}h | Duração: ${horas}h\nTotal Calculado: R$ ${precoCalculado.toFixed(2)}\n\nConfirmar adição?`)) return;
+
+        carrinho.push({ codigo: 'SERVICO', nome: `${nomeQuadra} (${horas}h a partir das ${hInicial}h)`, preco: precoCalculado, qtd: 1 }); 
+        total += precoCalculado; atualizarCarrinho(); 
+    }
+    
+    function aplicarDescontoCaixa() {
+        if(carrinho.length === 0) return alert("Adicione produtos primeiro!");
+        let descStr = prompt(`Total Atual: R$ ${total.toFixed(2)}\n\nDigite o valor do desconto (Ex: 10,00):`, "0,00");
+        if(!descStr) return; let valDesc = parseFloat(descStr.replace(',', '.')); if(isNaN(valDesc) || valDesc <= 0) return;
+        if(valDesc > total) return alert("O desconto não pode ser maior que o total da compra!");
+
+        carrinho.push({ codigo: 'DESC', nome: 'Desconto Aplicado', preco: -valDesc, qtd: 1 });
+        total -= valDesc; atualizarCarrinho();
+    }
+
+    async function aplicarDescontoComanda(idComanda, cliente, totalAtual) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        let descStr = prompt(`Comanda de ${cliente}: R$ ${totalAtual.toFixed(2)}\n\nDigite o valor do DESCONTO (Ex: 10,00):`, "0,00");
+        if(!descStr) return; let valDesc = parseFloat(descStr.replace(',', '.')); if(isNaN(valDesc) || valDesc <= 0) return;
+        if(valDesc > totalAtual) return alert("O desconto não pode ser maior que a comanda!");
+
+        document.getElementById('status-bar').innerText = "Aplicando Desconto...";
+        await reqPOST({ acao: "desconto_comanda", id_comanda: idComanda, valor_desconto: valDesc });
+        alert(`Desconto aplicado com sucesso!`); recarregarDadosSilencioso();
+    }
+
+    function removerPagamentoParcial(idComanda, idTransacao) {
+        verificarPermissaoGerente('Cancelar Pagamento Parcial', async () => {
+            if(confirm("Deseja cancelar este pagamento parcial?\n\nO valor voltará para a dívida da comanda e o registro será apagado do Livro de Caixa.")) {
+                document.getElementById('status-bar').innerText = "Removendo pagamento...";
+                await reqPOST({ acao: "remover_pagamento_parcial", id_comanda: idComanda, id_transacao: idTransacao });
+                recarregarDadosSilencioso();
+            }
+        });
+    }
+
+    document.getElementById('codigoInput').addEventListener('keypress', function(e) { if (e.key === 'Enter' && this.value.trim() !== "") { e.preventDefault(); processarEntradaCodigo(this.value.trim()); this.value = ""; } });
+    
+    function processarEntradaCodigo(termo) { 
+        termo = termo.toLowerCase(); let prod = bancoDeProdutos.find(p => String(p.ID_Produto).toLowerCase() === termo || String(p.Nome_Produto).toLowerCase() === termo); 
+        if (!prod) { let achados = bancoDeProdutos.filter(p => String(p.Nome_Produto).toLowerCase().includes(termo)); if (achados.length === 1) prod = achados[0]; else if (achados.length > 1) { alert("Múltiplos produtos encontrados. Digite o código exato."); return; } } 
+        if (prod) { 
+            let preco = parseFloat(prod.Preco_Venda.toString().replace(',','.')) || 0; let qtdMult = parseInt(document.getElementById('qtdInput').value) || 1;
+            let ext = carrinho.find(i => i.codigo === prod.ID_Produto); 
+            if(ext) { ext.qtd += qtdMult; } else { carrinho.push({ codigo: prod.ID_Produto, nome: prod.Nome_Produto, preco: preco, qtd: qtdMult }); } 
+            total += (preco * qtdMult); atualizarCarrinho(); document.getElementById('qtdInput').value = "1"; 
+        } else { alert("Produto não encontrado!"); } 
+    }
+    
+    function removerItemCarrinho(index) {
+        let confirmacao = confirm(`Deseja remover ${carrinho[index].nome} da venda atual?`);
+        if(confirmacao) { total -= (carrinho[index].preco * carrinho[index].qtd); carrinho.splice(index, 1); atualizarCarrinho(); }
+    }
+
+    function atualizarCarrinho() { 
+        document.getElementById('listaCarrinho').innerHTML = carrinho.map((i, index) => `<tr><td>${i.codigo}</td><td>${i.nome}</td><td>${i.qtd}</td><td>R$ ${i.preco.toFixed(2)}</td><td>R$ ${(i.preco * i.qtd).toFixed(2)}</td><td><button type="button" class="btn-vermelho" style="padding: 5px 10px; font-size:12px;" onclick="removerItemCarrinho(${index})">X</button></td></tr>`).join(''); 
+        document.getElementById('valorTotal').innerText = total.toFixed(2); document.getElementById('btnDescontoCaixa').disabled = carrinho.length === 0;
+    }
+
+    function alternarCamera(alvoId) { inputCameraAlvo = alvoId; let divCamera = document.getElementById('leitorCamera'); if (divCamera.style.display === "block") fecharCamera(); else abrirCamera(); }
+    function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { alert("Sem acesso à câmara."); divCamera.style.display = "none"; }); }
+    function fecharCamera() { if(leitorHtml5) leitorHtml5.stop().then(() => { document.getElementById('leitorCamera').style.display = "none"; }).catch(e=>e); }
+
+    function abrirModalComandas() { let lista = document.getElementById('listaComandasModal'); lista.innerHTML = bancoComandas.length === 0 ? "<p>Nenhuma comanda aberta.</p>" : bancoComandas.map(c => `<button type="button" class="btn-comanda-item" onclick="adicionarNaComandaExistente('${c.ID_Comanda}', '${c.Cliente}')">👤 ${c.Cliente} (Comanda #${c.ID_Comanda})</button>`).join(''); document.getElementById('modalComandas').style.display = 'flex'; }
+    function fecharModalComandas() { document.getElementById('modalComandas').style.display = 'none'; }
+    async function criarNovaComandaModal() { fecharModalComandas(); let nome = prompt("Nome do Cliente para a NOVA comanda?"); if(!nome) return; document.getElementById('status-bar').innerText = "Abrindo Comanda..."; await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda criada!"); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
+    async function adicionarNaComandaExistente(idComanda, nomeCli) { fecharModalComandas(); document.getElementById('status-bar').innerText = "Adicionando itens..."; await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho, operador: operadorAtual }); alert(`Itens adicionados!`); carrinho = []; total = 0; atualizarCarrinho(); recarregarDadosSilencioso(); }
+    
+    // --- NOVO VISUAL LADO A LADO DAS COMANDAS ---
+    function atualizarTabelaComandas() { 
+        let grid = document.getElementById('listaComandasGrid'); 
+        if(bancoComandas.length === 0) { grid.innerHTML = `<div style="text-align: center; width:100%; color:#64748b; padding: 20px;">Nenhuma comanda aberta no momento.</div>`; return; } 
+        grid.innerHTML = bancoComandas.map(c => { 
+            if(!c.ID_Comanda) return ''; 
+            let itensStr = "", itensObj = []; 
+            try { itensObj = JSON.parse(c.Itens_JSON); itensStr = itensObj.map(i => `• ${i.qtd}x ${i.nome}`).join('<br>'); } catch(e) {} 
+            
+            let pagamentosHtml = "";
+            if(c.Pagamentos_JSON) {
+                try {
+                    let pags = JSON.parse(c.Pagamentos_JSON);
+                    if(pags.length > 0) {
+                        let strPags = pags.map(p => {
+                            let btnExcluir = p.id_transacao ? `<button type="button" onclick="removerPagamentoParcial('${c.ID_Comanda}', '${p.id_transacao}')" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:14px; padding:0; margin-left:5px;" title="Remover Pagamento">❌</button>` : '';
+                            return `<b>${p.nome}</b> (R$ ${p.valor.toFixed(2)})${btnExcluir}`;
+                        }).join(' | ');
+                        pagamentosHtml = `<div style="font-size:12px; color:#16a34a; margin-top:10px; background:#dcfce7; padding:8px; border-radius:4px; border: 1px solid #bbf7d0;">✅ <b>Pgto Parcial:</b><br>${strPags}</div>`;
+                    }
+                } catch(e){}
+            }
+
+            let valor = parseFloat(c.Total.toString().replace(',','.')) || 0; 
+            
+            return `
+            <div class="comanda-card">
+                <div class="comanda-header">
+                    <h3>👤 ${c.Cliente}</h3>
+                    <span class="id-comanda">#${c.ID_Comanda}</span>
                 </div>
-                <div class="custom-time-box">
-                    <label style="color:#777;">Outro:</label>
-                    <input type="number" id="customInput" class="custom-input" placeholder="0" max="16" oninput="usarPersonalizado(this.value)">
-                    <span style="color:#777;">h</span>
+                <div class="comanda-body">
+                    <div class="itens">${itensStr}</div>
+                    ${pagamentosHtml}
                 </div>
-            </div>
-            
-            <div class="time-selector-container">
-                <p class="duration-title" style="color:white; font-weight:bold;">4. Forma de Pagamento:</p>
-                <select id="selectPagamento" class="time-select" onchange="atualizarPrecoDisplay()">
-                    <option value="dinheiro" selected>Espécie / Pix</option>
-                    <option value="cartao">Cartão (Crédito/Débito)</option>
-                </select>
-            </div>
-            
-            <div class="time-selector-container">
-                <p class="duration-title" style="color:white; font-weight:bold;">5. Selecione um horário disponível:</p>
-                
-                <div id="avisoPromocao" class="promo-alert">🏷️ Promoção Ativa Neste Dia!</div>
-                
-                <div id="loading" class="loading-msg">A carregar disponibilidade...</div>
-                <select id="selectHora" class="time-select" onchange="liberarBotao()">
-                    <option value="">Aguarde, a carregar agenda...</option>
-                </select>
-                <div id="priceDisplay" class="price-display" style="margin-top: 15px;">Valor: Selecione o horário</div>
-                <button id="btnAgendar" class="btn-agendar-final" onclick="prepararAgendamento()">✅ CONFIRMAR HORÁRIO</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalCadastro" class="modal-overlay">
-        <div class="modal-content">
-            <h3>🎾 Confirmar Reserva</h3>
-            <div class="form-group"><label>Nome e Sobrenome:</label><input type="text" id="cadNomeCompleto" disabled style="background:#333; color:#aaa; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #555; margin-top: 5px;"></div>
-            <div class="form-group" style="margin-top: 10px;"><label>Telefone (WhatsApp):</label><input type="tel" id="cadTelefone" disabled style="background:#333; color:#aaa; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #555; margin-top: 5px;"></div>
-            <div class="terms-box">
-                ⚠️ <strong>POLÍTICA DE CANCELAMENTO</strong><br><br>
-                • Cancelamentos realizados com antecedência mínima de 3 (três) horas não terão cobrança.<br><br>
-                • Menos de 3 horas: cobrança de 50% sobre o <strong>valor total das horas marcadas</strong>.<br><br>
-                • <strong>O utilizador que realiza o agendamento é o único responsável</strong> pelo pagamento integral da reserva.<br><br>
-                • O não comparecimento sem aviso prévio resultará em <strong>bloqueio para novos agendamentos</strong>.
-            </div>
-            <div class="checkbox-container"><input type="checkbox" id="checkTermos"><label for="checkTermos">Concordo com os termos e valores.</label></div>
-            <div class="modal-buttons"><button class="btn-cancel" onclick="fecharModal()">Cancelar</button><button class="btn-confirm" onclick="enviarAgendamento()">Ir para WhatsApp</button></div>
-        </div>
-    </div>
-
-    <div id="tela-modalidades" class="secao-conteudo"><h2 class="section-title">Nossas Modalidades</h2><div class="grid-cards"><div class="card"><h3>🎾 Beach Tennis</h3><p>Quadras oficiais com areia tratada.</p></div><div class="card"><h3>🏐 Vôlei de Praia</h3><p>Espaço perfeito para o set disputado.</p></div><div class="card"><h3>⚽ Futevôlei</h3><p>Treine com amigos.</p></div></div></div>
-    <div id="tela-arena" class="secao-conteudo"><h2 class="section-title">Conheça Nossa Arena</h2><div class="gallery-grid"><img src="fachada.jpeg" alt="Arena Vitale" class="gallery-item"><img src="quadra2.jpeg" alt="Quadra de Beach Tennis" class="gallery-item"><img src="geral2.jpeg" alt="Lounge" class="gallery-item"><img src="foto4.jpg" alt="Iluminação Noturna" class="gallery-item"></div></div>
-    <div id="tela-areia" class="secao-conteudo"><h2 class="section-title">Nossa Areia</h2><div style="max-width: 800px; margin: auto; background: var(--card-color); padding: 30px; border-radius: 15px; border: 1px solid #333; text-align: left; line-height: 1.6;"><img src="quadra2.jpeg" alt="Areia de Alta Qualidade" style="width: 100%; height: 250px; object-fit: cover; border-radius: 10px; margin-bottom: 25px; filter: brightness(0.8);"><p>A quadra de Beach Tennis utiliza areia de alta qualidade, cuidadosamente selecionada para garantir segurança, conforto e melhor desempenho desportivo.</p><br><p>Com granulometria ideal, essa areia proporciona o equilíbrio perfeito entre estabilidade do solo e absorção de impacto, favorecendo movimentos rápidos, precisos e seguros.</p><br><p style="text-align: center; font-weight: bold; color: var(--primary); font-size: 1.2rem; margin-top: 10px;">Aproveite o jogo com mais qualidade! 🎾</p></div></div>
-    <div id="tela-local" class="secao-conteudo"><h2 class="section-title">Onde Estamos</h2><p style="font-size: 1.1rem; margin-bottom: 20px;">Av. Cel Antônio Cordeiro, N°2261<br>Tabuleiro do Catavento, Russas - Ceará</p><div class="map-responsive"><iframe src="https://maps.google.com/maps?q=Arena%20Vitale%20Russas%20Ceara&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="450" style="border:0; border-radius: 15px;" allowfullscreen="" loading="lazy"></iframe></div><br><br><a href="https://www.google.com/maps/search/?api=1&query=Arena+Vitale+Russas" target="_blank" class="map-btn">🗺️ Abrir no Google Maps</a></div>
-    <div id="tela-placar" class="secao-conteudo"><h2 class="section-title">Marcar Placar ⚡</h2><div class="scoreboard-container"><div class="mode-switch"><button class="btn-duration active" onclick="mudarModo('beach')" id="btnBeach">Beach Tennis</button><button class="btn-duration" onclick="mudarModo('volei')" id="btnVolei">Vôlei / Fute</button></div><div class="score-box"><div class="team-score"><input type="text" value="Dupla A"><div class="points-display" id="scoreA" onclick="addPonto('A')">0</div><button class="btn-point" onclick="addPonto('A')">+</button><div class="games-display">Games: <span class="games-count" id="gameA">0</span></div></div><div style="font-size: 1.5rem; font-weight: bold; color: #555;">X</div><div class="team-score"><input type="text" value="Dupla B"><div class="points-display" id="scoreB" onclick="addPonto('B')">0</div><button class="btn-point" onclick="addPonto('B')">+</button><div class="games-display">Games: <span class="games-count" id="gameB">0</span></div></div></div><button class="reset-btn" onclick="zerarPlacar()">🔄 Zerar Placar</button></div><p style="margin-top:10px; color:#777; font-size:0.8rem;">Toque no número para adicionar ponto.</p></div>
-    <div id="tela-parceiros" class="secao-conteudo"><h2 class="section-title">Nossos Parceiros</h2><div class="partners-container"><a href="https://www.instagram.com/chicashoes_/" target="_blank" class="partner-link"><img src="quadra-chicashoes.jpg" alt="Chicashoes" class="partner-logo"></a><a href="https://www.instagram.com/padariadohelder/" target="_blank" class="partner-link"><img src="quadra-panificadora.jpg" alt="Panificadora" class="partner-logo"></a><a href="https://www.instagram.com/vitale_blend/" target="_blank" class="partner-link"><img src="vitale.jpg" alt="Arena Vitale" class="partner-logo"></a><a href="https://instagram.com/seuparceiroaqui" target="_blank" class="partner-link"><img src="foto4.jpg" alt="Parceiro 4" class="partner-logo"></a></div></div>
-    <div id="tela-faq" class="secao-conteudo section-dark"><h2 class="section-title">Dúvidas Frequentes</h2><div style="max-width: 600px; margin: auto; text-align: left;"><details class="faq-item"><summary>Preciso de levar a minha própria raquete?</summary><p>Não necessariamente! A Arena Vitale disponibiliza raquetes <strong>gratuitamente</strong>.</p></details><details class="faq-item"><summary>Qual a antecedência para cancelar?</summary><p>Até <strong>3 horas</strong> antes sem custo.</p></details><details class="faq-item"><summary>Formas de pagamento?</summary><p>Espécie, Pix e Cartão.</p></details><details class="faq-item"><summary>Funciona na chuva?</summary><p>Sim! Arena coberta.</p></details><details class="faq-item"><summary>Diferença de valor?</summary><p>Conforme Lei nº 13.455/2017 e horários promocionais.</p></details></div></div>
-
-    <footer id="footerPrincipal"><p>Desenvolvido por Edilson Renovato</p><p>© 2026 Arena Vitale. Todos os direitos reservados.</p></footer>
+                <div class="comanda-valor">R$ ${valor.toFixed(2)}</div>
+                <div class="comanda-actions">
+                    <button type="button" class="btn-azul" onclick="editarComanda('${c.ID_Comanda}')">✏️ Editar</button>
+                    <button type="button" class="btn-amarelo" onclick="iniciarPagamentoParcial('${c.ID_Comanda}', '${c.Cliente}', ${valor})">💳 Parcial</button>
+                    <button type="button" style="background-color:#8b5cf6; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="verificarPermissaoGerente('Aplicar Desconto', () => aplicarDescontoComanda('${c.ID_Comanda}', '${c.Cliente}', ${valor}))">-% Desc</button>
+                    <button type="button" class="btn-vermelho" onclick="verificarPermissaoGerente('Zerar Comanda', () => excluirComanda('${c.ID_Comanda}'))">🗑️ Cancelar</button>
+                    <button type="button" class="btn-verde" style="grid-column: span 2;" onclick="iniciarCobrancaComanda('${c.ID_Comanda}', '${c.Cliente}', '${encodeURIComponent(JSON.stringify(itensObj))}', ${valor})">💰 Cobrar Todo</button>
+                </div>
+            </div>`; 
+        }).join(''); 
+    }
     
-    <a href="https://wa.me/5588988229008" class="wa-float" target="_blank" title="Falar no WhatsApp"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"></a>
-    <a href="https://www.instagram.com/arenavitale/" class="ig-float" target="_blank" title="Siga no Instagram"><i class="fab fa-instagram"></i></a>
+    function iniciarPagamentoParcial(idComanda, cliente, totalVal) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        let promptVal = prompt(`A comanda de ${cliente} tem saldo de R$ ${totalVal.toFixed(2)}.\n\nQuanto ele vai adiantar (pagar agora)?`, "0,00");
+        if(promptVal === null) return;
+        let valorA_Pagar = parseFloat(promptVal.replace(',','.'));
+        if(!valorA_Pagar || isNaN(valorA_Pagar) || valorA_Pagar <= 0) return;
+        if(valorA_Pagar >= totalVal) return alert("O valor digitado liquida ou passa do total da comanda. Para isso, use o botão verde 'Cobrar Todo'.");
 
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx4Dj4kUKuY9Ji7FP-q5dMZLYESHW1XDW7jTCvnM9xl6RnYi8Z6aISv31ytR3klMCCa/exec"; 
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTlYbHI9mgBo8JbEzXjCddY-w5LJqZdFQDiKy1XkJS5m4mkRPoj0CCgTN5WldIRH-ciFxev14TRijP/pub?output=csv";
-        const whatsappNumber = "5588988229008";
+        abrirModalPagamento(valorA_Pagar, { tipo: 'comanda_parcial', id_comanda: idComanda, cliente: cliente, valorTotal: valorA_Pagar });
+    }
 
-        let usuarioLogado = null; let promocaoAtual = null; let usouPromoFlag = false;
-        let agendaStatusGeral = "SIM"; let agendaDataInicio = ""; let agendaDataFim = ""; 
-
-        fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ acao: "registrar_acesso" }) }).catch(e => console.log(e));
-
-        window.onload = function() {
-            if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(function(registrations) { for (let registration of registrations) { registration.unregister(); } }); }
-
-            fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ acao: "buscar_promocao" }) })
-            .then(r => r.json()).then(data => { 
-                if(data.sucesso) {
-                    if (data.promo && data.promo.inicio) promocaoAtual = data.promo; 
-                    agendaStatusGeral = data.agendaLiberada ? "SIM" : "NAO"; 
-                    agendaDataInicio = data.agendaInicio || "";
-                    agendaDataFim = data.agendaFim || "";
-                }
-            });
-
-            const savedUser = localStorage.getItem('usuarioArenaVitale');
-            if(savedUser) {
-                usuarioLogado = JSON.parse(savedUser);
-                document.getElementById('tela-auth').style.display = 'none'; document.querySelector('.navbar').style.display = 'block'; document.getElementById('relogioFlutuante').style.display = 'block'; document.querySelector('.btn-refresh-float').style.display = 'flex'; document.querySelector('.wa-float').style.display = 'flex'; document.querySelector('.ig-float').style.display = 'flex'; document.querySelector('.chat-float-btn').style.display = 'flex'; document.querySelector('footer').style.display = 'block';
-                atualizarRelogio(); document.getElementById('dateDisplay').innerText = formatarDataHeader(dataVisualizada).texto;
-                carregarDadosDoDia(); carregarClima(); buscarPontosNoServidor(); 
-                const telaSalvaSessao = sessionStorage.getItem('ultimaTelaArena');
-                if (telaSalvaSessao && document.getElementById(telaSalvaSessao)) navegarPara(telaSalvaSessao); else navegarPara('tela-inicial');
-            } else { navegarPara('tela-inicial'); }
-        }
+    function iniciarCobrancaComanda(idComanda, cliente, itensJsonStr, totalVal) {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        let numPessoas = parseInt(prompt("Dividir a conta para quantas pessoas? (Deixe 1 para não dividir)", "1")) || 1;
+        let msgDescricaoExtra = numPessoas > 1 ? ` (Dividido para ${numPessoas})` : "";
+        if(numPessoas > 1) alert(`🎾 DIVIDIDO PARA ${numPessoas} PESSOAS\n💰 CADA UM PAGA: R$ ${(totalVal / numPessoas).toFixed(2)}\n\nAvance para registar as formas de pagamento até liquidar a conta.`);
         
-        async function carregarClima() {
-            try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-4.9383&longitude=-37.9761&current_weather=true'); const data = await res.json();
-                document.getElementById('clima-temp').innerText = Math.round(data.current_weather.temperature) + '°C';
-                if(!data.current_weather.is_day) { document.getElementById('weather-icon').className = 'fas fa-moon'; document.getElementById('weather-icon').style.color = '#fff'; }
-            } catch (error) { document.getElementById('clima-temp').innerText = "28°C"; }
-        }
+        abrirModalPagamento(totalVal, { tipo: 'comanda', id_comanda: idComanda, cliente: cliente, itensJsonStr: itensJsonStr, totalSalvo: totalVal, valorTotal: totalVal, msgExtra: msgDescricaoExtra });
+    }
 
-        function buscarPontosNoServidor() {
-            if(!usuarioLogado) return;
-            fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ acao: "buscar_pontos", telefone: usuarioLogado.phone }) })
-            .then(res => res.json()).then(data => { if(data.sucesso) { localStorage.setItem('pontosVitale', data.pontos); renderizarFidelidade(); } }).catch(e => console.log(e));
-        }
+    function editarComanda(idComanda) {
+        let comanda = bancoComandas.find(c => String(c.ID_Comanda) === String(idComanda)); if(!comanda) return alert("Comanda não encontrada!");
+        idComandaEmEdicao = idComanda; try { carrinho = JSON.parse(comanda.Itens_JSON); } catch(e) { carrinho = []; }
+        total = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
+        document.getElementById('bannerEdicaoComanda').style.display = 'flex'; document.getElementById('nomeEdicaoComanda').innerText = comanda.Cliente;
+        let selectCli = document.getElementById('selectClienteVenda'); if(!Array.from(selectCli.options).some(opt => opt.value === comanda.Cliente)) { selectCli.add(new Option(comanda.Cliente, comanda.Cliente)); }
+        selectCli.value = comanda.Cliente; document.getElementById('btnSalvarComanda').innerText = "Gravar Alterações (F3)"; document.getElementById('btnSalvarComanda').classList.replace("btn-laranja", "btn-amarelo"); document.getElementById('btnSalvarComanda').disabled = false; document.getElementById('btnFinalizarVenda').style.display = 'none';
+        atualizarCarrinho(); mudarTela('tela-caixa');
+    }
 
-        function renderizarFidelidade() {
-            const grid = document.getElementById('stampGrid'); if(!grid) return; grid.innerHTML = '';
-            let pontosAtuais = parseInt(localStorage.getItem('pontosVitale')) || 0;
-            for(let i=1; i<=10; i++) {
-                const box = document.createElement('div'); if(i<=pontosAtuais) { box.className = 'stamp-box stamped'; box.innerHTML = '🎾'; } else { box.className = 'stamp-box'; box.innerHTML = i; } grid.appendChild(box);
+    function cancelarEdicaoComanda() {
+        idComandaEmEdicao = null; carrinho = []; total = 0; document.getElementById('bannerEdicaoComanda').style.display = 'none';
+        document.getElementById('btnSalvarComanda').innerText = "Salvar na Comanda (F3)"; document.getElementById('btnSalvarComanda').classList.replace("btn-amarelo", "btn-laranja"); document.getElementById('btnFinalizarVenda').style.display = 'block'; document.getElementById('selectClienteVenda').value = "Consumidor Final"; atualizarCarrinho();
+    }
+
+    function acaoBotaoComanda() { if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!"); if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); } }
+    async function atualizarComandaExistente() { let clienteSel = document.getElementById('selectClienteVenda').value; document.getElementById('status-bar').innerText = "A Atualizar Comanda..."; await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda atualizada!"); cancelarEdicaoComanda(); recarregarDadosSilencioso(); }
+    
+    async function excluirComanda(idComanda) { 
+        if(confirm("ATENÇÃO: Deseja excluir a comanda e devolver TODOS os itens ao estoque sem cobrar?")) { 
+            await reqPOST({ acao: "excluir_comanda", id_comanda: idComanda, operador: operadorAtual }); 
+            recarregarDadosSilencioso(); 
+        } 
+    }
+
+    // --- ESTOQUE E HISTÓRICO ---
+    function abrirModalHistorico() {
+        let tbody = document.getElementById('listaHistoricoModal');
+        tbody.innerHTML = bancoHistorico.slice().reverse().map(h => {
+            if(!h.Data_Hora) return '';
+            let corQtd = String(h.Qtd).includes('-') ? 'color:#dc2626;' : 'color:#16a34a;';
+            return `<tr><td>${formatarDataExibicao(h.Data_Hora)}</td><td>${h.Operador}</td><td>${h.Produto}</td><td style="font-weight:bold; ${corQtd}">${h.Qtd}</td><td>${h.Motivo}</td></tr>`;
+        }).join('');
+        document.getElementById('modalHistorico').style.display = 'flex';
+    }
+    function fecharModalHistorico() { document.getElementById('modalHistorico').style.display = 'none'; }
+
+    function adicionarEntradaManual(idProduto, nomeProduto) {
+        let qtdStr = prompt(`Dar entrada no estoque: ${nomeProduto}\n\nQuantas unidades chegaram?`);
+        if(!qtdStr) return; let qtd = parseInt(qtdStr); if(isNaN(qtd) || qtd <= 0) return alert("Quantidade inválida!");
+        document.getElementById('status-bar').innerText = "Registrando entrada...";
+        reqPOST({ acao: "entrada_estoque", id_produto: idProduto, qtd: qtd, operador: operadorAtual }).then(() => { alert(`Entrada de ${qtd} unidades registrada!`); recarregarDadosSilencioso(); });
+    }
+
+    function atualizarTabelaEstoque() { document.getElementById('listaGestao').innerHTML = bancoDeProdutos.map(p => { if(!p.ID_Produto) return ''; return `<tr><td>${p.ID_Produto}</td><td>${p.Nome_Produto}</td><td>R$ ${p.Preco_Custo}</td><td>R$ ${p.Preco_Venda}</td><td style="font-weight:bold;">${p.Quantidade}</td><td>${p.Estoque_Minimo || 0}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button type="button" class="btn-verde" onclick="adicionarEntradaManual('${p.ID_Produto}', '${p.Nome_Produto}')">+ Entrada</button><button type="button" class="btn-amarelo" onclick="prepararEdicaoEstoque('${p.ID_Produto}')">Editar</button><button type="button" class="btn-vermelho" onclick="removerProduto('${p.ID_Produto}')">Apagar</button></td></tr>`; }).join(''); }
+    function prepararEdicaoEstoque(id) { let p = bancoDeProdutos.find(x => String(x.ID_Produto) === String(id)); if(!p) return; document.getElementById('novoId').value = p.ID_Produto; document.getElementById('novoNome').value = p.Nome_Produto; document.getElementById('novoCusto').value = p.Preco_Custo; document.getElementById('novoPreco').value = p.Preco_Venda; document.getElementById('novaQtd').value = p.Quantidade; document.getElementById('novoMinimo').value = p.Estoque_Minimo || 0; idEditandoEstoque = id; document.getElementById('btnAdicionarEstoque').innerText = "Atualizar Produto"; document.getElementById('btnAdicionarEstoque').className = "btn-amarelo"; window.scrollTo(0, 0); }
+    
+    async function salvarProdutoEstoque() { 
+        let id = document.getElementById('novoId').value, nome = document.getElementById('novoNome').value; 
+        let custo = document.getElementById('novoCusto').value.replace(',','.'), preco = document.getElementById('novoPreco').value.replace(',','.'), qtd = document.getElementById('novaQtd').value, min = document.getElementById('novoMinimo').value || 0; 
+        if(!id || !nome || !preco || !qtd) return alert("Preencha Código, Nome, Venda e Qtd!"); 
+        let acaoReq = idEditandoEstoque ? "editar_produto" : "adicionar"; document.getElementById('btnAdicionarEstoque').innerText = "Salvando..."; 
+        await reqPOST({ acao: acaoReq, id_antigo: idEditandoEstoque, id: id, nome: nome, custo: custo, preco: preco, quantidade: qtd, estoque_minimo: min }); 
+        document.getElementById('novoId').value = ""; document.getElementById('novoNome').value = ""; document.getElementById('novoCusto').value = ""; document.getElementById('novoPreco').value = ""; document.getElementById('novaQtd').value = ""; document.getElementById('novoMinimo').value = ""; idEditandoEstoque = null; document.getElementById('btnAdicionarEstoque').innerText = "Salvar Produto"; document.getElementById('btnAdicionarEstoque').className = "btn-verde"; recarregarDadosSilencioso(); 
+    }
+    async function removerProduto(id) { if(confirm("Apagar produto?")) { await reqPOST({ acao: "remover", id: id }); recarregarDadosSilencioso(); } }
+
+    function mudarFormDespesa() { let t = document.getElementById('tipoMovimento').value; if(t === "Saida") document.getElementById('boxCategoriaDespesa').style.display = "block"; else document.getElementById('boxCategoriaDespesa').style.display = "none"; }
+    
+    function atualizarDashboardECaixa() {
+        let sTurno = 0, vHoje = 0, hj = new Date().toLocaleDateString('pt-BR'); 
+        bancoCaixaGlobal.forEach(m => { 
+            if(!m.ID_Transacao) return; let v = parseFloat(m.Valor.toString().replace(',','.'))||0; 
+            if(turnoAtual && m.ID_Transacao >= turnoAtual.ID_Turno) { if(m.Tipo==="Entrada") sTurno+=v; if(m.Tipo==="Saida") sTurno-=v; } 
+            if(m.Data_Hora && m.Data_Hora.includes(hj) && m.Tipo==="Entrada" && (m.Descricao.includes("Venda") || m.Descricao.includes("Pgto Comanda"))) { vHoje+=v; } 
+        });
+        document.getElementById('dash-saldo').innerText = "R$ " + sTurno.toFixed(2); document.getElementById('dash-vendas').innerText = "R$ " + vHoje.toFixed(2); 
+
+        let itensBaixos = bancoDeProdutos.filter(p => p.ID_Produto && p.ID_Produto !== 'SERVICO' && parseInt(p.Quantidade) <= parseInt(p.Estoque_Minimo || 0));
+        let alertaBox = document.getElementById('alerta-estoque');
+        if(itensBaixos.length > 0) { alertaBox.style.display = 'block'; alertaBox.innerHTML = `<h3 style="color:#b91c1c; margin-top:0;">⚠️ Alerta de Reposição de Estoque</h3>` + itensBaixos.map(i => `<div>- <b>${i.Nome_Produto}</b> (Restam: ${i.Quantidade})</div>`).join(''); } else { alertaBox.style.display = 'none'; }
+        filtrarLivroCaixa();
+    }
+
+    function filtrarLivroCaixa() {
+        let dIni = document.getElementById('filtroDataInicio').value ? new Date(document.getElementById('filtroDataInicio').value + "T00:00:00") : null; 
+        let dFim = document.getElementById('filtroDataFim').value ? new Date(document.getElementById('filtroDataFim').value + "T23:59:59") : null;
+        let htmlTabela = ""; let somaEntradas = 0; let somaSaidas = 0;
+
+        bancoCaixaGlobal.slice().reverse().forEach(m => {
+            if(!m.ID_Transacao) return;
+            let recordDate = parseDataBR(m.Data_Hora);
+            if (dIni && recordDate < dIni) return; if (dFim && recordDate > dFim) return;
+
+            let v = parseFloat(m.Valor.toString().replace(',','.'))||0; 
+            let hData = formatarDataExibicao(m.Data_Hora);
+            let c = m.Tipo==='Entrada' ? 'val-entrada' : 'val-saida'; 
+
+            if(m.Tipo === 'Entrada') somaEntradas += v; if(m.Tipo === 'Saida') somaSaidas += v;
+            htmlTabela += `<tr><td>${hData}</td><td class="${c}">${m.Tipo}</td><td>${m.Descricao}</td><td class="${c}">R$ ${v.toFixed(2)}</td><td><button type="button" class="btn-vermelho" style="padding: 5px 10px; font-size:12px;" onclick="excluirItemCaixa('${m.ID_Transacao}')">X Cancelar</button></td></tr>`; 
+        });
+
+        document.getElementById('listaCaixa').innerHTML = htmlTabela; document.getElementById('resumo-filtro-entradas').innerText = "R$ " + somaEntradas.toFixed(2); document.getElementById('resumo-filtro-saidas').innerText = "R$ " + somaSaidas.toFixed(2); document.getElementById('resumo-filtro-saldo').innerText = "R$ " + (somaEntradas - somaSaidas).toFixed(2);
+    }
+
+    function limparFiltroCaixa() { document.getElementById('filtroDataInicio').value = ""; document.getElementById('filtroDataFim').value = ""; filtrarLivroCaixa(); }
+    
+    function excluirItemCaixa(idTrans) { 
+        verificarPermissaoGerente('Cancelar Movimentação Caixa', async () => {
+            if(confirm("Apagar este registro do Caixa?")) { 
+                await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans, operador: operadorAtual }); 
+                recarregarDadosSilencioso(); 
             }
-            if(pontosAtuais>=10) document.getElementById('btnResgatar').style.display = 'block'; else if(document.getElementById('btnResgatar')) document.getElementById('btnResgatar').style.display = 'none';
-        }
+        });
+    }
+    
+    async function registrarCaixa() { 
+        let t = document.getElementById('tipoMovimento').value, d = document.getElementById('descMovimento').value;
+        let v = document.getElementById('valorMovimento').value.replace(',','.'); 
+        if(t === "Saida") d = `[${document.getElementById('categoriaDespesa').value}] ` + d; 
+        if(d&&v) { await reqPOST({ acao: "caixa", tipo: t, descricao: d, valor: v, operador: operadorAtual }); document.getElementById('descMovimento').value=""; document.getElementById('valorMovimento').value=""; recarregarDadosSilencioso(); } 
+    }
+    
+    async function acaoCaixa() { 
+        if(!turnoAtual) { 
+            let pVal = prompt("Troco inicial na gaveta (Ex: 50,00):", "0,00"); 
+            if(pVal!==null) { let f = parseFloat(pVal.replace(',','.')); await reqPOST({ acao: "abrir_caixa", fundo: f||0, operador: operadorAtual }); recarregarDadosSilencioso(); } 
+        } else { 
+            let esp = 0, totalEntradas = 0, totalSaidas = 0; 
+            bancoCaixaGlobal.forEach(m => { 
+                if(m.ID_Transacao >= turnoAtual.ID_Turno) { 
+                    let v = parseFloat(m.Valor.toString().replace(',','.'))||0; 
+                    if(m.Tipo==="Entrada") { esp+=v; totalEntradas+=v; } if(m.Tipo==="Saida") { esp-=v; totalSaidas+=v; }
+                } 
+            }); 
+            let apStr = prompt("Valor na gaveta:", "0,00"); 
+            if(apStr!==null) { 
+                let ap = parseFloat(apStr.replace(',','.'))||0; let dif = ap - esp; 
+                if(confirm(`Esperado: R$ ${esp.toFixed(2)}\nContado: R$ ${ap.toFixed(2)}\nConfirmar fechamento?`)) { 
+                    await reqPOST({ acao: "fechar_caixa", valor_apurado: ap, diferenca: dif, operador: operadorAtual }); recarregarDadosSilencioso(); 
+                    if(confirm("Enviar resumo do Fechamento de Caixa para o WhatsApp do grupo?")) { let textoFechamento = `*📊 FECHAMENTO DE CAIXA*%0A*Operador:* ${operadorAtual}%0A*Data:* ${new Date().toLocaleString('pt-BR')}%0A----------------%0A*Total Entradas:* R$ ${totalEntradas.toFixed(2)}%0A*Total Saídas (Despesas):* R$ ${totalSaidas.toFixed(2)}%0A----------------%0A*Esperado (Sistema):* R$ ${esp.toFixed(2)}%0A*Apurado (Gaveta):* R$ ${ap.toFixed(2)}%0A*Diferença:* R$ ${dif.toFixed(2)}%0A----------------%0A*Turno Encerrado.*`; window.open(`https://wa.me/?text=${textoFechamento}`, '_blank'); }
+                } 
+            } 
+        } 
+    }
+    
+    function atualizarInterfaceTurno() { let s = turnoAtual ? ["#10b981", "ABERTO", "Fechar Caixa", "btn-vermelho", "none", false] : ["#ef4444", "FECHADO", "Abrir Caixa", "btn-verde", "block", true]; document.getElementById('card-status-caixa').style.borderColor = s[0]; document.getElementById('texto-status-caixa').style.color = s[0]; document.getElementById('texto-status-caixa').innerText = s[1]; document.getElementById('btnAcaoCaixa').innerText = s[2]; document.getElementById('btnAcaoCaixa').className = s[3]; document.getElementById('alerta-caixa').style.display = s[4]; ['codigoInput','btnCamera','btnSalvarComanda','btnFinalizarVenda','btnRegistrarLivro'].forEach(id => document.getElementById(id).disabled = s[5]); }
 
-        function resgatarPremio() {
-            let senhaAdmin = prompt("⚠️ APENAS PARA FUNCIONÁRIOS DA RECEPÇÃO ⚠️\n\nDigite a senha para liberar 1 Hora Grátis:");
-            if (senhaAdmin === "1234") { 
-                const btn = document.getElementById('btnResgatar'); btn.innerText = "A processar..."; btn.disabled = true;
-                fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ acao: "resgatar_pontos", telefone: usuarioLogado.phone }) })
-                .then(res => res.json()).then(data => {
-                    btn.innerText = "🎁 Resgatar 1 Hora Grátis"; btn.disabled = false;
-                    if(data.sucesso) { alert("🎉 Resgate confirmado na Base de Dados! 1 Hora Grátis liberada para o cliente."); buscarPontosNoServidor(); } else { alert("❌ Ocorreu um erro ao resgatar ou os pontos são insuficientes."); }
-                }).catch(e => { btn.innerText = "🎁 Resgatar 1 Hora Grátis"; btn.disabled = false; alert("Erro de ligação com a Base de Dados."); });
-            } else if (senhaAdmin !== null && senhaAdmin !== "") { alert("❌ Senha incorreta! O resgate não foi realizado."); }
-        }
+    function atualizarListaUsuarios() { let tbody = document.getElementById('listaUsuariosGestao'); tbody.innerHTML = ""; bancoUsuarios.forEach(u => { if(!u.Login) return; let btnApagar = String(u.Login).toLowerCase() === 'edilson' ? `<span style="color:#94a3b8; font-size:12px;">Admin Fixo</span>` : `<button type="button" class="btn-vermelho" onclick="removerUsuarioSistema('${u.Login}')">Excluir</button>`; tbody.innerHTML += `<tr><td style="font-weight:bold;">${u.Login}</td><td>${u.Cargo || 'Operador'}</td><td>${btnApagar}</td></tr>`; }); }
+    async function adicionarUsuarioSistema() { let l = document.getElementById('novoUserLogin').value.trim(); let s = document.getElementById('novoUserSenha').value.trim(); let c = document.getElementById('novoUserCargo').value; if(!l || !s) return alert("Preencha Login e Senha!"); if(bancoUsuarios.find(u => String(u.Login).toLowerCase() === l.toLowerCase())) return alert("Login já existe!"); document.getElementById('btnAdicionarUser').innerText = "Gravando..."; await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; document.getElementById('btnAdicionarUser').innerText = "Criar Operador"; recarregarDadosSilencioso(); }
+    async function removerUsuarioSistema(login) { if(confirm(`Remover acesso de ${login}?`)) { await reqPOST({ acao: "remover_usuario", login: login }); recarregarDadosSilencioso(); } }
 
-        function toggleChat() { const cw = document.getElementById('chatbotWindow'); cw.style.display = cw.style.display === 'flex' ? 'none' : 'flex'; }
+    async function adicionarCliente() { let id = document.getElementById('novoIdCli').value, nome = document.getElementById('novoNomeCli').value, tel = document.getElementById('novoTelCli').value; if(!id || !nome) return alert("Preencha ID e Nome!"); await reqPOST({ acao: "adicionar_cliente", id: id, nome: nome, telefone: tel }); recarregarDadosSilencioso(); }
+    async function removerCliente(id) { if(confirm("Apagar cliente?")) { await reqPOST({ acao: "remover_cliente", id: id }); recarregarDadosSilencioso(); } }
+    function atualizarListasClientes() { let tbody = document.getElementById('listaClientesGestao'); let selectVenda = document.getElementById('selectClienteVenda'); tbody.innerHTML = ""; selectVenda.innerHTML = '<option value="Consumidor Final">Consumidor Final</option>'; bancoClientes.forEach(c => { if(!c.ID_Cliente) return; tbody.innerHTML += `<tr><td>${c.ID_Cliente}</td><td>${c.Nome}</td><td>${c.Telefone}</td><td><button type="button" class="btn-vermelho" onclick="removerCliente('${c.ID_Cliente}')">Apagar</button></td></tr>`; selectVenda.innerHTML += `<option value="${c.Nome}">${c.Nome}</option>`; }); }
 
-        async function enviarMensagemChat() {
-            const inputField = document.getElementById('chatInput'); const userMessage = inputField.value.trim(); if (!userMessage) return;
-            adicionarMensagemUI('user', userMessage); inputField.value = ''; document.getElementById('typingIndicator').style.display = 'block';
-            try {
-                const response = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ acao: "chat_ia", mensagem: userMessage }) });
-                const data = await response.json(); document.getElementById('typingIndicator').style.display = 'none';
-                if (data.sucesso && data.resposta) adicionarMensagemUI('bot', data.resposta); else adicionarMensagemUI('bot', "Poxa, deu-me um branco agora. Pode repetir a pergunta? 😕");
-            } catch (error) { document.getElementById('typingIndicator').style.display = 'none'; adicionarMensagemUI('bot', "Estou sem internet para pensar agora. Por favor, chame-nos no WhatsApp!"); }
-        }
+    function enviarWhatsApp(clienteNome, itensCart, valorT) { let resumo = itensCart.map(i => `${i.qtd}x ${i.nome}`).join('%0A'); let texto = `*ARENA VITALE*%0AOlá ${clienteNome}, aqui está o resumo da sua compra:%0A%0A${resumo}%0A%0A*Total: R$ ${valorT.toFixed(2)}*%0A%0AObrigado!`; window.open(`https://wa.me/?text=${texto}`, '_blank'); }
+    function imprimirCupao(clienteNome, itensCart, valorT) { let cupao = document.getElementById('cupao-impressao'); let data = new Date().toLocaleString('pt-BR'); let itensHtml = itensCart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:2px;"><span>${i.qtd}x ${i.nome}</span><span>R$ ${(i.preco * i.qtd).toFixed(2)}</span></div>`).join(''); cupao.innerHTML = `<div style="text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 5px;">ARENA VITALE</div><div style="text-align: center; font-size: 10px; margin-bottom: 10px;">Russas - CE</div><div style="text-align: center; font-size: 12px; margin-bottom: 10px;">Recibo Não Fiscal</div><div>Data: ${data}</div><div>Operador: ${operadorAtual}</div><div>Cliente: ${clienteNome}</div><hr style="border-top: 1px dashed #000; margin: 5px 0;">${itensHtml}<hr style="border-top: 1px dashed #000; margin: 5px 0;"><div style="text-align: right; font-weight: bold; font-size: 14px;">TOTAL: R$ ${valorT.toFixed(2)}</div><div style="text-align: center; margin-top: 15px; font-size: 10px;">Obrigado e volte sempre!</div>`; window.print(); }
 
-        function adicionarMensagemUI(tipo, texto) {
-            const chatMessages = document.getElementById('chatMessages'); const msgDiv = document.createElement('div');
-            msgDiv.classList.add(tipo === 'user' ? 'msg-user' : 'msg-bot'); msgDiv.innerHTML = texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>'); 
-            chatMessages.appendChild(msgDiv); chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
+    document.addEventListener('keydown', e => { if(turnoAtual && document.getElementById('tela-login').style.display === 'none') { if(e.key==='F2'){e.preventDefault();iniciarVendaDireta();} if(e.key==='F3'){e.preventDefault();acaoBotaoComanda();} } });
+</script>
 
-        function mostrarCadastro() { document.getElementById('box-login').style.display='none'; document.getElementById('box-cadastro').style.display='block'; }
-        function mostrarLogin() { document.getElementById('box-cadastro').style.display='none'; document.getElementById('box-recuperar').style.display='none'; document.getElementById('box-login').style.display='block'; }
-        function mostrarRecuperar() { document.getElementById('box-login').style.display='none'; document.getElementById('box-recuperar').style.display='block'; }
-
-        function fazerLogin() {
-            const phone = document.getElementById('loginPhone').value; const pass = document.getElementById('loginPass').value; const btn = document.getElementById('btnLogin');
-            if(!phone || !pass) return alert("Preencha todos os campos."); btn.innerText = "Verificando..."; btn.disabled = true;
-            fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ acao: "login", telefone: phone, senha: pass }) })
-            .then(res => res.text()).then(text => { btn.innerText = "ENTRAR"; btn.disabled = false; try { const data = JSON.parse(text); if (data.erro) alert("❌ " + data.erro); else if (data.sucesso) { usuarioLogado = { nome: data.nome, phone: data.telefone }; localStorage.setItem('usuarioArenaVitale', JSON.stringify(usuarioLogado)); location.reload(); } } catch(e) { alert("⚠️ Erro no servidor."); } }).catch(e => { btn.innerText = "ENTRAR"; btn.disabled = false; alert("Erro de conexão."); });
-        }
-
-        function realizarCadastro() {
-            const nome = document.getElementById('cadNome').value; const phone = document.getElementById('cadPhone').value; const pass = document.getElementById('cadPass').value; const btn = document.getElementById('btnCadastrar');
-            if(!nome || !phone || !pass) return alert("Preencha todos os campos!"); let cleanPhone = phone.replace(/\D/g, ""); if (cleanPhone.length !== 11) return alert("⚠️ O telefone deve ter exatamente 11 dígitos.");
-            btn.innerText = "Cadastrando..."; btn.disabled = true;
-            fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ acao: "salvar_cliente", nome: nome, telefone: cleanPhone, senha: pass }) })
-            .then(res => res.text()).then(text => { btn.innerText = "CADASTRAR"; btn.disabled = false; try { const data = JSON.parse(text); if (data.sucesso) { alert("✅ Cadastro realizado!"); mostrarLogin(); } else alert("Erro ao salvar: " + data.erro); } catch(e) { alert("⚠️ Erro no servidor."); } }).catch(e => { btn.innerText = "CADASTRAR"; btn.disabled = false; alert("Erro de conexão."); });
-        }
-
-        function navegarPara(idTela) {
-            document.querySelectorAll('#tela-inicial, .secao-conteudo').forEach(tela => tela.style.display = 'none');
-            const telaAlvo = document.getElementById(idTela); if (idTela === 'tela-inicial') telaAlvo.style.display = 'flex'; else telaAlvo.style.display = 'block';
-            document.getElementById('navLinks').classList.remove('active'); window.scrollTo(0, 0); sessionStorage.setItem('ultimaTelaArena', idTela);
-            if(idTela === 'tela-agendamento') { document.getElementById('dateDisplay').innerText = formatarDataHeader(dataVisualizada).texto; carregarDadosDoDia(); }
-            if(idTela === 'tela-fidelidade') buscarPontosNoServidor(); 
-        }
-
-        function atualizarPagina() { const btn = document.querySelector('.btn-refresh-float'); btn.style.transform = "rotate(360deg)"; setTimeout(() => location.reload(), 300); }
-
-        let duracaoSelecionada = 1; let quadraSelecionada = 1; let nomeQuadra = "Quadra Chicashoes";
-        let horariosOcupadosDoDia = []; let tempHora = 0, tempFim = "", tempInfoDia = "", tempValor = 0;
-        const diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']; const horas = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]; let dataVisualizada = new Date(); 
-
-        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
-        function atualizarRelogio() { document.getElementById('relogioFlutuante').innerText = new Date().toLocaleTimeString('pt-BR'); } setInterval(atualizarRelogio, 1000);
-
-        function calcularValorTotal(horaInicio, duracao, pagamento) {
-            if (isNaN(horaInicio)) return 0; let total = 0; let promoAtivaNesteDia = false; let valorPromo = 0; let horasPromo = []; usouPromoFlag = false; 
-            
-            let avisoPromo = document.getElementById('avisoPromocao');
-            if(avisoPromo) avisoPromo.style.display = 'none';
-
-            if (promocaoAtual && promocaoAtual.inicio && promocaoAtual.fim) {
-                let dataEscolhida = new Date(dataVisualizada); dataEscolhida.setHours(0,0,0,0);
-                let pIni = promocaoAtual.inicio.split('-'); let dataIni = new Date(pIni[0], pIni[1]-1, pIni[2]);
-                let pFim = promocaoAtual.fim.split('-'); let dataFim = new Date(pFim[0], pFim[1]-1, pFim[2]);
-                
-                if (dataEscolhida >= dataIni && dataEscolhida <= dataFim) {
-                    let jaUsou = false;
-                    let listaTelefones = promocaoAtual.telefones ? promocaoAtual.telefones.toString() : "";
-                    let meuTelefone = (usuarioLogado && usuarioLogado.phone) ? usuarioLogado.phone.toString() : "";
-                    
-                    if (meuTelefone && listaTelefones.includes(meuTelefone)) { jaUsou = true; }
-
-                    if (jaUsou) {
-                        if(avisoPromo) {
-                            avisoPromo.innerHTML = "🏷️ Você já utilizou a promoção! (Limite de 1 por cliente)";
-                            avisoPromo.style.display = 'block'; avisoPromo.style.color = "#aaa"; avisoPromo.style.borderColor = "#aaa"; avisoPromo.style.background = "#222";
-                        }
-                    } else {
-                        promoAtivaNesteDia = true; valorPromo = parseFloat(promocaoAtual.valor) || 0; horasPromo = promocaoAtual.horarios ? promocaoAtual.horarios.toString().split(',').map(Number) : [];
-                        if(avisoPromo) {
-                            avisoPromo.innerHTML = "🏷️ Promoção Ativa Neste Dia!";
-                            avisoPromo.style.display = 'block'; avisoPromo.style.color = "var(--primary)"; avisoPromo.style.borderColor = "var(--primary)"; avisoPromo.style.background = "rgba(255, 215, 0, 0.1)";
-                        }
-                    }
-                }
-            }
-
-            for (let i = 0; i < duracao; i++) {
-                let hAtual = horaInicio + i;
-                if (promoAtivaNesteDia && horasPromo.includes(hAtual)) { total += valorPromo; usouPromoFlag = true; } 
-                else if (hAtual >= 7 && hAtual <= 16) { total += 35; } else { total += (pagamento === 'cartao') ? 50 : 45; }
-            } return total;
-        }
-
-        function atualizarPrecoDisplay() {
-            const h = parseInt(document.getElementById('selectHora').value); const pag = document.getElementById('selectPagamento').value;
-            if (!isNaN(h)) { let total = calcularValorTotal(h, duracaoSelecionada, pag); document.getElementById('priceDisplay').innerText = `Valor Total: R$ ${total.toFixed(2).replace('.', ',')}`; } 
-            else document.getElementById('priceDisplay').innerText = `Valor: Selecione o horário acima`; 
-        }
-
-        function mudarQuadra(id, btn) { quadraSelecionada = id; nomeQuadra = id === 1 ? "Quadra Chicashoes" : "Quadra Padaria do Helder"; document.querySelectorAll('.btn-court').forEach(b => b.classList.remove('active')); btn.classList.add('active'); carregarDadosDoDia(); }
-        function setDuracao(horas, btn) { duracaoSelecionada = horas; document.getElementById('customInput').value = ""; document.querySelectorAll('.btn-duration').forEach(b => b.classList.remove('active')); if(btn) btn.classList.add('active'); carregarDadosDoDia(); }
-        function usarPersonalizado(valor) { if(valor) { let v = parseFloat(valor); if(v > 16) { alert("Máximo 16h."); v = 16; document.getElementById('customInput').value = 16; } else if(v > 0) { duracaoSelecionada = v; } document.querySelectorAll('.btn-duration').forEach(b => b.classList.remove('active')); carregarDadosDoDia(); } }
-        
-        function mudarDia(delta) { 
-            let dataAlvo = new Date(dataVisualizada); dataAlvo.setDate(dataAlvo.getDate() + delta); dataAlvo.setHours(0,0,0,0);
-            let hojeStr = new Date(); hojeStr.setHours(0,0,0,0);
-            
-            if (dataAlvo < hojeStr) return; 
-            
-            if (agendaStatusGeral === "NAO") return alert("🔒 A agenda está temporariamente bloqueada pela administração.");
-
-            if (agendaDataInicio) {
-                let p = agendaDataInicio.split('-'); let dIni = new Date(p[0], p[1]-1, p[2]); dIni.setHours(0,0,0,0);
-                if (dataAlvo < dIni) { if (delta > 0) alert(`🔒 A agenda está liberada apenas a partir do dia ${p[2]}/${p[1]}/${p[0]}.`); return; }
-            }
-
-            if (agendaDataFim) {
-                let p = agendaDataFim.split('-'); let dFim = new Date(p[0], p[1]-1, p[2]); dFim.setHours(0,0,0,0);
-                if (dataAlvo > dFim) return alert(`🔒 A agenda está liberada apenas até o dia ${p[2]}/${p[1]}/${p[0]}.`);
-            }
-
-            dataVisualizada = dataAlvo; document.getElementById('dateDisplay').innerText = formatarDataHeader(dataVisualizada).texto; carregarDadosDoDia();
-        }
-
-        function formatarDataHeader(date) { let diaSemanaJS = date.getDay(); let diaIndex = diaSemanaJS === 0 ? 6 : diaSemanaJS - 1; let dia = String(date.getDate()).padStart(2, '0'); let mes = String(date.getMonth() + 1).padStart(2, '0'); return { texto: `${diasSemana[diaIndex]} (${dia}/${mes})`, index: diaIndex }; }
-
-        async function carregarDadosDoDia() {
-            const loading = document.getElementById('loading'); const select = document.getElementById('selectHora'); loading.style.display = 'block'; select.innerHTML = '<option value="">A carregar...</option>'; document.getElementById('dateDisplay').innerText = formatarDataHeader(dataVisualizada).texto;
-            try {
-                const response = await fetch(SHEET_URL + '&t=' + new Date().getTime()); const data = await response.text();
-                const rows = data.split('\n').map(row => row.split(',')); let colOffset = (quadraSelecionada === 2) ? 8 : 0; horariosOcupadosDoDia = [];
-                rows.forEach((row, rowIndex) => {
-                    if (rowIndex === 0) return; const hLinha = parseInt(row[0]);
-                    if (!isNaN(hLinha)) { 
-                        let diaPlan = formatarDataHeader(dataVisualizada).index + 1; 
-                        let colReal = diaPlan + colOffset; 
-                        let val = row[colReal] ? row[colReal].replace(/[\r\n"]/g, '').trim() : ""; 
-                        
-                        // CORTE DA ASSINATURA ANTES DE EXIBIR NO SITE DOS CLIENTES
-                        val = val.split('||')[0].trim();
-
-                        if (val.length > 0) horariosOcupadosDoDia.push({ hora: hLinha, nome: val }); 
-                    }
-                });
-                atualizarMenuHorarios(); atualizarPrecoDisplay();
-            } catch (error) { horariosOcupadosDoDia = []; atualizarMenuHorarios(); } finally { loading.style.display = 'none'; }
-        }
-
-        function atualizarMenuHorarios() {
-            const select = document.getElementById('selectHora'); 
-            select.innerHTML = '<option value="">Selecione o horário...</option>';
-            
-            let hoje = new Date();
-            let isHoje = (dataVisualizada.getDate() === hoje.getDate() && dataVisualizada.getMonth() === hoje.getMonth() && dataVisualizada.getFullYear() === hoje.getFullYear());
-            let horaAtual = hoje.getHours();
-
-            let h = 7;
-            let blocosNecessarios = Math.ceil(duracaoSelecionada);
-
-            while (h <= 22) {
-                // Ocultar horas passadas se for hoje
-                if (isHoje && h <= horaAtual) { 
-                    h++; 
-                    continue; 
-                }
-
-                let ocupacaoAtual = horariosOcupadosDoDia.find(item => item.hora === h);
-
-                if (ocupacaoAtual) {
-                    // Agrupar bloco inteiro ocupado por essa pessoa
-                    let nomeOcupante = ocupacaoAtual.nome;
-                    let horaFimOcupacao = h + 1;
-                    while (horaFimOcupacao <= 22) {
-                        let proxOcupacao = horariosOcupadosDoDia.find(item => item.hora === horaFimOcupacao);
-                        if (proxOcupacao && proxOcupacao.nome === nomeOcupante) {
-                            horaFimOcupacao++;
-                        } else { break; }
-                    }
-                    
-                    let option = document.createElement('option');
-                    let displayTexto = "INDISPONÍVEL";
-                    let nl = nomeOcupante.toLowerCase().trim();
-                    if (nl === 'x' || nl === 'ok' || nl.includes('indisponivel') || nl.includes('bloqueado') || nl.includes('interditado') || nl.includes('⛔')) { 
-                        displayTexto = "INDISPONÍVEL"; 
-                    } else if (nomeOcupante.includes("⏳")) { 
-                        displayTexto = `${nomeOcupante.replace('⏳', '').trim()} (Pendente)`; 
-                    } else { 
-                        displayTexto = nomeOcupante.replace('(Confirmado)', '').trim(); 
-                    }
-
-                    option.text = `Início: ${h}:00 | Encerra: ${horaFimOcupacao}:00 - ⛔ ${displayTexto}`;
-                    option.value = h;
-                    option.disabled = true;
-                    select.appendChild(option);
-
-                    h = horaFimOcupacao; 
-                } else {
-                    let temConflito = false;
-                    for (let i = 0; i < blocosNecessarios; i++) {
-                        let horaVerificada = h + i;
-                        if (horaVerificada > 22 || horariosOcupadosDoDia.find(item => item.hora === horaVerificada)) {
-                            temConflito = true;
-                            break;
-                        }
-                    }
-
-                    let option = document.createElement('option');
-                    option.value = h;
-
-                    if (temConflito) {
-                        option.text = `Início: ${h}:00 | Encerra: ${h + blocosNecessarios}:00 - ⚠️ Conflito/Tempo insuficiente`;
-                        option.disabled = true;
-                        select.appendChild(option);
-                    } else {
-                        option.text = `Início: ${h}:00 | Encerra: ${h + blocosNecessarios}:00 - ✅ Livre`;
-                        select.appendChild(option);
-                    }
-                    
-                    // Incrementa sempre de 1 em 1 para as horas livres, não importa a duração escolhida.
-                    h++;
-                }
-            }
-
-            if (select.options.length === 1) { 
-                select.options[0].text = "Sem horários livres no momento."; 
-            }
-        }
-
-        function liberarBotao() { document.getElementById('btnAgendar').style.display = document.getElementById('selectHora').value ? 'block' : 'none'; atualizarPrecoDisplay(); }
-        
-        function prepararAgendamento() { 
-            if(usuarioLogado) { document.getElementById('cadNomeCompleto').value = usuarioLogado.nome; document.getElementById('cadTelefone').value = usuarioLogado.phone; }
-            const h = parseInt(document.getElementById('selectHora').value); const pag = document.getElementById('selectPagamento').value; let valTotal = calcularValorTotal(h, duracaoSelecionada, pag); 
-            abrirModal(h, (h + Math.ceil(duracaoSelecionada)) + ":00", formatarDataHeader(dataVisualizada).texto, valTotal); 
-        }
-        
-        function abrirModal(hora, fim, infoDia, valor) { tempHora = hora; tempFim = fim; tempInfoDia = infoDia; tempValor = valor; document.getElementById('modalCadastro').style.display = 'flex'; }
-        function fecharModal() { document.getElementById('modalCadastro').style.display = 'none'; }
-
-        function enviarAgendamento() {
-            if(!document.getElementById('checkTermos').checked) return alert("Aceite os termos.");
-            const btn = document.querySelector('.btn-confirm'); btn.innerText = "A agendar..."; btn.disabled = true;
-            
-            fetch(SCRIPT_URL, { 
-                method: "POST", 
-                body: JSON.stringify({ acao: "agendar", nome: usuarioLogado.nome, telefone: usuarioLogado.phone, diaIndex: formatarDataHeader(dataVisualizada).index, hora: tempHora, quadra: quadraSelecionada, duracao: duracaoSelecionada, status: 'pendente', usouPromo: usouPromoFlag }) 
-            })
-            .then(res => res.text())
-            .then(txt => {
-                fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ acao: "adicionar_ponto", telefone: usuarioLogado.phone }) });
-                
-                let pag = document.getElementById('selectPagamento').options[document.getElementById('selectPagamento').selectedIndex].text;
-                let mod = document.getElementById('selectModalidade').options[document.getElementById('selectModalidade').selectedIndex].text;
-                
-                // MENSAGEM DO WHATSAPP BLINDADA PARA IPHONE E COM MODALIDADE
-                let msg = "*SOLICITAÇÃO DE RESERVA*\n";
-                msg += "👤 Nome: " + usuarioLogado.nome + "\n";
-                msg += "🏟️ Quadra: " + nomeQuadra + "\n";
-                msg += "🏆 Modalidade: " + mod + "\n";
-                msg += "📅 Data: " + formatarDataHeader(dataVisualizada).texto + "\n";
-                msg += "⏰ Horário: " + tempHora + ":00 às " + tempFim + "\n";
-                msg += "💰 Valor: R$ " + tempValor + ",00\n";
-                msg += "💳 Pagamento: " + pag + "\n\n";
-                msg += "✅ *Termos de cancelamento aceitos.*\n\n";
-                msg += "⚠️ *Aviso:* O site pode levar alguns minutos para atualizar a tela, mas não se preocupe! Assim que confirmarmos sua mensagem por aqui, seu horário estará 100% garantido!";
-                
-                window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`;
-                
-                setTimeout(() => { location.reload(); }, 1500);
-            })
-            .catch(e => { alert("Erro de ligação."); btn.disabled = false; });
-        }
-
-        let pA = 0, pB = 0; let gA = 0, gB = 0; const beachPoints = [0, 15, 30, 40]; let modoJogo = 'beach';
-        function mudarModo(modo) { modoJogo = modo; document.getElementById('btnBeach').classList.remove('active'); document.getElementById('btnVolei').classList.remove('active'); if(modo === 'beach') document.getElementById('btnBeach').classList.add('active'); else document.getElementById('btnVolei').classList.add('active'); zerarPlacar(); }
-        function addPonto(time) { if(modoJogo === 'beach') { if(time === 'A') { if(pA < 3) pA++; else { gA++; pA = 0; pB = 0; } } else { if(pB < 3) pB++; else { gB++; pA = 0; pB = 0; } } atualizarTelaBeach(); } else { if(time === 'A') gA++; else gB++; document.getElementById('scoreA').innerText = gA; document.getElementById('scoreB').innerText = gB; document.getElementById('gameA').innerText = "-"; document.getElementById('gameB').innerText = "-"; } }
-        function atualizarTelaBeach() { document.getElementById('scoreA').innerText = beachPoints[pA]; document.getElementById('scoreB').innerText = beachPoints[pB]; document.getElementById('gameA').innerText = gA; document.getElementById('gameB').innerText = gB; }
-        function zerarPlacar() { pA = 0; pB = 0; gA = 0; gB = 0; if(modoJogo === 'beach') atualizarTelaBeach(); else { document.getElementById('scoreA').innerText = 0; document.getElementById('scoreB').innerText = 0; } }
-    </script>
 </body>
 </html>
