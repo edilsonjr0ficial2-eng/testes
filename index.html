@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistema de Gestão Arena</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
         
@@ -186,13 +187,15 @@
 
         <div style="background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; flex: 1; min-height: 0;">
             
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 10px;">
                 <h2 style="margin:0; color:#111; font-size:20px; display:flex; align-items:center; gap:8px;">Nova Venda <span style="font-size:16px; color:#94a3b8;">💬</span></h2>
-                <div style="display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 12px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
+                <div style="display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); flex: 1; min-width: 200px;">
                     <span style="color:#64748b;">🔍</span>
-                    <input type="text" id="codigoInput" placeholder="Produto ou Cód. Barras" style="border:none; background:transparent; outline:none; width: 180px; font-size: 13px;" disabled>
-                    <button type="button" class="btn-camera" id="btnCamera" onclick="alternarCamera('codigoInput')" disabled style="padding: 2px; font-size: 14px; background: transparent; border: none; color: #3b82f6;">📷</button>
-                    <span style="font-size: 11px; color: #3b82f6; font-weight: bold; border-left: 1px solid #cbd5e1; padding-left: 8px;">Cód. Barras 🔴</span>
+                    <input type="text" id="codigoInput" placeholder="Produto ou Cód. Barras" style="border:none; background:transparent; outline:none; flex: 1; min-width: 80px; font-size: 13px;" disabled>
+                    
+                    <button type="button" id="btnAddCodigo" onclick="let inp=document.getElementById('codigoInput'); if(inp.value.trim()!==''){processarEntradaCodigo(inp.value.trim()); inp.value='';}" disabled style="background:#10b981; color:#fff; border:none; border-radius:15px; padding:6px 12px; font-weight:bold; font-size:12px; cursor:pointer; box-shadow: 0 2px 4px rgba(16,185,129,0.3);">+ Inserir</button>
+
+                    <button type="button" class="btn-camera" id="btnCamera" onclick="alternarCamera('codigoInput')" disabled style="padding: 2px; font-size: 16px; background: transparent; border: none; color: #3b82f6;">📷</button>
                 </div>
             </div>
 
@@ -392,7 +395,8 @@
                             <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: center;">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="listaCaixa"></tbody>
+                    <tbody id="listaCaixa">
+                        </tbody>
                 </table>
             </div>
         </div>
@@ -1281,7 +1285,6 @@
         
         let saldoAtual = abertura + entradas - saidas;
 
-        // Atualiza Livro de Caixa Cards
         let elAbertura = document.getElementById('resumoLivroAbertura');
         if(elAbertura) elAbertura.innerText = "R$ " + abertura.toFixed(2);
         
@@ -1458,7 +1461,7 @@
         let alertaCaixa = document.getElementById('alerta-caixa');
         if(alertaCaixa) alertaCaixa.style.display = s[4]; 
         
-        ['codigoInput','btnCamera','btnSalvarComanda','btnFinalizarVenda','btnRegistrarLivro'].forEach(id => {
+        ['codigoInput','btnAddCodigo','btnCamera','btnSalvarComanda','btnFinalizarVenda'].forEach(id => {
             let el = document.getElementById(id);
             if(el) el.disabled = s[5];
         }); 
