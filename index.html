@@ -1183,7 +1183,8 @@
                 </div>
                 <div style="text-align: right; margin-bottom: 15px;">${valorExibicaoHtml}</div>
                 <div class="comanda-actions">
-                    <button type="button" class="btn-azul" style="grid-column: span 2;" onclick="mudarTela('tela-caixa'); editarComanda('${c.ID_Comanda}')">📂 Abrir no Caixa</button>
+                    <button type="button" class="btn-azul" onclick="mudarTela('tela-caixa'); editarComanda('${c.ID_Comanda}')">📂 Abrir no Caixa</button>
+                    <button type="button" class="btn-vermelho" onclick="verificarPermissaoGerente('Zerar Comanda', () => excluirComanda('${c.ID_Comanda}'))">🗑️ Cancelar</button>
                 </div>
             </div>`; 
         }).join(''); 
