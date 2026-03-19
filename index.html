@@ -54,7 +54,7 @@
         .main-content { flex: 1; padding: 15px; overflow-y: auto; position: relative; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; }
         .tela { display: none; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex: 1; }
         .tela.ativa { display: block; }
-        #tela-caixa.ativa, #tela-livro.ativa, #tela-relatorios.ativa, #tela-relatorio-fluxo.ativa { display: flex !important; flex-direction: column; background: transparent; padding: 0; box-shadow: none;}
+        #tela-caixa.ativa, #tela-livro.ativa, #tela-relatorios.ativa, #tela-relatorio-fluxo.ativa, #tela-relatorio-estoque.ativa, #tela-relatorio-produtos.ativa, #tela-relatorio-lucro.ativa, #tela-relatorio-pagamentos.ativa { display: flex !important; flex-direction: column; background: transparent; padding: 0; box-shadow: none;}
 
         h1 { color: #333; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; font-size: 24px; }
         
@@ -178,7 +178,6 @@
     <div id="status-bar" style="display:none;">Sistema Online</div>
 
     <div id="tela-caixa" class="tela ativa" style="padding: 0; background: transparent; border: none; box-shadow: none;">
-        
         <div id="alerta-caixa" style="margin-bottom: 5px; padding: 10px; flex-shrink: 0;">⚠️ O CAIXA ESTÁ FECHADO! Vá em Controle de Caixa para abrir o turno.</div>
         <div id="bannerEdicaoComanda" style="display:none; background:#fef3c7; border:1px solid #f59e0b; padding:8px; margin-bottom:5px; border-radius:5px; color:#b45309; font-weight:bold; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; flex-shrink: 0;">
             <span>✏️ A editar a Comanda de <span id="nomeEdicaoComanda"></span></span>
@@ -186,7 +185,6 @@
         </div>
 
         <div style="background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; flex: 1; min-height: 0;">
-            
             <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 10px;">
                 <h2 style="margin:0; color:#111; font-size:20px; display:flex; align-items:center; gap:8px;">Nova Venda <span style="font-size:16px; color:#94a3b8;">💬</span></h2>
                 <div style="display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); flex: 1; min-width: 200px;">
@@ -292,6 +290,7 @@
                     💵 Pagamento <span style="font-size:11px; opacity:0.8;">F6</span>
                 </button>
             </div>
+
         </div>
     </div>
 
@@ -440,72 +439,183 @@
     </div>
 
     <div id="tela-relatorios" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
-        <h2 style="margin: 0 0 20px 0; color: #1e293b; display: flex; align-items: center; gap: 10px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">📈 Relatórios</h2>
+        <h2 style="margin: 0 0 20px 0; color: #1e293b; display: flex; align-items: center; gap: 10px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">📈 Central de Relatórios</h2>
         
         <div class="relatorios-grid">
-            <div class="relatorio-card" onclick="alert('Em breve!')">
-                <div class="rel-icon">🛒</div>
-                <div class="rel-text">
-                    <h4>Relatório de Vendas</h4>
-                    <p>Visualize o desempenho das vendas</p>
-                </div>
-            </div>
-            <div class="relatorio-card" onclick="alert('Em breve!')">
+            <div class="relatorio-card" onclick="abrirRelatorioEstoque()">
                 <div class="rel-icon">📦</div>
                 <div class="rel-text">
                     <h4>Relatório de Estoque</h4>
-                    <p>Acompanhe o status do estoque</p>
+                    <p>Valor total do estoque e lucros projetados</p>
                 </div>
             </div>
-            <div class="relatorio-card" onclick="alert('Em breve!')">
-                <div class="rel-icon">⚠️</div>
-                <div class="rel-text">
-                    <h4>Relatório de Estoque Mínimo</h4>
-                    <p>Produtos abaixo do estoque mínimo</p>
-                </div>
-            </div>
-            <div class="relatorio-card" onclick="alert('Em breve!')">
+            <div class="relatorio-card" onclick="abrirRelatorioProdutos()">
                 <div class="rel-icon">📉</div>
                 <div class="rel-text">
                     <h4>Produtos Mais/Menos Vendidos</h4>
                     <p>Análise dos produtos com maior ou menor saída</p>
                 </div>
             </div>
-            
             <div class="relatorio-card" onclick="abrirRelatorioFluxo()">
                 <div class="rel-icon">💲</div>
                 <div class="rel-text">
                     <h4>Relatório Fluxo de Caixa</h4>
-                    <p>Confira todas as entradas e saídas de dinheiro</p>
+                    <p>Confira as entradas e saídas detalhadas</p>
                 </div>
             </div>
-
-            <div class="relatorio-card" onclick="alert('Em breve!')">
+            <div class="relatorio-card" onclick="abrirRelatorioLucro()">
                 <div class="rel-icon">📈</div>
                 <div class="rel-text">
                     <h4>Relatório de Lucro nas Vendas</h4>
-                    <p>Análise de custos e lucros por venda</p>
+                    <p>Análise de custos e lucro real das vendas</p>
                 </div>
             </div>
-            <div class="relatorio-card" onclick="alert('Em breve!')">
+            <div class="relatorio-card" onclick="abrirRelatorioPagamentos()">
                 <div class="rel-icon">💳</div>
                 <div class="rel-text">
                     <h4>Vendas por Forma de Pagamento</h4>
-                    <p>Análise das vendas por método de pagamento</p>
+                    <p>Análise das vendas por método recebido</p>
                 </div>
             </div>
-            <div class="relatorio-card" onclick="alert('Em breve!')">
-                <div class="rel-icon">🛵</div>
-                <div class="rel-text">
-                    <h4>Taxas por Entregador</h4>
-                    <p>Análise das entregas e taxas por entregador</p>
+        </div>
+    </div>
+
+    <div id="tela-relatorio-estoque" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Relatório de Estoque Atual
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div class="livro-resumo-grid">
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #fee2e2; color: #ef4444;">💰</div>
+                    <div class="livro-card-text"><h4>Custo Total no Estoque</h4><p id="relEstoqueTotalCusto">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #dcfce7; color: #22c55e;">🏷️</div>
+                    <div class="livro-card-text"><h4>Receita Bruta Projetada</h4><p id="relEstoqueTotalVenda">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card" style="border: 1px solid #3b82f6; background: #eff6ff;">
+                    <div class="livro-icon-box" style="background: #3b82f6; color: #fff;">📈</div>
+                    <div class="livro-card-text"><h4>Lucro Projetado</h4><p id="relEstoqueLucroProj" style="color: #3b82f6;">R$ 0,00</p></div>
                 </div>
             </div>
-            <div class="relatorio-card" onclick="alert('Em breve!')">
-                <div class="rel-icon">🤵</div>
-                <div class="rel-text">
-                    <h4>Taxas por Garçom</h4>
-                    <p>Análise dos atendimentos e taxas por garçom</p>
+            <div class="table-responsive" style="max-height: 400px; overflow-y:auto; border: 1px solid #e2e8f0; border-radius: 4px;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
+                    <thead style="background: #f8fafc; position: sticky; top: 0;">
+                        <tr>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Produto</th>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Qtd em Estoque</th>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Custo Unit.</th>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Custo Total</th>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Venda Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="relEstoqueTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="tela-relatorio-produtos" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Produtos Mais e Menos Vendidos
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight:bold; color:#475569; font-size:14px;">Período:</label>
+                <input type="date" id="relProdDataInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <input type="date" id="relProdDataFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="gerarRelatorioProdutos()">🔍 Gerar</button>
+            </div>
+            
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <div style="flex:2; min-width:300px; height: 300px; position: relative;">
+                    <canvas id="graficoRelProdutos"></canvas>
+                </div>
+                <div style="flex:1; min-width:250px;">
+                    <div class="table-responsive" style="max-height: 300px; overflow-y:auto; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
+                            <thead style="background: #f8fafc; position: sticky; top: 0;">
+                                <tr><th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Produto</th><th style="padding:10px; text-align:right; border-bottom: 1px solid #e2e8f0;">Qtd Vendida</th></tr>
+                            </thead>
+                            <tbody id="relProdTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tela-relatorio-lucro" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Relatório de Lucro nas Vendas (CMV)
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight:bold; color:#475569; font-size:14px;">Período:</label>
+                <input type="date" id="relLucroDataInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <input type="date" id="relLucroDataFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="gerarRelatorioLucro()">🔍 Gerar</button>
+            </div>
+            
+            <div class="livro-resumo-grid">
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #dcfce7; color: #22c55e;">📈</div>
+                    <div class="livro-card-text"><h4>Receita de Vendas</h4><p id="relLucroReceita">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #fee2e2; color: #ef4444;">📉</div>
+                    <div class="livro-card-text"><h4>Custo da Mercadoria (CMV)</h4><p id="relLucroCusto">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card" style="border: 1px solid #3b82f6; background: #eff6ff;">
+                    <div class="livro-icon-box" style="background: #3b82f6; color: #fff;">💰</div>
+                    <div class="livro-card-text"><h4>Lucro Bruto</h4><p id="relLucroBruto" style="color: #3b82f6;">R$ 0,00</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tela-relatorio-pagamentos" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Vendas por Forma de Pagamento
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight:bold; color:#475569; font-size:14px;">Período:</label>
+                <input type="date" id="relPagDataInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <input type="date" id="relPagDataFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="gerarRelatorioPagamentos()">🔍 Gerar</button>
+            </div>
+            
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <div style="flex:1; min-width:300px; height: 300px; position: relative;">
+                    <canvas id="graficoRelPagamentos"></canvas>
+                </div>
+                <div style="flex:1; min-width:250px;">
+                    <div class="table-responsive" style="border: 1px solid #e2e8f0; border-radius: 4px;">
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 14px;">
+                            <thead style="background: #f8fafc;">
+                                <tr><th style="padding:12px; border-bottom: 1px solid #e2e8f0;">Forma de Pagamento</th><th style="padding:12px; text-align:right; border-bottom: 1px solid #e2e8f0;">Total Recebido</th></tr>
+                            </thead>
+                            <tbody id="relPagTbody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -649,78 +759,61 @@
 
 <div id="modalPagamento" class="modal-overlay">
     <div class="modal-box" style="max-width: 450px; padding: 0; border-radius: 8px; overflow: hidden; background: #f8fafc; display: flex; flex-direction: column; max-height: 90vh;">
-        
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;">
             <h3 id="tituloModalPagamento" style="margin: 0; color: #0f172a; font-size: 18px;">Formas de pagamento</h3>
             <button style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer; padding: 0;" onclick="fecharModalPagamento()">×</button>
         </div>
-        
         <div style="padding: 20px; text-align: left; overflow-y: auto; flex: 1;">
-            
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
                 <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('dinheiro', 'Dinheiro', '💵')">Dinheiro</button>
                 <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('debito', 'Cartão de Débito', '💳')">Cartão de Débito</button>
                 <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('credito', 'Cartão de Crédito', '💳')">Cartão de Crédito</button>
                 <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('pix', 'Pix', '💠')">Pix</button>
             </div>
-
             <div id="boxNomePagador" style="display: none; margin-bottom: 20px;">
                 <label style="font-weight:bold; color:#475569; font-size:13px; display:block; margin-bottom:5px;">Nome de quem está pagando (Parcial):</label>
                 <input type="text" id="pagNomePagador" placeholder="Ex: João" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:4px; font-size:14px; outline:none;">
             </div>
-
             <div style="background:#fff; border:1px solid #e2e8f0; padding:15px; border-radius:6px; margin-bottom:20px; font-size:14px; color:#475569;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <span>Subtotal</span>
-                    <span style="font-weight:bold; color:#111;">R$ <span id="pagSubtotalVal">0.00</span></span>
+                    <span>Subtotal</span><span style="font-weight:bold; color:#111;">R$ <span id="pagSubtotalVal">0.00</span></span>
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #e2e8f0;">
-                    <span style="color:#3b82f6;">Taxa de Serviço</span>
-                    <span style="color:#3b82f6; font-weight:bold;">+ R$ <span id="pagTaxaVal">0.00</span></span>
+                    <span style="color:#3b82f6;">Taxa de Serviço</span><span style="color:#3b82f6; font-weight:bold;">+ R$ <span id="pagTaxaVal">0.00</span></span>
                 </div>
-                
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:16px; font-weight:bold; color:#111;">
-                    <span>Total</span>
-                    <span>R$ <span id="pagTotalVal">0.00</span></span>
+                    <span>Total</span><span>R$ <span id="pagTotalVal">0.00</span></span>
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold; color:#22c55e;">
-                    <span>Pago</span>
-                    <span>R$ <span id="pagPagoVal">0.00</span></span>
+                    <span>Pago</span><span>R$ <span id="pagPagoVal">0.00</span></span>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-weight:bold; color:#dc2626;">
-                    <span>Restante</span>
-                    <span>R$ <span id="pagRestanteVal">0.00</span></span>
+                    <span>Restante</span><span>R$ <span id="pagRestanteVal">0.00</span></span>
                 </div>
             </div>
-
             <div id="listaPagamentosAtivos" style="margin-bottom: 20px;"></div>
-
             <div style="display:flex; align-items:center; justify-content:center; gap:10px; font-size:14px; color:#64748b; margin-bottom:10px;">
                 <span>Dividir a conta por:</span>
                 <input type="number" id="pagDividirInput" value="1" min="1" style="width:50px; padding:6px; border:1px solid #cbd5e1; border-radius:4px; text-align:center; outline:none;" oninput="calcularDivisao()">
                 <span style="color:#3b82f6; font-weight:bold;">R$ <span id="pagDivisaoResult">0.00</span> pra cada</span>
             </div>
         </div>
-
         <div style="padding: 15px 20px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; flex-shrink: 0;">
-            <button type="button" id="btnFin1" style="flex:1; background:#22c55e; color:#fff; border:none; padding:14px; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="confirmarPagamentoMisto(false)" disabled>
-                ✓ Finalizar
-            </button>
-            <button type="button" id="btnFin2" style="flex:2; background:#22c55e; color:#fff; border:none; padding:14px; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="confirmarPagamentoMisto(true)" disabled>
-                🖨️ Finalizar e imprimir <span style="font-size:10px; opacity:0.8;">F6</span>
-            </button>
+            <button type="button" id="btnFin1" style="flex:1; background:#22c55e; color:#fff; border:none; padding:14px; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="confirmarPagamentoMisto(false)" disabled>✓ Finalizar</button>
+            <button type="button" id="btnFin2" style="flex:2; background:#22c55e; color:#fff; border:none; padding:14px; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="confirmarPagamentoMisto(true)" disabled>🖨️ Finalizar e imprimir <span style="font-size:10px; opacity:0.8;">F6</span></button>
         </div>
     </div>
 </div>
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
-    
+    const TAXAS_CARTAO = { credito: 0.03, debito: 0.015, pix: 0, especie: 0 };
+
     let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
     let turnoAtual = null, carrinho = [], total = 0, leitorHtml5 = null;
     let inputCameraAlvo = "codigoInput", idEditandoEstoque = null, operadorAtual = "", cargoAtual = "";
     
-    let chartFat = null, chartProd = null, chartRelFluxo = null;
+    let chartFat = null, chartProd = null, chartRelFluxo = null, chartRelProdutos = null, chartRelPagamentos = null;
     let acaoPagamentoPendente = null;
     let idComandaEmEdicao = null;
     let pagamentosComandaAtual = 0; 
@@ -840,6 +933,7 @@
     function atualizarTodasAsTelas() {
         atualizarInterfaceTurno(); atualizarTabelaEstoque(); atualizarTabelaComandas(); 
         atualizarDashboardECaixa(); atualizarListasClientes(); atualizarListaUsuarios();
+        desenharGraficos();
     }
 
     function mudarTela(idTela, elementoMenu) {
@@ -849,7 +943,7 @@
         let painel = document.getElementById(idTela);
         painel.classList.add('ativa');
         
-        if(idTela === 'tela-caixa' || idTela === 'tela-livro' || idTela === 'tela-relatorios' || idTela === 'tela-relatorio-fluxo') {
+        if(idTela === 'tela-caixa' || idTela === 'tela-livro' || idTela === 'tela-relatorios' || idTela.includes('tela-relatorio-')) {
             document.getElementById('status-bar').style.display = 'none';
         } else {
             document.getElementById('status-bar').style.display = 'block';
@@ -861,7 +955,6 @@
     }
 
     function desenharGraficos() {
-        // Graficos do Dashboard Antigo (Opcional, se ainda quiser manter lá escondido ou reutilizar)
         let labelsDias = [], dadosFaturamento = [];
         for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); labelsDias.push(d.toLocaleDateString('pt-BR').substring(0,5)); dadosFaturamento.push(0); }
         let hjFormatDateArray = [];
@@ -1143,6 +1236,7 @@
     function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { alert("Sem acesso à câmara."); divCamera.style.display = "none"; }); }
     function fecharCamera() { if(leitorHtml5) leitorHtml5.stop().then(() => { document.getElementById('leitorCamera').style.display = "none"; }).catch(e=>e); }
 
+    // --- LÓGICA DO MODAL DE BUSCA DE COMANDAS ---
     function abrirModalComandas() { 
         renderizarTabelaModalComandas(bancoComandas);
         document.getElementById('buscaComandaInput').value = "";
@@ -1574,13 +1668,17 @@
         } 
     });
 
-    // --- NOVA LÓGICA DO RELATÓRIO DE FLUXO DE CAIXA ---
-    function abrirRelatorioFluxo() {
+    // --- LÓGICA DOS NOVOS RELATÓRIOS ---
+    function setaDatasPadrao(idIni, idFim) {
         let hoje = new Date();
         let primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-        document.getElementById('relFluxoDataInicio').value = primeiroDia.toISOString().split('T')[0];
-        document.getElementById('relFluxoDataFim').value = hoje.toISOString().split('T')[0];
-        
+        document.getElementById(idIni).value = primeiroDia.toISOString().split('T')[0];
+        document.getElementById(idFim).value = hoje.toISOString().split('T')[0];
+    }
+
+    // 1. FLUXO DE CAIXA
+    function abrirRelatorioFluxo() {
+        setaDatasPadrao('relFluxoDataInicio', 'relFluxoDataFim');
         mudarTela('tela-relatorio-fluxo');
         gerarRelatorioFluxo();
     }
@@ -1588,19 +1686,15 @@
     function gerarRelatorioFluxo() {
         let dIniStr = document.getElementById('relFluxoDataInicio').value;
         let dFimStr = document.getElementById('relFluxoDataFim').value;
-        
         let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null;
         let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
 
-        let totalEntradas = 0;
-        let totalSaidas = 0;
-        let dadosPorDia = {};
-        let dadosPorCategoria = {};
+        let totalEntradas = 0, totalSaidas = 0;
+        let dadosPorDia = {}, dadosPorCategoria = {};
 
         bancoCaixaGlobal.forEach(m => {
             if(!m.ID_Transacao) return;
             let recordDate = parseDataBR(m.Data_Hora);
-            
             if (dIni && recordDate < dIni) return;
             if (dFim && recordDate > dFim) return;
 
@@ -1611,13 +1705,9 @@
 
             let categoria = "Vendas/Outros";
             let catMatch = m.Descricao.match(/\[(.*?)\]/);
-            if(catMatch) {
-                categoria = catMatch[1];
-            } else if(m.Descricao.toLowerCase().includes('venda') || m.Descricao.toLowerCase().includes('pgto comanda')) {
-                categoria = "Vendas / Recebimentos";
-            } else if(m.Descricao.toLowerCase().includes('troco inicial')) {
-                categoria = "Abertura de Caixa (Troco)";
-            }
+            if(catMatch) categoria = catMatch[1];
+            else if(m.Descricao.toLowerCase().includes('venda') || m.Descricao.toLowerCase().includes('pgto comanda')) categoria = "Vendas / Recebimentos";
+            else if(m.Descricao.toLowerCase().includes('troco inicial')) categoria = "Abertura de Caixa";
 
             if(!dadosPorCategoria[categoria]) dadosPorCategoria[categoria] = 0;
 
@@ -1646,7 +1736,6 @@
         }).join('');
         document.getElementById('relFluxoCategorias').innerHTML = htmlCat;
 
-        // Gráfico
         let labels = Object.keys(dadosPorDia).sort((a,b) => parseDataBR(a) - parseDataBR(b)); 
         let valEntradas = labels.map(l => dadosPorDia[l].entradas);
         let valSaidas = labels.map(l => dadosPorDia[l].saidas);
@@ -1663,12 +1752,208 @@
                         { label: 'Saídas', data: valSaidas, backgroundColor: '#ef4444', borderRadius: 4 }
                     ] 
                 }, 
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    scales: { y: { beginAtZero: true } },
-                    plugins: { legend: { position: 'top' } }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } } 
+            });
+        }
+    }
+
+    // 2. RELATÓRIO DE ESTOQUE ATUAL
+    function abrirRelatorioEstoque() {
+        mudarTela('tela-relatorio-estoque');
+        let totalCusto = 0, totalVenda = 0, html = '';
+        
+        bancoDeProdutos.forEach(p => {
+            if(!p.ID_Produto || p.ID_Produto === 'SERVICO') return;
+            let qtd = parseInt(p.Quantidade) || 0;
+            let custo = parseFloat(String(p.Preco_Custo).replace(',','.')) || 0;
+            let preco = parseFloat(String(p.Preco_Venda).replace(',','.')) || 0;
+            
+            let tCusto = qtd * custo;
+            let tVenda = qtd * preco;
+            
+            totalCusto += tCusto;
+            totalVenda += tVenda;
+            
+            html += `<tr style="border-bottom: 1px solid #e2e8f0; transition: 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                <td style="padding:10px; font-weight:bold; color:#334155;">${p.Nome_Produto}</td>
+                <td style="padding:10px;">${qtd}</td>
+                <td style="padding:10px;">R$ ${custo.toFixed(2)}</td>
+                <td style="padding:10px; color:#ef4444;">R$ ${tCusto.toFixed(2)}</td>
+                <td style="padding:10px; color:#22c55e; font-weight:bold;">R$ ${tVenda.toFixed(2)}</td>
+            </tr>`;
+        });
+        
+        document.getElementById('relEstoqueTbody').innerHTML = html;
+        document.getElementById('relEstoqueTotalCusto').innerText = "R$ " + totalCusto.toFixed(2);
+        document.getElementById('relEstoqueTotalVenda').innerText = "R$ " + totalVenda.toFixed(2);
+        document.getElementById('relEstoqueLucroProj').innerText = "R$ " + (totalVenda - totalCusto).toFixed(2);
+    }
+
+    // 3. PRODUTOS MAIS/MENOS VENDIDOS
+    function abrirRelatorioProdutos() {
+        setaDatasPadrao('relProdDataInicio', 'relProdDataFim');
+        mudarTela('tela-relatorio-produtos');
+        gerarRelatorioProdutos();
+    }
+
+    function gerarRelatorioProdutos() {
+        let dIniStr = document.getElementById('relProdDataInicio').value;
+        let dFimStr = document.getElementById('relProdDataFim').value;
+        let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null;
+        let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
+
+        let contagem = {};
+        
+        bancoVendas.forEach(v => {
+            let recordDate = parseDataBR(v.Data_Hora);
+            if (dIni && recordDate < dIni) return;
+            if (dFim && recordDate > dFim) return;
+
+            if(!v.Itens_Vendidos) return; 
+            let itensStr = v.Itens_Vendidos.split('(')[0];
+            
+            itensStr.split(',').forEach(item => { 
+                let match = item.trim().match(/^(\d+)x\s+(.+)$/); 
+                if(match) { 
+                    let qtd = parseInt(match[1]); 
+                    let nome = match[2].trim(); 
+                    if(nome !== "SERVICO" && !nome.includes("Quadra") && !nome.includes("Desconto Aplicado")) { 
+                        contagem[nome] = (contagem[nome] || 0) + qtd; 
+                    } 
                 } 
+            });
+        });
+
+        let arrayProds = Object.keys(contagem).map(k => ({ nome: k, qtd: contagem[k] })).sort((a,b) => b.qtd - a.qtd);
+        
+        let html = arrayProds.map(p => `
+            <tr style="border-bottom: 1px solid #e2e8f0; transition: 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                <td style="padding:10px; font-weight:bold; color:#334155;">${p.nome}</td>
+                <td style="padding:10px; text-align:right; color:#3b82f6; font-weight:bold;">${p.qtd} un.</td>
+            </tr>
+        `).join('');
+        document.getElementById('relProdTbody').innerHTML = html;
+
+        let top10 = arrayProds.slice(0, 10);
+        if(chartRelProdutos) chartRelProdutos.destroy();
+        let ctx = document.getElementById('graficoRelProdutos');
+        if(ctx) {
+            chartRelProdutos = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: top10.map(p => p.nome),
+                    datasets: [{ label: 'Qtd Vendida (Top 10)', data: top10.map(p => p.qtd), backgroundColor: '#3b82f6', borderRadius: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            });
+        }
+    }
+
+    // 4. RELATÓRIO DE LUCRO (CMV)
+    function abrirRelatorioLucro() {
+        setaDatasPadrao('relLucroDataInicio', 'relLucroDataFim');
+        mudarTela('tela-relatorio-lucro');
+        gerarRelatorioLucro();
+    }
+
+    function gerarRelatorioLucro() {
+        let dIniStr = document.getElementById('relLucroDataInicio').value;
+        let dFimStr = document.getElementById('relLucroDataFim').value;
+        let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null;
+        let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
+
+        let receitaVendas = 0;
+        let custoVendas = 0;
+
+        bancoVendas.forEach(v => {
+            let recordDate = parseDataBR(v.Data_Hora);
+            if (dIni && recordDate < dIni) return;
+            if (dFim && recordDate > dFim) return;
+
+            let totalVenda = parseFloat(String(v.Total).replace(',','.')) || 0;
+            receitaVendas += totalVenda;
+
+            if(v.Itens_Vendidos) {
+                let itensStr = v.Itens_Vendidos.split('(')[0];
+                itensStr.split(',').forEach(item => { 
+                    let match = item.trim().match(/^(\d+)x\s+(.+)$/); 
+                    if(match) { 
+                        let qtd = parseInt(match[1]); 
+                        let nome = match[2].trim(); 
+                        let prodDb = bancoDeProdutos.find(p => p.Nome_Produto === nome);
+                        if(prodDb) {
+                            let custoUn = parseFloat(String(prodDb.Preco_Custo).replace(',','.')) || 0;
+                            custoVendas += (custoUn * qtd);
+                        }
+                    } 
+                });
+            }
+        });
+
+        document.getElementById('relLucroReceita').innerText = "R$ " + receitaVendas.toFixed(2);
+        document.getElementById('relLucroCusto').innerText = "R$ " + custoVendas.toFixed(2);
+        document.getElementById('relLucroBruto').innerText = "R$ " + (receitaVendas - custoVendas).toFixed(2);
+    }
+
+    // 5. VENDAS POR FORMA DE PAGAMENTO
+    function abrirRelatorioPagamentos() {
+        setaDatasPadrao('relPagDataInicio', 'relPagDataFim');
+        mudarTela('tela-relatorio-pagamentos');
+        gerarRelatorioPagamentos();
+    }
+
+    function gerarRelatorioPagamentos() {
+        let dIniStr = document.getElementById('relPagDataInicio').value;
+        let dFimStr = document.getElementById('relPagDataFim').value;
+        let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null;
+        let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
+
+        let totais = {};
+
+        bancoVendas.forEach(v => {
+            let recordDate = parseDataBR(v.Data_Hora);
+            if (dIni && recordDate < dIni) return;
+            if (dFim && recordDate > dFim) return;
+
+            let fStr = String(v.Forma_Pagamento || "Não informada");
+            let partes = fStr.split('+');
+            
+            partes.forEach(parte => {
+                if(parte.includes(':')) {
+                    let pedaco = parte.split(':');
+                    let nome = pedaco[0].trim();
+                    let valor = parseFloat(pedaco[1].trim()) || 0;
+                    totais[nome] = (totais[nome] || 0) + valor;
+                } else {
+                    let nome = parte.trim();
+                    let valorTotal = parseFloat(String(v.Total).replace(',','.')) || 0;
+                    totais[nome] = (totais[nome] || 0) + valorTotal;
+                }
+            });
+        });
+
+        let totalGeral = Object.values(totais).reduce((a,b)=>a+b, 0);
+
+        let html = Object.keys(totais).sort((a,b) => totais[b] - totais[a]).map(k => `
+            <tr style="border-bottom: 1px solid #e2e8f0; transition: 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                <td style="padding:12px; font-weight:bold; color:#334155;">${k}</td>
+                <td style="padding:12px; text-align:right; color:#10b981; font-weight:bold;">R$ ${totais[k].toFixed(2)}</td>
+            </tr>
+        `).join('');
+        html += `<tr style="background:#f8fafc;"><td style="padding:12px; font-weight:900;">Total Processado</td><td style="padding:12px; text-align:right; font-weight:900;">R$ ${totalGeral.toFixed(2)}</td></tr>`;
+        document.getElementById('relPagTbody').innerHTML = html;
+
+        let cores = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#64748b'];
+        if(chartRelPagamentos) chartRelPagamentos.destroy();
+        let ctx = document.getElementById('graficoRelPagamentos');
+        if(ctx) {
+            chartRelPagamentos = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(totais),
+                    datasets: [{ data: Object.values(totais), backgroundColor: cores }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
             });
         }
     }
