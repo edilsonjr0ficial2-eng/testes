@@ -431,7 +431,7 @@
                     <option value="Gerente">Gerente (Acesso Total)</option>
                 </select>
             </div>
-            <button type="button" class="btn-verde" style="margin-bottom: 2px;" onclick="adicionarUsuarioSistema()" id="btnAdicionarUser">Criar Operador</button>
+            <button type="button" class="btn-verde" id="btnAdicionarUser" style="margin-bottom: 2px;" onclick="adicionarUsuarioSistema()">Criar Operador</button>
         </div>
         <div class="table-responsive">
             <table><thead><tr><th>Usuário de Acesso</th><th>Cargo</th><th>Ação</th></tr></thead><tbody id="listaUsuariosGestao"></tbody></table>
@@ -807,6 +807,7 @@
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
+    
     const TAXAS_CARTAO = { credito: 0.03, debito: 0.015, pix: 0, especie: 0 };
 
     let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
@@ -933,7 +934,6 @@
     function atualizarTodasAsTelas() {
         atualizarInterfaceTurno(); atualizarTabelaEstoque(); atualizarTabelaComandas(); 
         atualizarDashboardECaixa(); atualizarListasClientes(); atualizarListaUsuarios();
-        desenharGraficos();
     }
 
     function mudarTela(idTela, elementoMenu) {
@@ -952,35 +952,6 @@
         if(elementoMenu) elementoMenu.classList.add('ativo'); else { let el = document.querySelector(`.menu-item[onclick*="${idTela}"]`); if(el) el.classList.add('ativo'); }
         localStorage.setItem('arena_tab', idTela);
         if(leitorHtml5) fecharCamera(); if(idTela === 'tela-caixa' && turnoAtual) document.getElementById('codigoInput').focus();
-    }
-
-    function desenharGraficos() {
-        let labelsDias = [], dadosFaturamento = [];
-        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); labelsDias.push(d.toLocaleDateString('pt-BR').substring(0,5)); dadosFaturamento.push(0); }
-        let hjFormatDateArray = [];
-        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); hjFormatDateArray.push(d.toLocaleDateString('pt-BR')); }
-
-        bancoCaixaGlobal.forEach(m => {
-            if(m.Tipo === "Entrada" && (m.Descricao.includes("Venda") || m.Descricao.includes("Pgto Comanda"))) {
-                let dStr = m.Data_Hora.split(/[\s,T]+/)[0]; let idx = hjFormatDateArray.indexOf(dStr);
-                if(idx !== -1) dadosFaturamento[idx] += parseFloat(m.Valor.toString().replace(',','.')) || 0;
-            }
-        });
-
-        let ctxFat = document.getElementById('graficoFaturamento');
-        if(chartFat && ctxFat) chartFat.destroy();
-        if(ctxFat) chartFat = new Chart(ctxFat, { type: 'bar', data: { labels: labelsDias, datasets: [{ label: 'Receita (R$)', data: dadosFaturamento, backgroundColor: '#0ea5e9', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
-
-        let contagemProdutos = {};
-        bancoVendas.forEach(v => {
-            if(!v.Itens_Vendidos) return; let itensStr = v.Itens_Vendidos.split('(')[0];
-            itensStr.split(',').forEach(item => { let match = item.trim().match(/(\d+)x\s(.+)/); if(match) { let qtd = parseInt(match[1]); let nome = match[2].trim(); if(nome !== "SERVICO" && !nome.includes("Quadra") && nome !== "Desconto Aplicado" && nome !== "Desconto Especial") { contagemProdutos[nome] = (contagemProdutos[nome] || 0) + qtd; } } });
-        });
-
-        let prodOrder = Object.keys(contagemProdutos).map(k => ({nome: k, qtd: contagemProdutos[k]})).sort((a,b) => b.qtd - a.qtd).slice(0, 5);
-        let ctxProd = document.getElementById('graficoProdutos');
-        if(chartProd && ctxProd) chartProd.destroy();
-        if(ctxProd) chartProd = new Chart(ctxProd, { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
     function abrirModalPagamento(valorTotal, acaoObj) {
@@ -1236,7 +1207,6 @@
     function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { alert("Sem acesso à câmara."); divCamera.style.display = "none"; }); }
     function fecharCamera() { if(leitorHtml5) leitorHtml5.stop().then(() => { document.getElementById('leitorCamera').style.display = "none"; }).catch(e=>e); }
 
-    // --- LÓGICA DO MODAL DE BUSCA DE COMANDAS ---
     function abrirModalComandas() { 
         renderizarTabelaModalComandas(bancoComandas);
         document.getElementById('buscaComandaInput').value = "";
@@ -1642,7 +1612,31 @@
     }
 
     function atualizarListaUsuarios() { let tbody = document.getElementById('listaUsuariosGestao'); tbody.innerHTML = ""; bancoUsuarios.forEach(u => { if(!u.Login) return; let btnApagar = String(u.Login).toLowerCase() === 'edilson' ? `<span style="color:#94a3b8; font-size:12px;">Admin Fixo</span>` : `<button type="button" class="btn-vermelho" onclick="removerUsuarioSistema('${u.Login}')">Excluir</button>`; tbody.innerHTML += `<tr><td style="font-weight:bold;">${u.Login}</td><td>${u.Cargo || 'Operador'}</td><td>${btnApagar}</td></tr>`; }); }
-    async function adicionarUsuarioSistema() { let l = document.getElementById('novoUserLogin').value.trim(); let s = document.getElementById('novoUserSenha').value.trim(); let c = document.getElementById('novoUserCargo').value; if(!l || !s) return alert("Preencha Login e Senha!"); if(bancoUsuarios.find(u => String(u.Login).toLowerCase() === l.toLowerCase())) return alert("Login já existe!"); await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; recarregarDadosSilencioso(); }
+    
+    async function adicionarUsuarioSistema() { 
+        let l = document.getElementById('novoUserLogin').value.trim(); 
+        let s = document.getElementById('novoUserSenha').value.trim(); 
+        let c = document.getElementById('novoUserCargo').value; 
+        
+        if(!l || !s) return alert("Preencha Login e Senha!"); 
+        if(bancoUsuarios.find(u => String(u.Login).toLowerCase() === l.toLowerCase())) return alert("Login já existe!"); 
+        
+        let btn = document.getElementById('btnAdicionarUser');
+        btn.innerText = "Aguarde..."; btn.disabled = true;
+        
+        try {
+            await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); 
+            document.getElementById('novoUserLogin').value = ""; 
+            document.getElementById('novoUserSenha').value = ""; 
+            await recarregarDadosSilencioso();
+            alert("Usuário criado com sucesso!");
+        } catch (error) {
+            alert("Falha na comunicação. Verifique se o Google Apps Script está aceitando o campo 'cargo'.");
+        } finally {
+            btn.innerText = "Criar Operador"; btn.disabled = false;
+        }
+    }
+    
     async function removerUsuarioSistema(login) { if(confirm(`Remover acesso de ${login}?`)) { await reqPOST({ acao: "remover_usuario", login: login }); recarregarDadosSilencioso(); } }
 
     async function adicionarCliente() { let id = document.getElementById('novoIdCli').value, nome = document.getElementById('novoNomeCli').value, tel = document.getElementById('novoTelCli').value; if(!id || !nome) return alert("Preencha ID e Nome!"); await reqPOST({ acao: "adicionar_cliente", id: id, nome: nome, telefone: tel }); recarregarDadosSilencioso(); }
@@ -1668,7 +1662,7 @@
         } 
     });
 
-    // --- LÓGICA DOS NOVOS RELATÓRIOS ---
+    // --- NOVA LÓGICA DOS RELATÓRIOS ---
     function setaDatasPadrao(idIni, idFim) {
         let hoje = new Date();
         let primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
