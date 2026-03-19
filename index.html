@@ -54,7 +54,7 @@
         .main-content { flex: 1; padding: 15px; overflow-y: auto; position: relative; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; }
         .tela { display: none; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex: 1; }
         .tela.ativa { display: block; }
-        #tela-caixa.ativa, #tela-livro.ativa, #tela-relatorios.ativa { display: flex !important; flex-direction: column; background: transparent; padding: 0; box-shadow: none;}
+        #tela-caixa.ativa, #tela-livro.ativa, #tela-relatorios.ativa, #tela-relatorio-fluxo.ativa { display: flex !important; flex-direction: column; background: transparent; padding: 0; box-shadow: none;}
 
         h1 { color: #333; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; font-size: 24px; }
         
@@ -192,9 +192,7 @@
                 <div style="display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); flex: 1; min-width: 200px;">
                     <span style="color:#64748b;">🔍</span>
                     <input type="text" id="codigoInput" placeholder="Produto ou Cód. Barras" style="border:none; background:transparent; outline:none; flex: 1; min-width: 80px; font-size: 13px;" disabled>
-                    
                     <button type="button" id="btnAddCodigo" onclick="let inp=document.getElementById('codigoInput'); if(inp.value.trim()!==''){processarEntradaCodigo(inp.value.trim()); inp.value='';}" disabled style="background:#10b981; color:#fff; border:none; border-radius:15px; padding:6px 12px; font-weight:bold; font-size:12px; cursor:pointer; box-shadow: 0 2px 4px rgba(16,185,129,0.3);">+ Inserir</button>
-
                     <button type="button" class="btn-camera" id="btnCamera" onclick="alternarCamera('codigoInput')" disabled style="padding: 2px; font-size: 16px; background: transparent; border: none; color: #3b82f6;">📷</button>
                 </div>
             </div>
@@ -294,7 +292,6 @@
                     💵 Pagamento <span style="font-size:11px; opacity:0.8;">F6</span>
                 </button>
             </div>
-
         </div>
     </div>
 
@@ -358,7 +355,6 @@
                 <div style="display: flex; gap: 10px;">
                     <button id="btnAcaoCaixa" style="padding: 10px 15px;" onclick="acaoCaixa()">🛑 Fechar Caixa</button>
                     <button style="background: #0ea5e9; color: #fff; padding: 10px 15px;" onclick="window.print()">🖨️ Imprimir</button>
-                    <button style="background: #0ea5e9; color: #fff; padding: 10px 15px;" onclick="alert('Relatório detalhado nas opções de Relatórios!')">📉 Rel. Fluxo de Caixa</button>
                 </div>
             </div>
         </div>
@@ -370,7 +366,6 @@
                     <button class="pill-btn active" id="pill-Todos" onclick="setFiltroLivro('Todos')">📄 Todos</button>
                     <button class="pill-btn" id="pill-Entrada" onclick="setFiltroLivro('Entrada')">⬆️ Entradas</button>
                     <button class="pill-btn" id="pill-Saida" onclick="setFiltroLivro('Saida')">⬇️ Saídas</button>
-                    <button class="pill-btn" onclick="alert('Filtro por forma de pagamento em breve!')">💳 Mov. Forma de Pagamento</button>
                 </div>
             </div>
             
@@ -395,8 +390,7 @@
                             <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: center;">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="listaCaixa">
-                        </tbody>
+                    <tbody id="listaCaixa"></tbody>
                 </table>
             </div>
         </div>
@@ -477,13 +471,15 @@
                     <p>Análise dos produtos com maior ou menor saída</p>
                 </div>
             </div>
-            <div class="relatorio-card" onclick="alert('Em breve!')">
+            
+            <div class="relatorio-card" onclick="abrirRelatorioFluxo()">
                 <div class="rel-icon">💲</div>
                 <div class="rel-text">
                     <h4>Relatório Fluxo de Caixa</h4>
                     <p>Confira todas as entradas e saídas de dinheiro</p>
                 </div>
             </div>
+
             <div class="relatorio-card" onclick="alert('Em breve!')">
                 <div class="rel-icon">📈</div>
                 <div class="rel-text">
@@ -514,6 +510,61 @@
             </div>
         </div>
     </div>
+
+    <div id="tela-relatorio-fluxo" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Relatório de Fluxo de Caixa
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight:bold; color:#475569; font-size:14px;">Período:</label>
+                <input type="date" id="relFluxoDataInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <input type="date" id="relFluxoDataFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="gerarRelatorioFluxo()">🔍 Gerar Relatório</button>
+            </div>
+            
+            <div class="livro-resumo-grid">
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #dcfce7; color: #22c55e;">⬆️</div>
+                    <div class="livro-card-text"><h4>Total Entradas</h4><p id="relFluxoEntradas">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #fee2e2; color: #ef4444;">⬇️</div>
+                    <div class="livro-card-text"><h4>Total Saídas</h4><p id="relFluxoSaidas">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card" style="border: 1px solid #3b82f6; background: #eff6ff;">
+                    <div class="livro-icon-box" style="background: #3b82f6; color: #fff;">💰</div>
+                    <div class="livro-card-text"><h4>Saldo Líquido</h4><p id="relFluxoSaldo" style="color: #3b82f6;">R$ 0,00</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            <div style="flex:2; min-width:300px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <h3 style="margin-top:0; color:#475569; text-align:center;">📊 Entradas vs Saídas Diárias</h3>
+                <div style="position: relative; height: 300px; width: 100%;">
+                    <canvas id="graficoRelFluxo"></canvas>
+                </div>
+            </div>
+            <div style="flex:1; min-width:250px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <h3 style="margin-top:0; color:#475569; text-align:center;">📑 Resumo por Categoria</h3>
+                <div class="table-responsive" style="max-height: 300px; overflow-y:auto; border: 1px solid #e2e8f0; border-radius: 4px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
+                        <thead style="background: #f8fafc; position: sticky; top: 0;">
+                            <tr><th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Categoria/Tipo</th><th style="padding:10px; text-align:right; border-bottom: 1px solid #e2e8f0;">Valor</th></tr>
+                        </thead>
+                        <tbody id="relFluxoCategorias"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div id="modalMovimentacao" class="modal-overlay">
@@ -665,12 +716,11 @@
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
     
-    const TAXAS_CARTAO = { credito: 0.03, debito: 0.015, pix: 0, especie: 0 };
-
     let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
     let turnoAtual = null, carrinho = [], total = 0, leitorHtml5 = null;
     let inputCameraAlvo = "codigoInput", idEditandoEstoque = null, operadorAtual = "", cargoAtual = "";
     
+    let chartFat = null, chartProd = null, chartRelFluxo = null;
     let acaoPagamentoPendente = null;
     let idComandaEmEdicao = null;
     let pagamentosComandaAtual = 0; 
@@ -799,7 +849,7 @@
         let painel = document.getElementById(idTela);
         painel.classList.add('ativa');
         
-        if(idTela === 'tela-caixa' || idTela === 'tela-livro' || idTela === 'tela-relatorios') {
+        if(idTela === 'tela-caixa' || idTela === 'tela-livro' || idTela === 'tela-relatorios' || idTela === 'tela-relatorio-fluxo') {
             document.getElementById('status-bar').style.display = 'none';
         } else {
             document.getElementById('status-bar').style.display = 'block';
@@ -808,6 +858,36 @@
         if(elementoMenu) elementoMenu.classList.add('ativo'); else { let el = document.querySelector(`.menu-item[onclick*="${idTela}"]`); if(el) el.classList.add('ativo'); }
         localStorage.setItem('arena_tab', idTela);
         if(leitorHtml5) fecharCamera(); if(idTela === 'tela-caixa' && turnoAtual) document.getElementById('codigoInput').focus();
+    }
+
+    function desenharGraficos() {
+        // Graficos do Dashboard Antigo (Opcional, se ainda quiser manter lá escondido ou reutilizar)
+        let labelsDias = [], dadosFaturamento = [];
+        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); labelsDias.push(d.toLocaleDateString('pt-BR').substring(0,5)); dadosFaturamento.push(0); }
+        let hjFormatDateArray = [];
+        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); hjFormatDateArray.push(d.toLocaleDateString('pt-BR')); }
+
+        bancoCaixaGlobal.forEach(m => {
+            if(m.Tipo === "Entrada" && (m.Descricao.includes("Venda") || m.Descricao.includes("Pgto Comanda"))) {
+                let dStr = m.Data_Hora.split(/[\s,T]+/)[0]; let idx = hjFormatDateArray.indexOf(dStr);
+                if(idx !== -1) dadosFaturamento[idx] += parseFloat(m.Valor.toString().replace(',','.')) || 0;
+            }
+        });
+
+        let ctxFat = document.getElementById('graficoFaturamento');
+        if(chartFat && ctxFat) chartFat.destroy();
+        if(ctxFat) chartFat = new Chart(ctxFat, { type: 'bar', data: { labels: labelsDias, datasets: [{ label: 'Receita (R$)', data: dadosFaturamento, backgroundColor: '#0ea5e9', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
+
+        let contagemProdutos = {};
+        bancoVendas.forEach(v => {
+            if(!v.Itens_Vendidos) return; let itensStr = v.Itens_Vendidos.split('(')[0];
+            itensStr.split(',').forEach(item => { let match = item.trim().match(/(\d+)x\s(.+)/); if(match) { let qtd = parseInt(match[1]); let nome = match[2].trim(); if(nome !== "SERVICO" && !nome.includes("Quadra") && nome !== "Desconto Aplicado" && nome !== "Desconto Especial") { contagemProdutos[nome] = (contagemProdutos[nome] || 0) + qtd; } } });
+        });
+
+        let prodOrder = Object.keys(contagemProdutos).map(k => ({nome: k, qtd: contagemProdutos[k]})).sort((a,b) => b.qtd - a.qtd).slice(0, 5);
+        let ctxProd = document.getElementById('graficoProdutos');
+        if(chartProd && ctxProd) chartProd.destroy();
+        if(ctxProd) chartProd = new Chart(ctxProd, { type: 'doughnut', data: { labels: prodOrder.map(p => p.nome), datasets: [{ data: prodOrder.map(p => p.qtd), backgroundColor: ['#10b981', '#0ea5e9', '#eab308', '#f97316', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
 
     function abrirModalPagamento(valorTotal, acaoObj) {
@@ -1183,8 +1263,7 @@
                 </div>
                 <div style="text-align: right; margin-bottom: 15px;">${valorExibicaoHtml}</div>
                 <div class="comanda-actions">
-                    <button type="button" class="btn-azul" onclick="mudarTela('tela-caixa'); editarComanda('${c.ID_Comanda}')">📂 Abrir no Caixa</button>
-                    <button type="button" class="btn-vermelho" onclick="verificarPermissaoGerente('Zerar Comanda', () => excluirComanda('${c.ID_Comanda}'))">🗑️ Cancelar</button>
+                    <button type="button" class="btn-azul" style="grid-column: span 2;" onclick="mudarTela('tela-caixa'); editarComanda('${c.ID_Comanda}')">📂 Abrir no Caixa</button>
                 </div>
             </div>`; 
         }).join(''); 
@@ -1494,6 +1573,105 @@
             } 
         } 
     });
+
+    // --- NOVA LÓGICA DO RELATÓRIO DE FLUXO DE CAIXA ---
+    function abrirRelatorioFluxo() {
+        let hoje = new Date();
+        let primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+        document.getElementById('relFluxoDataInicio').value = primeiroDia.toISOString().split('T')[0];
+        document.getElementById('relFluxoDataFim').value = hoje.toISOString().split('T')[0];
+        
+        mudarTela('tela-relatorio-fluxo');
+        gerarRelatorioFluxo();
+    }
+
+    function gerarRelatorioFluxo() {
+        let dIniStr = document.getElementById('relFluxoDataInicio').value;
+        let dFimStr = document.getElementById('relFluxoDataFim').value;
+        
+        let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null;
+        let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
+
+        let totalEntradas = 0;
+        let totalSaidas = 0;
+        let dadosPorDia = {};
+        let dadosPorCategoria = {};
+
+        bancoCaixaGlobal.forEach(m => {
+            if(!m.ID_Transacao) return;
+            let recordDate = parseDataBR(m.Data_Hora);
+            
+            if (dIni && recordDate < dIni) return;
+            if (dFim && recordDate > dFim) return;
+
+            let v = parseFloat(m.Valor.toString().replace(',','.')) || 0;
+            let diaStr = m.Data_Hora.split(/[\s,T]+/)[0]; 
+
+            if(!dadosPorDia[diaStr]) dadosPorDia[diaStr] = { entradas: 0, saidas: 0 };
+
+            let categoria = "Vendas/Outros";
+            let catMatch = m.Descricao.match(/\[(.*?)\]/);
+            if(catMatch) {
+                categoria = catMatch[1];
+            } else if(m.Descricao.toLowerCase().includes('venda') || m.Descricao.toLowerCase().includes('pgto comanda')) {
+                categoria = "Vendas / Recebimentos";
+            } else if(m.Descricao.toLowerCase().includes('troco inicial')) {
+                categoria = "Abertura de Caixa (Troco)";
+            }
+
+            if(!dadosPorCategoria[categoria]) dadosPorCategoria[categoria] = 0;
+
+            if (m.Tipo === 'Entrada') {
+                totalEntradas += v;
+                dadosPorDia[diaStr].entradas += v;
+                dadosPorCategoria[categoria] += v;
+            } else {
+                totalSaidas += v;
+                dadosPorDia[diaStr].saidas += v;
+                dadosPorCategoria[categoria] -= v; 
+            }
+        });
+
+        document.getElementById('relFluxoEntradas').innerText = "R$ " + totalEntradas.toFixed(2);
+        document.getElementById('relFluxoSaidas').innerText = "R$ " + totalSaidas.toFixed(2);
+        document.getElementById('relFluxoSaldo').innerText = "R$ " + (totalEntradas - totalSaidas).toFixed(2);
+
+        let htmlCat = Object.keys(dadosPorCategoria).sort((a,b) => dadosPorCategoria[b] - dadosPorCategoria[a]).map(cat => {
+            let val = dadosPorCategoria[cat];
+            let cor = val >= 0 ? '#16a34a' : '#dc2626';
+            return `<tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding:10px; font-weight:500; color: #334155;">${cat}</td>
+                <td style="padding:10px; text-align:right; color:${cor}; font-weight:bold;">R$ ${Math.abs(val).toFixed(2)}</td>
+            </tr>`;
+        }).join('');
+        document.getElementById('relFluxoCategorias').innerHTML = htmlCat;
+
+        // Gráfico
+        let labels = Object.keys(dadosPorDia).sort((a,b) => parseDataBR(a) - parseDataBR(b)); 
+        let valEntradas = labels.map(l => dadosPorDia[l].entradas);
+        let valSaidas = labels.map(l => dadosPorDia[l].saidas);
+
+        if(chartRelFluxo) chartRelFluxo.destroy();
+        let ctx = document.getElementById('graficoRelFluxo');
+        if (ctx) {
+            chartRelFluxo = new Chart(ctx, { 
+                type: 'bar', 
+                data: { 
+                    labels: labels.map(l => l.substring(0,5)), 
+                    datasets: [
+                        { label: 'Entradas', data: valEntradas, backgroundColor: '#22c55e', borderRadius: 4 },
+                        { label: 'Saídas', data: valSaidas, backgroundColor: '#ef4444', borderRadius: 4 }
+                    ] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { y: { beginAtZero: true } },
+                    plugins: { legend: { position: 'top' } }
+                } 
+            });
+        }
+    }
 </script>
 
 </body>
