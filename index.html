@@ -108,7 +108,7 @@
         .comanda-card:active { cursor: grabbing; }
         .comanda-card.over { border: 2px dashed #0ea5e9; opacity: 0.6; transform: scale(1.02); }
         
-        .comanda-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 10px; }
+        .comanda-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 5px; }
         .comanda-header h3 { margin: 0; font-size: 18px; color: #0f172a; pointer-events: none; }
         .comanda-header .id-comanda { font-size: 12px; color: #64748b; background: #f1f5f9; padding: 3px 8px; border-radius: 10px; font-weight: bold; pointer-events: none; }
         .comanda-body { flex: 1; font-size: 14px; color: #475569; margin-bottom: 15px; pointer-events: none; }
@@ -168,8 +168,8 @@
 </div>
 
 <div id="tela-sincronizacao">
-    <img src="raquete-raio.gif" alt="Aguarde..." class="loader-gif">
-    <div class="sync-text">Sincronizando dados...</div>
+    <img src="./raquete-raio.gif" alt="Aguarde..." class="loader-gif">
+    <div class="sync-text">A Processar...</div>
 </div>
 
 <div id="cupao-impressao"></div>
@@ -852,7 +852,21 @@
         if(str.includes('T')) return new Date(str); let partes = str.split(/[\s,]+/); let dma = partes[0].split('/'); if(dma.length === 3) return new Date(`${dma[2]}-${dma[1]}-${dma[0]}T12:00:00`); return new Date(0); 
     }
 
-    async function reqPOST(dados) { return await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }); }
+    // --- AQUI A ANIMAÇÃO FOI ATIVADA PARA TODAS AS COMUNICAÇÕES ---
+    async function reqPOST(dados) { 
+        document.getElementById('tela-sincronizacao').style.display = 'flex';
+        try {
+            let resposta = await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }); 
+            return resposta;
+        } finally {
+            // Um pequeno delay de segurança caso a função de recarregar não esconda a tela
+            setTimeout(() => {
+                if (document.getElementById('tela-sincronizacao').style.display === 'flex') {
+                    document.getElementById('tela-sincronizacao').style.display = 'none';
+                }
+            }, 3000);
+        }
+    }
 
     document.getElementById('loginSenha').addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); fazerLogin(); } });
 
@@ -940,9 +954,7 @@
         }
     }
 
-    // --- LÓGICA DE SINCRONIZAÇÃO COM ANIMAÇÃO ---
     async function recarregarDadosSilencioso() {
-        // Mostra a tela de sincronização com o GIF da raquete
         document.getElementById('tela-sincronizacao').style.display = 'flex';
         
         try {
@@ -963,7 +975,6 @@
                 setTimeout(() => { statusBar.style.display = 'none'; }, 3000);
             }
         } finally {
-            // Esconde a animação de sincronização quando terminar
             document.getElementById('tela-sincronizacao').style.display = 'none';
         }
     }
@@ -1367,12 +1378,16 @@
             let btnSelecionar = `<button onclick="selecionarComandaModal('${c.ID_Comanda}', '${clienteEscapado}')" style="background:transparent; border:none; color:#3b82f6; cursor:pointer; font-size:16px; padding:0 5px;" title="Selecionar / Abrir">📂</button>`;
             let btnApagar = `<button onclick="verificarPermissaoGerente('Zerar Comanda', () => { excluirComanda('${c.ID_Comanda}'); fecharModalComandas(); })" style="background:transparent; border:none; color:#ef4444; cursor:pointer; font-size:16px; padding:0 5px;" title="Apagar">🗑️</button>`;
 
+            // ADICIONADO DATA E HORA DE CRIAÇÃO E O OPERADOR NA TABELA (F3)
             return `
             <tr style="border-bottom: 1px solid #e2e8f0; transition: 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
-                <td style="padding: 10px;">${c.ID_Comanda}</td>
+                <td style="padding: 10px; font-weight: bold;">${c.ID_Comanda}</td>
                 <td style="padding: 10px;">${c.Cliente || 'Sem cliente'}</td>
-                <td style="padding: 10px; color: #64748b;">Em andamento</td>
-                <td style="padding: 10px;">R$ ${valor.toFixed(2)}</td>
+                <td style="padding: 10px; font-size: 12px; color: #64748b;">
+                    ${c.Data_Hora ? formatarDataExibicao(c.Data_Hora) : '--'}<br>
+                    <span style="font-size: 10px; color: #94a3b8;">Op: ${c.Operador || '--'}</span>
+                </td>
+                <td style="padding: 10px; font-weight: bold;">R$ ${valor.toFixed(2)}</td>
                 <td style="padding: 10px;">${btnSelecionar} ${btnApagar}</td>
             </tr>`; 
         }).join('');
@@ -1382,7 +1397,8 @@
         let termo = String(document.getElementById('buscaComandaInput').value || '').toLowerCase();
         let filtradas = bancoComandas.filter(c => 
             String(c.ID_Comanda || '').toLowerCase().includes(termo) || 
-            String(c.Cliente || '').toLowerCase().includes(termo)
+            String(c.Cliente || '').toLowerCase().includes(termo) ||
+            String(c.Operador || '').toLowerCase().includes(termo)
         );
         renderizarTabelaModalComandas(filtradas);
     }
@@ -1513,11 +1529,16 @@
             
             let clienteEscapado = String(c.Cliente || '').replace(/'/g, "\\'");
             
+            // ADICIONADO DATA E HORA E OPERADOR NO CABEÇALHO DO CARTÃO DA COMANDA
             return `
             <div class="comanda-card" draggable="true" data-id="${c.ID_Comanda}">
                 <div class="comanda-header">
                     <h3>👤 ${c.Cliente || 'Sem Nome'}</h3>
                     <span class="id-comanda">#${c.ID_Comanda}</span>
+                </div>
+                <div style="font-size: 11px; color: #64748b; margin-bottom: 10px; display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 5px;">
+                    <span>📅 ${c.Data_Hora ? formatarDataExibicao(c.Data_Hora) : '--'}</span>
+                    <span>👤 Op: ${c.Operador || '--'}</span>
                 </div>
                 <div class="comanda-body">
                     <div class="itens">${itensStr}</div>
