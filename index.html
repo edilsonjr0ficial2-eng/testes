@@ -48,12 +48,16 @@
         .btn-main { background-color: var(--primary); color: black; padding: 18px 40px; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; border: none; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
         .btn-main:hover { transform: scale(1.05); background-color: var(--hover); }
         
-        /* NOVAS CLASSES PARA OS PARCEIROS */
-        .hero-actions { display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 10px; }
-        .mini-partners { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 50px; border: 1px solid #333; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
-        .partners-title { font-size: 0.8rem; color: #aaa; text-transform: uppercase; font-weight: bold; }
-        .mini-partner-logo { height: 35px; width: auto; filter: grayscale(100%) brightness(1.2); opacity: 0.7; transition: 0.3s; cursor: pointer; }
-        .mini-partner-logo:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
+        /* CSS PARA CARDS VERTICAIS DE PARCEIROS */
+        .hero-actions { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 20px; }
+        .partners-vertical-list { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+        .partners-vertical-title { color: #aaa; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: -5px; padding-left: 5px; }
+        .partner-card { background: rgba(17, 17, 17, 0.85); border: 1px solid #333; border-radius: 12px; padding: 10px 15px; display: flex; align-items: center; gap: 15px; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); min-width: 200px; }
+        .partner-card:hover { border-color: var(--primary); transform: translateX(-5px); background: #1a1a1a; }
+        .partner-card img { height: 40px; width: auto; border-radius: 6px; object-fit: contain; }
+        .partner-info { display: flex; flex-direction: column; }
+        .partner-tag { font-size: 0.65rem; color: var(--primary); text-transform: uppercase; font-weight: 900; letter-spacing: 1px; }
+        .partner-name { font-size: 0.9rem; font-weight: bold; margin-top: 2px; }
 
         .section-title { font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 10px; text-align: center; width: 100%; }
         .agenda-box { background: var(--card-color); padding: 20px; border-radius: 15px; max-width: 600px; margin: auto; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -220,13 +224,29 @@
         <p>A nova experiência do Beach Tennis de Russas e região.</p>
         
         <div class="hero-actions">
-            <div class="mini-partners">
-                <span class="partners-title">Apoio:</span>
-                <a href="#" target="_blank"><img src="logo_parceiro1.png" alt="Parceiro 1" class="mini-partner-logo"></a>
-                <a href="#" target="_blank"><img src="logo_parceiro2.png" alt="Parceiro 2" class="mini-partner-logo"></a>
+            
+            <div class="partners-vertical-list">
+                <span class="partners-vertical-title">Apoio Oficial:</span>
+                
+                <a href="#" target="_blank" class="partner-card">
+                    <img src="logo_parceiro1.png" alt="Parceiro 1">
+                    <div class="partner-info">
+                        <span class="partner-tag">Patrocinador</span>
+                        <span class="partner-name">Nome do Parceiro 1</span>
+                    </div>
+                </a>
+
+                <a href="#" target="_blank" class="partner-card">
+                    <img src="logo_parceiro2.png" alt="Parceiro 2">
+                    <div class="partner-info">
+                        <span class="partner-tag">Parceiro</span>
+                        <span class="partner-name">Nome do Parceiro 2</span>
+                    </div>
+                </a>
             </div>
             
             <button class="btn-main" onclick="navegarPara('tela-agendamento')">🔍 VERIFICAR HORÁRIOS</button>
+            
         </div>
     </div>
 
@@ -701,7 +721,7 @@
                 msg += "💰 Valor: R$ " + tempValor + ",00\n";
                 msg += "💳 Pagamento: " + pag + "\n\n";
                 msg += "✅ *Termos de cancelamento aceitos.*\n\n";
-                msg += "⚠️ *Aviso:* O site pode levar alguns minutos para atualizar a tela, mas não se preocupe! Assim que confirmarmos sua mensagem por aqui, seu horário estará 100% garantido!";
+                msg += "⚠️ *Aviso:* O site pode levar alguns minutos para atualizar o ecrã, mas não se preocupe! Assim que confirmarmos a sua mensagem por aqui, o seu horário estará 100% garantido!";
                 
                 window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`;
                 
