@@ -47,6 +47,14 @@
         .hero p { font-size: 1.2rem; color: #ddd; margin-bottom: 30px; max-width: 600px; text-shadow: 1px 1px 5px black; }
         .btn-main { background-color: var(--primary); color: black; padding: 18px 40px; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; border: none; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
         .btn-main:hover { transform: scale(1.05); background-color: var(--hover); }
+        
+        /* NOVAS CLASSES PARA OS PARCEIROS */
+        .hero-actions { display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 10px; }
+        .mini-partners { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 50px; border: 1px solid #333; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .partners-title { font-size: 0.8rem; color: #aaa; text-transform: uppercase; font-weight: bold; }
+        .mini-partner-logo { height: 35px; width: auto; filter: grayscale(100%) brightness(1.2); opacity: 0.7; transition: 0.3s; cursor: pointer; }
+        .mini-partner-logo:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
+
         .section-title { font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 10px; text-align: center; width: 100%; }
         .agenda-box { background: var(--card-color); padding: 20px; border-radius: 15px; max-width: 600px; margin: auto; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .court-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 20px; }
@@ -210,7 +218,16 @@
         </div>
         <img src="logo2.png" alt="Arena Vitale" class="hero-logo">
         <p>A nova experiência do Beach Tennis de Russas e região.</p>
-        <button class="btn-main" onclick="navegarPara('tela-agendamento')">🔍 VERIFICAR HORÁRIOS</button>
+        
+        <div class="hero-actions">
+            <div class="mini-partners">
+                <span class="partners-title">Apoio:</span>
+                <a href="#" target="_blank"><img src="logo_parceiro1.png" alt="Parceiro 1" class="mini-partner-logo"></a>
+                <a href="#" target="_blank"><img src="logo_parceiro2.png" alt="Parceiro 2" class="mini-partner-logo"></a>
+            </div>
+            
+            <button class="btn-main" onclick="navegarPara('tela-agendamento')">🔍 VERIFICAR HORÁRIOS</button>
+        </div>
     </div>
 
     <div id="tela-fidelidade" class="secao-conteudo">
