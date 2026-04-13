@@ -52,16 +52,37 @@
         .btn-main { background-color: var(--primary); color: black; padding: 18px 40px; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; border: none; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); margin-bottom: 10px; }
         .btn-main:hover { transform: scale(1.05); background-color: var(--hover); }
         
-        /* DISPOSIÇÃO: PARCEIROS À ESQUERDA, BOTÃO À DIREITA */
-        .hero-bottom-bar { width: 100%; max-width: 1300px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 40px; margin-top: 40px; }
-        .partners-vertical-list { display: flex; flex-direction: column; gap: 10px; text-align: left; }
-        .partners-vertical-title { color: #aaa; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: -5px; padding-left: 5px; }
-        .partner-card { background: rgba(17, 17, 17, 0.85); border: 1px solid #333; border-radius: 12px; padding: 8px 15px; display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); min-width: 220px; }
+        /* LAYOUT CENTRALIZADO DO BOTÃO COM CARDS MENORES À ESQUERDA */
+        .hero-bottom-bar { 
+            position: relative; 
+            width: 100%; 
+            max-width: 1300px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-end; 
+            padding: 0 40px; 
+            margin-top: 40px; 
+            min-height: 120px; 
+        }
+        
+        .partners-vertical-list { 
+            position: absolute; 
+            left: 40px; 
+            bottom: 0; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            text-align: left; 
+        }
+        .partners-vertical-title { color: #aaa; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; margin-bottom: -3px; padding-left: 5px; }
+        
+        /* CARDS MENORES */
+        .partner-card { background: rgba(17, 17, 17, 0.85); border: 1px solid #333; border-radius: 10px; padding: 5px 10px; display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); min-width: 160px; }
         .partner-card:hover { border-color: var(--primary); transform: translateX(5px); background: #1a1a1a; }
-        .partner-card img { height: 35px; width: auto; border-radius: 6px; object-fit: contain; }
+        .partner-card img { height: 26px; width: auto; border-radius: 4px; object-fit: contain; }
         .partner-info { display: flex; flex-direction: column; }
-        .partner-tag { font-size: 0.6rem; color: var(--primary); text-transform: uppercase; font-weight: 900; letter-spacing: 1px; }
-        .partner-name { font-size: 0.85rem; font-weight: bold; margin-top: 2px; }
+        .partner-tag { font-size: 0.55rem; color: var(--primary); text-transform: uppercase; font-weight: 900; letter-spacing: 1px; }
+        .partner-name { font-size: 0.75rem; font-weight: bold; margin-top: 1px; }
 
         .section-title { font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 10px; text-align: center; width: 100%; }
         .agenda-box { background: var(--card-color); padding: 20px; border-radius: 15px; max-width: 600px; margin: auto; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -145,8 +166,20 @@
         .card h3 { font-size: 1.5rem; margin-bottom: 10px; color: var(--primary); }
 
         @media (max-width: 768px) {
-            .hero-bottom-bar { flex-direction: column-reverse; align-items: center; gap: 30px; margin-top: 20px; padding: 0 10px; }
-            .partners-vertical-list { align-items: center; text-align: center; }
+            .hero-bottom-bar { 
+                flex-direction: column-reverse; 
+                align-items: center; 
+                gap: 30px; 
+                margin-top: 20px; 
+                padding: 0 10px; 
+            }
+            .partners-vertical-list { 
+                position: relative; 
+                left: 0; 
+                bottom: 0; 
+                align-items: center; 
+                text-align: center; 
+            }
             .partners-vertical-title { padding-left: 0; margin-bottom: 5px; }
             .hero h1 { font-size: 3rem; } 
         }
@@ -256,7 +289,7 @@
                 </a>
             </div>
             
-            <div style="margin-bottom: 20px;">
+            <div style="margin-bottom: 20px; z-index: 10;">
                 <button class="btn-main" onclick="navegarPara('tela-agendamento')">🔍 VERIFICAR HORÁRIOS</button>
             </div>
             
