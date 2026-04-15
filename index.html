@@ -48,41 +48,30 @@
         .weather-widget { background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary); padding: 8px 20px; border-radius: 50px; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); font-weight: bold; color: var(--primary); }
         .hero p { font-size: 1.2rem; color: #ddd; margin-bottom: 30px; max-width: 600px; text-shadow: 1px 1px 5px black; }
         
+        /* WIDGET RANKING TOP 5 */
+        .ranking-widget { position: absolute; top: 20px; left: 20px; background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary); padding: 15px; border-radius: 15px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); color: white; text-align: left; z-index: 10; min-width: 220px; backdrop-filter: blur(5px); }
+        .ranking-widget h4 { color: var(--primary); margin-bottom: 12px; font-size: 0.95rem; text-transform: uppercase; text-align: center; font-weight: 900; }
+        .ranking-list { list-style: none; padding: 0; margin: 0; font-size: 0.85rem; }
+        .ranking-list li { padding: 8px 0; border-bottom: 1px dashed #444; display: flex; justify-content: space-between; align-items: center; }
+        .ranking-list li:last-child { border-bottom: none; padding-bottom: 0; }
+        .ranking-list li span { font-weight: 900; color: var(--primary); background: #222; padding: 2px 8px; border-radius: 5px; font-size: 0.75rem; }
+        
         /* BOTÃO ORIGINAL - MANTIDO INTACTO */
         .btn-main { background-color: var(--primary); color: black; padding: 18px 40px; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; border: none; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); margin-bottom: 10px; }
         .btn-main:hover { transform: scale(1.05); background-color: var(--hover); }
         
-        /* LAYOUT CENTRALIZADO DO BOTÃO COM CARDS MENORES À ESQUERDA */
-        .hero-bottom-bar { 
-            position: relative; 
-            width: 100%; 
-            max-width: 1300px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-end; 
-            padding: 0 40px; 
-            margin-top: 40px; 
-            min-height: 120px; 
-        }
+        /* LAYOUT CENTRALIZADO DO BOTÃO E CARDS DOS PARCEIROS */
+        .hero-bottom-bar { position: relative; width: 100%; max-width: 1300px; display: flex; justify-content: center; align-items: flex-end; padding: 0 40px; margin-top: 40px; min-height: 120px; }
         
-        .partners-vertical-list { 
-            position: absolute; 
-            left: 40px; 
-            bottom: 0; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px; 
-            text-align: left; 
-        }
+        .partners-vertical-list { position: absolute; left: 40px; bottom: 0; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+        .partners-grid-mobile { display: flex; flex-direction: column; gap: 8px; }
         .partners-vertical-title { color: #aaa; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; margin-bottom: -3px; padding-left: 5px; }
         
-        /* CARDS MENORES */
         .partner-card { background: rgba(17, 17, 17, 0.85); border: 1px solid #333; border-radius: 10px; padding: 5px 10px; display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); min-width: 160px; }
         .partner-card:hover { border-color: var(--primary); transform: translateX(5px); background: #1a1a1a; }
         .partner-card img { height: 26px; width: auto; border-radius: 4px; object-fit: contain; }
-        .partner-info { display: flex; flex-direction: column; }
-        .partner-tag { font-size: 0.55rem; color: var(--primary); text-transform: uppercase; font-weight: 900; letter-spacing: 1px; }
-        .partner-name { font-size: 0.75rem; font-weight: bold; margin-top: 1px; }
+        .partner-info { display: flex; flex-direction: column; justify-content: center; }
+        .partner-name { font-size: 0.85rem; font-weight: bold; }
 
         .section-title { font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 10px; text-align: center; width: 100%; }
         .agenda-box { background: var(--card-color); padding: 20px; border-radius: 15px; max-width: 600px; margin: auto; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -160,26 +149,17 @@
         .faq-item summary::after { content: '+'; color: var(--primary); font-size: 1.5rem; font-weight: bold; }
         .faq-item[open] summary::after { content: '-'; }
         .faq-item p { padding: 15px; color: #ccc; border-top: 1px solid #444; font-size: 0.95rem; line-height: 1.5; margin-bottom: 0; background: #1a1a1a; }
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: auto; }
-        .card { background-color: var(--card-color); padding: 30px; border-radius: 15px; border: 1px solid #333; transition: 0.3s; }
-        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 5px 15px rgba(255, 215, 0, 0.1); }
-        .card h3 { font-size: 1.5rem; margin-bottom: 10px; color: var(--primary); }
 
         @media (max-width: 768px) {
-            .hero-bottom-bar { 
-                flex-direction: column-reverse; 
-                align-items: center; 
-                gap: 30px; 
-                margin-top: 20px; 
-                padding: 0 10px; 
-            }
-            .partners-vertical-list { 
-                position: relative; 
-                left: 0; 
-                bottom: 0; 
-                align-items: center; 
-                text-align: center; 
-            }
+            #tela-inicial { padding-top: 20px; justify-content: flex-start; } 
+            .ranking-widget { position: relative; top: 0; left: 0; margin-bottom: 20px; width: 90%; max-width: 350px; margin-left: auto; margin-right: auto; }
+            .hero-bottom-bar { flex-direction: column; align-items: center; gap: 30px; margin-top: 20px; padding: 0 10px; min-height: auto; }
+            
+            .partners-vertical-list { position: relative; left: 0; bottom: 0; align-items: center; text-align: center; width: 100%; }
+            .partners-grid-mobile { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
+            .partner-card { width: calc(50% - 5px); min-width: unset; justify-content: center; flex-direction: column; padding: 10px; text-align: center; }
+            .partner-card img { height: 35px; margin-bottom: 5px; }
+            
             .partners-vertical-title { padding-left: 0; margin-bottom: 5px; }
             .hero h1 { font-size: 3rem; } 
         }
@@ -250,6 +230,14 @@
     <div class="btn-refresh-float" onclick="atualizarPagina()" title="Atualizar Dados">🔄</div>
 
     <div id="tela-inicial">
+        
+        <div class="ranking-widget" id="rankingWidget">
+            <h4>🏆 Top 5 do Mês</h4>
+            <ul class="ranking-list" id="rankingList">
+                <li><i class="fas fa-spinner fa-spin"></i> A carregar...</li>
+            </ul>
+        </div>
+
         <div class="weather-widget" id="weather-widget">
             <i class="fas fa-sun" id="weather-icon"></i>
             <span id="clima-temp">--°C</span>
@@ -262,31 +250,30 @@
         <div class="hero-bottom-bar">
             
             <div class="partners-vertical-list">
-                <span class="partners-vertical-title">Apoio Oficial:</span>
+                <span class="partners-vertical-title">Nossos Parceiros:</span>
                 
-                <a href="https://www.instagram.com/chicashoes_/" target="_blank" class="partner-card">
-                    <img src="quadra-chicashoes.jpg" alt="Chicashoes">
-                    <div class="partner-info">
-                        <span class="partner-tag">Patrocinador</span>
-                        <span class="partner-name">Chicashoes</span>
-                    </div>
-                </a>
+                <div class="partners-grid-mobile">
+                    <a href="https://www.instagram.com/chicashoes_/" target="_blank" class="partner-card">
+                        <img src="quadra-chicashoes.jpg" alt="Chicashoes">
+                        <div class="partner-info">
+                            <span class="partner-name">Chicashoes</span>
+                        </div>
+                    </a>
 
-                <a href="https://www.instagram.com/padariadohelder/" target="_blank" class="partner-card">
-                    <img src="quadra-panificadora.jpg" alt="Padaria do Helder">
-                    <div class="partner-info">
-                        <span class="partner-tag">Patrocinador</span>
-                        <span class="partner-name">Padaria do Helder</span>
-                    </div>
-                </a>
+                    <a href="https://www.instagram.com/padariadohelder/" target="_blank" class="partner-card">
+                        <img src="quadra-panificadora.jpg" alt="Padaria do Helder">
+                        <div class="partner-info">
+                            <span class="partner-name">Padaria do Helder</span>
+                        </div>
+                    </a>
 
-                <a href="https://www.instagram.com/vitale_blend/" target="_blank" class="partner-card">
-                    <img src="vitale.jpg" alt="Vitale Blend">
-                    <div class="partner-info">
-                        <span class="partner-tag">Apoio Oficial</span>
-                        <span class="partner-name">Vitale Blend</span>
-                    </div>
-                </a>
+                    <a href="https://www.instagram.com/vitale_blend/" target="_blank" class="partner-card">
+                        <img src="vitale.jpg" alt="Vitale Blend">
+                        <div class="partner-info">
+                            <span class="partner-name">Vitale Blend</span>
+                        </div>
+                    </a>
+                </div>
             </div>
             
             <div style="margin-bottom: 20px; z-index: 10;">
@@ -433,7 +420,7 @@
 
                 document.getElementById('tela-auth').style.display = 'none'; document.querySelector('.navbar').style.display = 'block'; document.getElementById('relogioFlutuante').style.display = 'block'; document.querySelector('.btn-refresh-float').style.display = 'flex'; document.querySelector('.wa-float').style.display = 'flex'; document.querySelector('.ig-float').style.display = 'flex'; document.querySelector('footer').style.display = 'block';
                 atualizarRelogio(); document.getElementById('dateDisplay').innerText = formatarDataHeader(dataVisualizada).texto;
-                carregarDadosDoDia(); carregarClima(); buscarPontosNoServidor(); 
+                carregarDadosDoDia(); carregarClima(); buscarPontosNoServidor(); carregarRanking();
                 const telaSalvaSessao = sessionStorage.getItem('ultimaTelaArena');
                 if (telaSalvaSessao && document.getElementById(telaSalvaSessao)) navegarPara(telaSalvaSessao); else navegarPara('tela-inicial');
             } else { 
@@ -463,6 +450,21 @@
                 const box = document.createElement('div'); if(i<=pontosAtuais) { box.className = 'stamp-box stamped'; box.innerHTML = '🎾'; } else { box.className = 'stamp-box'; box.innerHTML = i; } grid.appendChild(box);
             }
             if(pontosAtuais>=10) document.getElementById('btnResgatar').style.display = 'block'; else if(document.getElementById('btnResgatar')) document.getElementById('btnResgatar').style.display = 'none';
+        }
+
+        // --- SISTEMA DO RANKING TOP 5 ---
+        function carregarRanking() {
+            const list = document.getElementById('rankingList');
+            fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ acao: "buscar_ranking" }) })
+            .then(r => r.json()).then(data => {
+                if(data.sucesso && data.ranking && data.ranking.length > 0) {
+                    list.innerHTML = '';
+                    data.ranking.forEach((r, i) => list.innerHTML += `<li>${i+1}º ${r.nome} <span>${r.horas}h</span></li>`);
+                } else { list.innerHTML = '<li style="color:#aaa; font-size:0.8rem; justify-content:center;">Aguardando dados...</li>'; }
+            }).catch(e => { 
+                // Se o backend ainda não tiver a função, mostra modelo visual de teste estático
+                list.innerHTML = '<li>1º Carregando... <span>--h</span></li><li>2º Aguardando... <span>--h</span></li>'; 
+            });
         }
 
         function resgatarPremio() {
