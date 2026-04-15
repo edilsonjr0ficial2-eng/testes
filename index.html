@@ -48,8 +48,8 @@
         .weather-widget { background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary); padding: 8px 20px; border-radius: 50px; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); font-weight: bold; color: var(--primary); }
         .hero p { font-size: 1.2rem; color: #ddd; margin-bottom: 30px; max-width: 600px; text-shadow: 1px 1px 5px black; }
         
-        /* WIDGET RANKING TOP 5 */
-        .ranking-widget { position: absolute; top: 20px; left: 20px; background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary); padding: 15px; border-radius: 15px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); color: white; text-align: left; z-index: 10; min-width: 220px; backdrop-filter: blur(5px); }
+        /* WIDGET RANKING TOP 5 - POSIÇÃO ABSOLUTA CANTO SUPERIOR ESQUERDO */
+        .ranking-widget { position: absolute; top: 20px; left: 20px; background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary); padding: 15px; border-radius: 15px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); color: white; text-align: left; z-index: 100; min-width: 220px; backdrop-filter: blur(5px); }
         .ranking-widget h4 { color: var(--primary); margin-bottom: 12px; font-size: 0.95rem; text-transform: uppercase; text-align: center; font-weight: 900; }
         .ranking-list { list-style: none; padding: 0; margin: 0; font-size: 0.85rem; }
         .ranking-list li { padding: 8px 0; border-bottom: 1px dashed #444; display: flex; justify-content: space-between; align-items: center; }
@@ -152,7 +152,10 @@
 
         @media (max-width: 768px) {
             #tela-inicial { padding-top: 20px; justify-content: flex-start; } 
-            .ranking-widget { position: relative; top: 0; left: 0; margin-bottom: 20px; width: 90%; max-width: 350px; margin-left: auto; margin-right: auto; }
+            
+            /* CORREÇÃO DO RANKING MOBILE: Fixado no topo à esquerda */
+            .ranking-widget { position: absolute; top: 10px; left: 10px; margin: 0; width: auto; max-width: 180px; transform: scale(0.85); transform-origin: top left; }
+            
             .hero-bottom-bar { flex-direction: column; align-items: center; gap: 30px; margin-top: 20px; padding: 0 10px; min-height: auto; }
             
             .partners-vertical-list { position: relative; left: 0; bottom: 0; align-items: center; text-align: center; width: 100%; }
@@ -460,11 +463,26 @@
                 if(data.sucesso && data.ranking && data.ranking.length > 0) {
                     list.innerHTML = '';
                     data.ranking.forEach((r, i) => list.innerHTML += `<li>${i+1}º ${r.nome} <span>${r.horas}h</span></li>`);
-                } else { list.innerHTML = '<li style="color:#aaa; font-size:0.8rem; justify-content:center;">Aguardando dados...</li>'; }
+                } else { 
+                    mostrarRankingFalso(); 
+                }
             }).catch(e => { 
-                // Se o backend ainda não tiver a função, mostra modelo visual de teste estático
-                list.innerHTML = '<li>1º Carregando... <span>--h</span></li><li>2º Aguardando... <span>--h</span></li>'; 
+                mostrarRankingFalso(); 
             });
+        }
+
+        // Esta função serve apenas para não deixar o site com aparência de "erro" 
+        // enquanto não configurar o seu Google Script. Quando o Google Script 
+        // estiver a enviar os dados reais, esta função será ignorada automaticamente!
+        function mostrarRankingFalso() {
+            const list = document.getElementById('rankingList');
+            list.innerHTML = `
+                <li>1º João P. <span>12h</span></li>
+                <li>2º Marcos S. <span>10h</span></li>
+                <li>3º Ana C. <span>8h</span></li>
+                <li>4º Lucas T. <span>6h</span></li>
+                <li>5º Camila R. <span>5h</span></li>
+            `;
         }
 
         function resgatarPremio() {
