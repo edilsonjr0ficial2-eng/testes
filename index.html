@@ -153,8 +153,20 @@
         @media (max-width: 768px) {
             #tela-inicial { padding-top: 20px; justify-content: flex-start; } 
             
-            /* CORREÇÃO DO RANKING MOBILE: Fixado no topo à esquerda */
-            .ranking-widget { position: absolute; top: 10px; left: 10px; margin: 0; width: auto; max-width: 180px; transform: scale(0.85); transform-origin: top left; }
+            /* CORREÇÃO DEFINITIVA DO RANKING MOBILE: Forçado no topo à esquerda */
+            .ranking-widget { 
+                position: absolute !important; 
+                top: 10px !important; 
+                left: 10px !important; 
+                right: auto !important;
+                margin: 0 !important; 
+                width: 160px !important; 
+                min-width: 160px !important;
+                padding: 10px !important;
+            }
+            .ranking-widget h4 { font-size: 0.8rem !important; margin-bottom: 8px !important; }
+            .ranking-list li { font-size: 0.75rem !important; padding: 5px 0 !important; }
+            .ranking-list li span { font-size: 0.65rem !important; padding: 2px 5px !important; }
             
             .hero-bottom-bar { flex-direction: column; align-items: center; gap: 30px; margin-top: 20px; padding: 0 10px; min-height: auto; }
             
