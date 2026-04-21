@@ -44,11 +44,10 @@
         #tela-inicial::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('quadra1.jpeg'); background-size: cover; background-position: center; filter: blur(6px) brightness(0.6); transform: scale(1.1); z-index: 1; }
         #tela-inicial > * { position: relative; z-index: 2; }
         
-        .hero-logo { max-width: 90%; width: 600px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0,0,0,0.8)); }
-        .weather-widget { background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary); padding: 8px 20px; border-radius: 50px; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); font-weight: bold; color: var(--primary); }
+        .hero-logo { max-width: 90%; width: 600px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0,0,0,0.8)); min-height: 150px; }
         .hero p { font-size: 1.2rem; color: #ddd; margin-bottom: 30px; max-width: 600px; text-shadow: 1px 1px 5px black; }
         
-        /* WIDGET RANKING TOP 5 - POSIÇÃO ABSOLUTA */
+        /* WIDGET RANKING TOP 5 - POSIÇÃO ABSOLUTA CANTO SUPERIOR ESQUERDO */
         .ranking-widget { 
             position: absolute !important; 
             top: 20px !important; 
@@ -73,16 +72,47 @@
         .ranking-list li:last-child { border-bottom: none; padding-bottom: 0; }
         .ranking-list li span { font-weight: 900; color: var(--primary); background: #222; padding: 2px 8px; border-radius: 5px; font-size: 0.75rem; }
         
+        /* WIDGET CLIMA - POSIÇÃO ABSOLUTA CANTO SUPERIOR DIREITO */
+        .weather-widget { 
+            position: absolute !important; 
+            top: 20px !important; 
+            right: 20px !important; 
+            margin: 0 !important;
+            background: rgba(0, 0, 0, 0.7); 
+            border: 1px solid var(--primary); 
+            padding: 8px 20px; 
+            border-radius: 50px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 10px; 
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); 
+            font-weight: bold; 
+            color: var(--primary); 
+            z-index: 100 !important; 
+            backdrop-filter: blur(5px); 
+        }
+
         /* BOTÃO ORIGINAL */
         .btn-main { background-color: var(--primary); color: black; padding: 18px 40px; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; border: none; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); margin-bottom: 10px; }
         .btn-main:hover { transform: scale(1.05); background-color: var(--hover); }
         
-        /* LAYOUT CENTRALIZADO DO BOTÃO E CARDS DOS PARCEIROS */
-        .hero-bottom-bar { position: relative; width: 100%; max-width: 1300px; display: flex; justify-content: center; align-items: flex-end; padding: 0 40px; margin-top: 40px; min-height: 120px; }
+        /* LAYOUT BARRA INFERIOR (DESKTOP) */
+        .hero-bottom-bar { width: 100%; max-width: 1300px; display: flex; justify-content: center; align-items: flex-end; padding: 0 40px; margin-top: 40px; z-index: 10;}
         
-        .partners-vertical-list { position: absolute; left: 40px; bottom: 0; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+        /* PARCEIROS CHUMBADOS NO CANTO INFERIOR ESQUERDO (DESKTOP) */
+        .partners-vertical-list { 
+            position: absolute; 
+            left: 20px; 
+            bottom: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            text-align: left; 
+            z-index: 50; 
+        }
+        
         .partners-grid-mobile { display: flex; flex-direction: column; gap: 8px; }
-        .partners-vertical-title { color: #aaa; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; margin-bottom: -3px; padding-left: 5px; }
+        .partners-vertical-title { color: #aaa; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; margin-bottom: -3px; padding-left: 5px; text-shadow: 1px 1px 3px black; }
         
         .partner-card { background: rgba(17, 17, 17, 0.85); border: 1px solid #333; border-radius: 10px; padding: 10px 15px; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .partner-card:hover { border-color: var(--primary); transform: translateX(5px); background: #1a1a1a; }
@@ -167,19 +197,15 @@
 
         /* REGRAS ESPECÍFICAS PARA TELEMÓVEL (MOBILE) */
         @media (max-width: 768px) {
-            /* MUDANÇA: Aumento do padding-top para empurrar a logo e o slogan para baixo, fugindo do ranking */
             #tela-inicial { padding-top: 210px !important; justify-content: flex-start; } 
             
-            /* Remove o relógio no celular para não sobrepor o Clima (O celular já mostra a hora no topo) */
+            /* Remove o relógio no celular para não sobrepor o Clima */
             .floating-clock { display: none !important; }
 
             /* Ranking preso no Canto Superior Esquerdo */
             .ranking-widget { 
-                position: absolute !important; 
                 top: 15px !important; 
                 left: 10px !important; 
-                right: auto !important;
-                margin: 0 !important; 
                 width: 145px !important; 
                 min-width: 145px !important;
                 padding: 10px !important;
@@ -190,10 +216,8 @@
             
             /* Clima preso no Canto Superior Direito */
             .weather-widget {
-                position: absolute !important;
                 top: 15px !important;
                 right: 10px !important;
-                margin: 0 !important;
                 padding: 5px 10px !important;
                 font-size: 0.8rem !important;
             }
@@ -201,7 +225,16 @@
             /* Forçar botão Verificar Horários a ficar ACIMA dos Parceiros */
             .hero-bottom-bar { flex-direction: column-reverse !important; align-items: center; gap: 20px; margin-top: 20px; padding: 0 10px; min-height: auto; }
             
-            .partners-vertical-list { position: relative; left: 0; bottom: 0; align-items: center; text-align: center; width: 100%; margin-top: 10px; }
+            /* RESTAURA OS PARCEIROS PARA O CENTRO DA TELA NO CELULAR */
+            .partners-vertical-list { 
+                position: relative !important; 
+                left: 0 !important; 
+                bottom: 0 !important; 
+                align-items: center; 
+                text-align: center; 
+                width: 100%; 
+                margin-top: 10px; 
+            }
             .partners-grid-mobile { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
             
             /* Cartões com a logo em destaque no telemóvel */
