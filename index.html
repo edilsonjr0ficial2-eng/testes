@@ -84,11 +84,9 @@
         .partners-grid-mobile { display: flex; flex-direction: column; gap: 8px; }
         .partners-vertical-title { color: #aaa; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; margin-bottom: -3px; padding-left: 5px; }
         
-        .partner-card { background: rgba(17, 17, 17, 0.85); border: 1px solid #333; border-radius: 10px; padding: 5px 10px; display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); min-width: 160px; }
+        .partner-card { background: rgba(17, 17, 17, 0.85); border: 1px solid #333; border-radius: 10px; padding: 10px 15px; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .partner-card:hover { border-color: var(--primary); transform: translateX(5px); background: #1a1a1a; }
-        .partner-card img { height: 26px; width: auto; border-radius: 4px; object-fit: contain; }
-        .partner-info { display: flex; flex-direction: column; justify-content: center; }
-        .partner-name { font-size: 0.85rem; font-weight: bold; }
+        .partner-card img { height: 35px; width: auto; border-radius: 4px; object-fit: contain; }
 
         .section-title { font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 10px; text-align: center; width: 100%; }
         .agenda-box { background: var(--card-color); padding: 20px; border-radius: 15px; max-width: 600px; margin: auto; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -169,12 +167,16 @@
 
         /* REGRAS ESPECÍFICAS PARA TELEMÓVEL (MOBILE) */
         @media (max-width: 768px) {
-            #tela-inicial { padding-top: 100px !important; justify-content: flex-start; } 
+            /* MUDANÇA: Aumento do padding-top para empurrar a logo e o slogan para baixo, fugindo do ranking */
+            #tela-inicial { padding-top: 210px !important; justify-content: flex-start; } 
             
+            /* Remove o relógio no celular para não sobrepor o Clima (O celular já mostra a hora no topo) */
+            .floating-clock { display: none !important; }
+
             /* Ranking preso no Canto Superior Esquerdo */
             .ranking-widget { 
                 position: absolute !important; 
-                top: 10px !important; 
+                top: 15px !important; 
                 left: 10px !important; 
                 right: auto !important;
                 margin: 0 !important; 
@@ -189,7 +191,7 @@
             /* Clima preso no Canto Superior Direito */
             .weather-widget {
                 position: absolute !important;
-                top: 10px !important;
+                top: 15px !important;
                 right: 10px !important;
                 margin: 0 !important;
                 padding: 5px 10px !important;
@@ -201,12 +203,17 @@
             
             .partners-vertical-list { position: relative; left: 0; bottom: 0; align-items: center; text-align: center; width: 100%; margin-top: 10px; }
             .partners-grid-mobile { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
-            .partner-card { width: calc(50% - 5px); min-width: unset; justify-content: center; flex-direction: column; padding: 10px; text-align: center; }
-            .partner-card img { height: 35px; margin-bottom: 5px; }
+            
+            /* Cartões com a logo em destaque no telemóvel */
+            .partner-card { width: calc(50% - 10px); min-width: unset; padding: 15px 10px; }
+            .partner-card img { height: 45px; margin: 0; }
             
             .partners-vertical-title { padding-left: 0; margin-bottom: 5px; }
             .hero h1 { font-size: 3rem; } 
-            .hero-logo { margin-top: 10px; }
+            
+            /* Ajuste extra para a logo no telemóvel */
+            .hero-logo { margin-top: 10px; max-width: 85%; }
+            .hero p { font-size: 1rem; padding: 0 10px; }
         }
         @media (max-width: 1100px) { 
             .nav-links { position: absolute; top: 100%; left: 0; width: 100%; background-color: #111; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; border-bottom: 1px solid var(--primary); display: none; }
@@ -298,25 +305,16 @@
                 <span class="partners-vertical-title">Nossos Parceiros:</span>
                 
                 <div class="partners-grid-mobile">
-                    <a href="https://www.instagram.com/chicashoes_/" target="_blank" class="partner-card">
+                    <a href="https://www.instagram.com/chicashoes_/" target="_blank" class="partner-card" title="Chicashoes">
                         <img src="quadra-chicashoes.jpg" alt="Chicashoes">
-                        <div class="partner-info">
-                            <span class="partner-name">Chicashoes</span>
-                        </div>
                     </a>
 
-                    <a href="https://www.instagram.com/padariadohelder/" target="_blank" class="partner-card">
+                    <a href="https://www.instagram.com/padariadohelder/" target="_blank" class="partner-card" title="Padaria do Helder">
                         <img src="quadra-panificadora.jpg" alt="Padaria do Helder">
-                        <div class="partner-info">
-                            <span class="partner-name">Padaria do Helder</span>
-                        </div>
                     </a>
 
-                    <a href="https://www.instagram.com/vitale_blend/" target="_blank" class="partner-card">
+                    <a href="https://www.instagram.com/vitale_blend/" target="_blank" class="partner-card" title="Vitale Blend">
                         <img src="vitale.jpg" alt="Vitale Blend">
-                        <div class="partner-info">
-                            <span class="partner-name">Vitale Blend</span>
-                        </div>
                     </a>
                 </div>
             </div>
