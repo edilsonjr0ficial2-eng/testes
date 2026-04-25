@@ -1,445 +1,2029 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-
-    <title>Arena Vitale | Beach Tennis</title>
-    <link rel="icon" href="logo.jpg" type="image/jpeg">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistema de Gestão Arena</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --bg-color: #000; --card-color: #111; --primary: #FFD700; --text-color: #fff; --hover: #E6C300; --instagram: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; padding-top: 80px; }
-        .secao-conteudo { display: none; min-height: 80vh; padding: 40px 20px; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .navbar { position: fixed; top: 0; left: 0; width: 100%; background-color: rgba(0, 0, 0, 0.95); border-bottom: 2px solid var(--primary); z-index: 2000; padding: 10px 0; backdrop-filter: blur(5px); display: none; }
-        .nav-container { max-width: 1300px; margin: auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
-        .nav-logo-img { max-height: 50px; width: auto; display: block; cursor: pointer; }
-        .nav-links { list-style: none; display: flex; gap: 15px; align-items: center;} 
-        .nav-links a { text-decoration: none; color: white; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; transition: 0.3s; cursor: pointer; white-space: nowrap; }
-        .nav-links a:hover { color: var(--primary); }
-        .hamburger { display: none; font-size: 1.8rem; color: var(--primary); cursor: pointer; }
-        .auth-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('quadra1.jpeg'); background-size: cover; background-position: center; position: fixed; top: 0; left: 0; width: 100%; z-index: 3000; }
-        .auth-box { background: rgba(17, 17, 17, 0.95); padding: 30px; border-radius: 20px; border: 2px solid var(--primary); width: 100%; max-width: 400px; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
-        .auth-logo { max-width: 150px; margin-bottom: 20px; }
-        .auth-title { color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; text-transform: uppercase; }
-        .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; background: #222; border: 1px solid #444; color: white; border-radius: 50px; text-align: center; font-size: 1rem; }
-        .auth-input:focus { border-color: var(--primary); outline: none; }
-        .auth-btn { width: 100%; padding: 15px; background: var(--primary); color: black; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-bottom: 10px; transition: 0.3s; }
-        .auth-btn:hover { background: var(--hover); transform: scale(1.02); }
-        .auth-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
-        .auth-link { color: #ccc; font-size: 0.9rem; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
-        .auth-link:hover { color: var(--primary); }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        .floating-clock { position: fixed; top: 95px; right: 20px; background-color: rgba(0, 0, 0, 0.8); border: 2px solid var(--primary); color: var(--primary); padding: 5px 15px; border-radius: 50px; font-size: 1rem; font-weight: 900; z-index: 1000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); display: none; }
-        .btn-refresh-float { position: fixed; top: 140px; right: 20px; background: rgba(0,0,0,0.8); border: 2px solid var(--primary); color: var(--primary); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; z-index: 1000; transition: 0.5s; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); display: none; }
-        .btn-refresh-float:hover { transform: rotate(360deg); background: var(--primary); color: black; }
+        body { margin: 0; background-color: #f1f5f9; display: flex; height: 100vh; height: 100dvh; overflow: hidden; -webkit-font-smoothing: antialiased; padding-left: 65px; }
         
-        #tela-inicial { display: none; height: 90vh; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px 0; overflow: hidden; position: relative; }
-        #tela-inicial::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('quadra1.jpeg'); background-size: cover; background-position: center; filter: blur(6px) brightness(0.6); transform: scale(1.1); z-index: 1; }
-        #tela-inicial > * { position: relative; z-index: 2; }
+        @media screen { #cupao-impressao { display: none; } }
         
-        .hero-logo { max-width: 90%; width: 600px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0,0,0,0.8)); min-height: 150px; }
-        .hero p { font-size: 1.2rem; color: #ddd; margin-bottom: 30px; max-width: 600px; text-shadow: 1px 1px 5px black; }
-        
-        .ranking-widget { 
-            position: absolute !important; top: 20px !important; left: 20px !important; margin: 0 !important; 
-            background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary); padding: 15px; border-radius: 15px; 
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); color: white; text-align: left; z-index: 100 !important; 
-            min-width: 220px; backdrop-filter: blur(5px); display: none; /* Escondido por padrão até o script verificar */
-        }
-        .ranking-widget h4 { color: var(--primary); margin-bottom: 12px; font-size: 0.95rem; text-transform: uppercase; text-align: center; font-weight: 900; }
-        .ranking-list { list-style: none; padding: 0; margin: 0; font-size: 0.85rem; }
-        .ranking-list li { padding: 8px 0; border-bottom: 1px dashed #444; display: flex; justify-content: space-between; align-items: center; }
-        .ranking-list li:last-child { border-bottom: none; padding-bottom: 0; }
-        .ranking-list li span { font-weight: 900; color: var(--primary); background: #222; padding: 2px 8px; border-radius: 5px; font-size: 0.75rem; }
-        
-        .weather-widget { 
-            background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary); padding: 8px 20px; border-radius: 50px; 
-            display: inline-flex; align-items: center; gap: 10px; margin-bottom: 25px;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); font-weight: bold; color: var(--primary); z-index: 100; backdrop-filter: blur(5px); 
+        /* --- REGRAS DE IMPRESSÃO CORRIGIDAS --- */
+        @media print { 
+            /* 1. SE FOR IMPRIMIR O CUPOM (TÉRMICA) */
+            body.imprimindo-cupom * { visibility: hidden; display: none !important; } 
+            body.imprimindo-cupom #cupao-impressao, body.imprimindo-cupom #cupao-impressao * { visibility: visible; display: block !important; } 
+            body.imprimindo-cupom #cupao-impressao { position: absolute; left: 0; top: 0; width: 58mm; padding: 0; margin: 0; font-family: monospace; font-size: 12px; color: #000; } 
+
+            /* 2. SE FOR IMPRIMIR RELATÓRIOS (A4 normal) */
+            body:not(.imprimindo-cupom) { padding-left: 0 !important; background: #fff !important; height: auto !important; overflow: visible !important; }
+            body:not(.imprimindo-cupom) .sidebar, 
+            body:not(.imprimindo-cupom) button, 
+            body:not(.imprimindo-cupom) #tela-sincronizacao, 
+            body:not(.imprimindo-cupom) #status-bar { display: none !important; }
+            body:not(.imprimindo-cupom) .main-content { padding: 0 !important; width: 100% !important; overflow: visible !important; height: auto !important; display: block !important; }
+            body:not(.imprimindo-cupom) .tela.ativa { display: block !important; box-shadow: none; border: none; padding: 0; overflow: visible !important; height: auto !important; }
+            body:not(.imprimindo-cupom) .table-responsive { max-height: none !important; overflow: visible !important; border: none !important; }
+            body:not(.imprimindo-cupom) canvas { max-width: 100% !important; height: auto !important; page-break-inside: avoid; }
+
+            /* 3. SE FOR IMPRIMIR UM MODAL ESPECÍFICO (Ex: Histórico) */
+            body.imprimindo-modal .main-content { display: none !important; }
+            body.imprimindo-modal .modal-overlay { position: static !important; background: #fff !important; display: block !important; align-items: flex-start !important; }
+            body.imprimindo-modal .modal-box { width: 100% !important; max-width: none !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-height: none !important; overflow: visible !important; }
+            body.imprimindo-modal .no-print { display: none !important; }
         }
 
-        .btn-main { background-color: var(--primary); color: black; padding: 18px 40px; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; border: none; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); margin-bottom: 10px; }
-        .btn-main:hover { transform: scale(1.05); background-color: var(--hover); }
+        #tela-login { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 999999; flex-direction: column; }
+        .login-box { background: #fff; padding: 40px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .login-box h2 { color: #0f172a; margin-top: 0; margin-bottom: 10px; }
+        .login-box input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; }
+        .login-box button { width: 100%; padding: 15px; background: #0ea5e9; color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; -webkit-appearance: none; appearance: none; }
+        .login-box button:hover:not(:disabled) { background: #0284c7; }
+        .login-box button:disabled { background: #94a3b8; cursor: not-allowed; }
+        #msg-login { color: #ef4444; font-weight: bold; margin-bottom: 15px; display: none; }
+        #status-login { color: #0ea5e9; font-weight: bold; margin-bottom: 15px; }
         
-        .hero-bottom-bar { width: 100%; max-width: 1300px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 20px; z-index: 10; gap: 30px; }
-        .partners-container { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .partners-grid { display: flex; flex-direction: row; gap: 15px; justify-content: center; flex-wrap: wrap; }
-        .partners-title { color: #aaa; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; text-shadow: 1px 1px 3px black; }
-        .partner-card { background: rgba(17, 17, 17, 0.85); border: 1px solid #333; border-radius: 10px; padding: 10px 15px; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .partner-card:hover { border-color: var(--primary); transform: translateY(-3px); background: #1a1a1a; }
-        .partner-card img { height: 35px; width: auto; border-radius: 4px; object-fit: contain; }
+        #caixa-login-loading { display: none; color: white; text-align: center; }
+        #caixa-login-loading h2 { color: #38bdf8; margin-bottom: 5px; }
 
-        .section-title { font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 10px; text-align: center; width: 100%; }
-        .agenda-box { background: var(--card-color); padding: 20px; border-radius: 15px; max-width: 600px; margin: auto; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .court-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 20px; }
-        .btn-court { background: #222; color: white; border: 2px solid #444; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 1rem; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .btn-court:hover { border-color: var(--primary); }
-        .btn-court.active { background: var(--primary); border-color: var(--primary); color: black; }
-        .btn-court.active::after { content: '✔'; font-weight: bold; }
-        .day-navigation { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #222; padding: 10px; border-radius: 10px; }
-        .nav-btn { background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; padding: 0 15px; }
-        .current-date-display { font-size: 1.1rem; font-weight: bold; color: white; text-transform: capitalize; }
-        .duration-selector { margin-bottom: 20px; }
-        .btn-duration { background: #222; color: white; border: 1px solid #444; padding: 8px 15px; margin: 2px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 0.9rem; }
-        .btn-duration.active { background: var(--primary); border-color: var(--primary); color: black; }
-        .custom-time-box { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; }
-        .custom-input { width: 60px; padding: 5px; border-radius: 5px; border: 1px solid #555; background: #222; color: white; text-align: center; font-weight: bold; }
-        .custom-input:focus { border-color: var(--primary); outline: none; }
-        .price-display { margin-top: 15px; font-size: 1.1rem; font-weight: bold; color: var(--primary); background: #222; padding: 10px; border-radius: 8px; border: 1px solid var(--primary); display: block; }
-        .promo-alert { display: none; background: rgba(255, 215, 0, 0.1); border: 1px dashed var(--primary); color: var(--primary); padding: 10px; margin-top: 15px; border-radius: 8px; font-size: 0.9rem; text-align: center; }
-        .time-selector-container { margin-top: 20px; text-align: left; }
-        .time-select { width: 100%; padding: 15px; font-size: 1rem; background: #222; color: white; border: 1px solid #555; border-radius: 10px; margin-top: 5px; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFD700" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); background-repeat: no-repeat; background-position: right 10px top 50%; }
-        .btn-agendar-final { margin-top: 20px; background: var(--primary); color: black; padding: 15px; width: 100%; font-weight: 900; font-size: 1.2rem; border: none; border-radius: 50px; cursor: pointer; text-transform: uppercase; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: none; }
-        .btn-agendar-final:hover { transform: scale(1.02); background: var(--hover); }
-        .fidelidade-box { background: var(--card-color); border: 2px solid var(--primary); padding: 30px; border-radius: 20px; max-width: 500px; margin: auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .stamp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 25px; }
-        .stamp-box { background: #222; border: 2px dashed #555; border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #555; font-weight: 900; margin: auto; transition: 0.3s; }
-        .stamp-box.stamped { background: var(--primary); border-color: var(--primary); color: black; box-shadow: 0 0 15px rgba(255,215,0,0.5); transform: scale(1.1); animation: popIn 0.4s ease; }
-        @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1.1); } }
-        .wa-float { position: fixed; bottom: 30px; right: 30px; background-color: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 100; transition: 0.3s; display: none; text-decoration: none; }
-        .wa-float i { color: white; font-size: 35px; }
-        .ig-float { position: fixed; bottom: 100px; right: 30px; background: var(--instagram); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 100; transition: 0.3s; display: none; text-decoration: none; }
-        .ig-float i { color: white; font-size: 30px; }
-        footer { margin-top: 50px; padding: 20px; background-color: black; font-size: 0.9rem; color: #777; border-top: 1px solid #222; text-align: center; display: none;}
-        .loading-msg { color: var(--primary); font-size: 0.9rem; margin-bottom: 10px; display: none; font-weight: bold; }
-        .scoreboard-container { background: var(--card-color); padding: 20px; border-radius: 20px; max-width: 600px; margin: auto; border: 2px solid var(--primary); position: relative; }
-        .mode-switch { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .score-box { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .team-score { flex: 1; text-align: center; background: #222; padding: 15px; border-radius: 15px; border: 1px solid #444; }
-        .team-score input { width: 100%; background: transparent; border: none; color: var(--primary); text-align: center; font-size: 1.2rem; margin-bottom: 10px; font-weight: bold; }
-        .points-display { font-size: 3.5rem; font-weight: 900; color: var(--primary); line-height: 1; margin: 10px 0; cursor: pointer; user-select: none; }
-        .btn-point { background: #333; color: var(--primary); border: 2px solid var(--primary); width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
-        .btn-point:hover { background: var(--primary); color: black; }
-        .games-display { font-size: 0.9rem; color: #aaa; margin-top: 5px; }
-        .reset-btn { margin-top: 20px; background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; }
+        #tela-sincronizacao { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px); z-index: 9999999; flex-direction: column; justify-content: center; align-items: center; }
+        .loader-gif { width: 150px; height: 150px; object-fit: contain; margin-bottom: 20px; }
+        .sync-text { font-size: 22px; font-weight: bold; color: #0ea5e9; font-family: 'Segoe UI', sans-serif; animation: pulseText 1.5s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .sidebar { position: fixed; top: 0; left: 0; width: 65px; height: 100%; background-color: #1e293b; color: white; display: flex; flex-direction: column; padding-top: 20px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; overflow: hidden; white-space: nowrap; box-shadow: 2px 0 10px rgba(0,0,0,0.15); }
+        .sidebar:hover { width: 250px; }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card-color); padding: 25px; border-radius: 15px; width: 95%; max-width: 450px; text-align: left; border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); max-height: 90vh; overflow-y: auto; }
-        .modal-content h3 { color: var(--primary); margin-bottom: 15px; text-align: center; }
-        .terms-box { background: #111; padding: 15px; border: 1px solid var(--primary); border-radius: 8px; margin: 15px 0; font-size: 0.8rem; color: #ccc; line-height: 1.6; }
-        .checkbox-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 0.9rem; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-cancel { background: #333; color: white; border: none; padding: 12px; border-radius: 8px; flex: 1; cursor: pointer; }
-        .btn-confirm { background: var(--primary); color: black; border: none; padding: 12px; border-radius: 8px; flex: 1; cursor: pointer; font-weight: bold; }
+        .sidebar h2 { margin-left: 15px; margin-bottom: 5px; font-size: 22px; color: #38bdf8; opacity: 0; transition: opacity 0.3s; }
+        .sidebar:hover h2 { opacity: 1; }
+        
+        #operadorLogadoText { text-align: left; margin-left: 18px; color: #94a3b8; font-size: 14px; margin-bottom: 5px; opacity: 0; transition: opacity 0.3s; }
+        #cargoLogadoText { text-align: left; margin-left: 18px; color: #fbbf24; font-size: 12px; margin-bottom: 25px; font-weight: bold; opacity: 0; transition: opacity 0.3s; }
+        .sidebar:hover #operadorLogadoText, .sidebar:hover #cargoLogadoText { opacity: 1; }
+
+        .menu-item { padding: 15px; cursor: pointer; font-size: 16px; border-left: 4px solid transparent; transition: 0.3s; display: flex; align-items: center; }
+        .menu-item i { font-style: normal; display: inline-block; width: 30px; text-align: center; font-size: 20px; margin-right: 15px; }
+        .menu-item span { opacity: 0; transition: opacity 0.2s; font-weight: 500; }
+        .sidebar:hover .menu-item span { opacity: 1; }
+        .menu-item:hover { background-color: #334155; }
+        .menu-item.ativo { background-color: #0f172a; border-left-color: #38bdf8; color: #38bdf8; }
+        #menu-usuarios, #menu-estoque, #menu-relatorios { display: none; } 
+        
+        .main-content { flex: 1; padding: 15px; overflow-y: auto; position: relative; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; }
+        .tela { display: none; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex: 1; }
+        .tela.ativa { display: block; }
+        #tela-caixa.ativa, #tela-livro.ativa, #tela-relatorios.ativa, #tela-relatorio-fluxo.ativa, #tela-relatorio-estoque.ativa, #tela-relatorio-produtos.ativa, #tela-relatorio-lucro.ativa, #tela-relatorio-pagamentos.ativa { display: flex !important; flex-direction: column; background: transparent; padding: 0; box-shadow: none;}
+
+        h1 { color: #333; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; font-size: 24px; }
+        
+        #alerta-estoque { display: none; background: #fef2f2; border: 2px solid #f87171; padding: 15px; margin-bottom: 20px; border-radius: 8px; color: #b91c1c; }
+        
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; min-width: 500px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background-color: #f8fafc; color: #475569; }
+        .form-grupo { display: flex; gap: 15px; margin-bottom: 20px; align-items: flex-end; flex-wrap: wrap; }
+        .form-grupo div { flex: 1; display: flex; flex-direction: column; min-width: 120px; }
+        .form-grupo input, .form-grupo select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; background-color: #fff;}
+        
+        button { cursor: pointer; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; color: white; font-size: 15px; transition: 0.2s; -webkit-appearance: none; appearance: none; }
+        .btn-azul { background-color: #0ea5e9; } .btn-azul:hover:not(:disabled) { background-color: #0284c7; }
+        .btn-verde { background-color: #10b981; } .btn-verde:hover:not(:disabled) { background-color: #059669; }
+        .btn-vermelho { background-color: #ef4444; } .btn-vermelho:hover:not(:disabled) { background-color: #dc2626; }
+        .btn-laranja { background-color: #f97316; } .btn-laranja:hover:not(:disabled) { background-color: #ea580c; }
+        .btn-amarelo { background-color: #eab308; color: black; } .btn-amarelo:hover:not(:disabled) { background-color: #ca8a04; }
+        
+        .botoes-quadra { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn-quadra { flex: 1; background-color: #14b8a6; font-size: 16px; padding: 15px; display: flex; justify-content: center; align-items: center; gap: 8px;}
+        .btn-quadra:hover { background-color: #0d9488; }
+        #leitorCamera { width: 100%; max-width: 500px; margin: 0 auto 20px; display: none; border: 2px solid #0ea5e9; border-radius: 8px; overflow: hidden; }
+        .btn-camera { background-color: #334155; font-size: 20px; padding: 10px 15px; width: auto; display: flex; align-items: center; justify-content: center; }
+        
+        #alerta-caixa { display: none; background: #fee2e2; color: #991b1b; padding: 15px; text-align: center; font-weight: bold; border-radius: 5px; margin-bottom: 20px; border: 2px solid #ef4444; }
+
+        .dropdown-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;}
+        .dropdown-item:hover { background-color: #f8fafc; color: #0ea5e9; }
+        .dropdown-item:last-child { border-bottom: none; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: #fff; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;}
+
+        .linha-pag { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap:wrap;}
+        .linha-pag label { width: 120px; text-align: left; font-weight: bold; color: #475569; }
+        .linha-pag input { flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 16px; -webkit-appearance: none; appearance: none; min-width:150px;}
+
+        .comandas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .comanda-card { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 5px solid #0ea5e9; display: flex; flex-direction: column; cursor: grab; transition: transform 0.2s, box-shadow 0.2s; }
+        .comanda-card:active { cursor: grabbing; }
+        .comanda-card.over { border: 2px dashed #0ea5e9; opacity: 0.6; transform: scale(1.02); }
+        
+        .comanda-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 5px; }
+        .comanda-header h3 { margin: 0; font-size: 18px; color: #0f172a; display: flex; align-items: center; gap: 8px;}
+        .comanda-header h3 span { pointer-events: none; }
+        .comanda-header .id-comanda { font-size: 12px; color: #64748b; background: #f1f5f9; padding: 3px 8px; border-radius: 10px; font-weight: bold; pointer-events: none; }
+        .comanda-body { flex: 1; font-size: 14px; color: #475569; margin-bottom: 15px; pointer-events: none; }
+        .comanda-body .itens { margin-bottom: 10px; line-height: 1.5; }
+        .comanda-valor { font-size: 20px; font-weight: bold; color: #10b981; text-align: right; margin-bottom: 15px; pointer-events: none; }
+        .comanda-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .comanda-actions button { padding: 10px 5px; font-size: 13px; width: 100%; cursor: pointer; }
+
+        .livro-resumo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .livro-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; display: flex; align-items: center; gap: 15px; }
+        .livro-icon-box { width: 50px; height: 50px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 22px; flex-shrink: 0; }
+        .livro-card-text h4 { margin: 0; font-size: 13px; color: #64748b; font-weight: 600; }
+        .livro-card-text p { margin: 5px 0 0 0; font-size: 20px; font-weight: bold; color: #0f172a; }
+        .pill-btn { background: #fff; border: 1px solid #cbd5e1; color: #475569; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .pill-btn.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+
+        .relatorios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .relatorio-card { background: #fff; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #e2e8f0; transition: 0.2s; }
+        .relatorio-card:hover { border-color: #3b82f6; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .rel-icon { background: #eff6ff; color: #3b82f6; width: 50px; height: 50px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; }
+        .rel-text h4 { margin: 0; font-size: 15px; color: #0f172a; }
+        .rel-text p { margin: 5px 0 0 0; font-size: 12px; color: #64748b; line-height: 1.4; }
 
         @media (max-width: 768px) {
-            #tela-inicial { padding-top: 210px !important; justify-content: flex-start; } 
-            .floating-clock { display: none !important; }
-            .ranking-widget { top: 15px !important; left: 10px !important; width: 145px !important; min-width: 145px !important; padding: 10px !important; }
-            .ranking-widget h4 { font-size: 0.75rem !important; margin-bottom: 8px !important; }
-            .ranking-list li { font-size: 0.7rem !important; padding: 4px 0 !important; }
-            .ranking-list li span { font-size: 0.6rem !important; padding: 2px 4px !important; }
-            .weather-widget { position: absolute !important; top: 15px !important; right: 10px !important; margin: 0 !important; padding: 5px 10px !important; font-size: 0.8rem !important; }
-            .hero-bottom-bar { flex-direction: column !important; align-items: center; gap: 20px; margin-top: 20px; }
-            .partners-container { margin-top: 10px; width: 100%; }
-            .partner-card { width: calc(50% - 10px); min-width: unset; padding: 15px 10px; }
-            .partner-card img { height: 45px; margin: 0; }
-        }
-        @media (max-width: 1100px) { 
-            .nav-links { position: absolute; top: 100%; left: 0; width: 100%; background-color: #111; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; border-bottom: 1px solid var(--primary); display: none; }
-            .nav-links.active { display: flex; }
-            .hamburger { display: block; }
+            body { flex-direction: column; padding-left: 0; } 
+            .sidebar { position: relative; width: 100vw; height: auto; padding-top: 0; flex-direction: row; overflow-x: auto; white-space: nowrap; align-items: center; justify-content: flex-start; flex-shrink: 0; border-bottom: 1px solid #0f172a; }
+            .sidebar:hover { width: 100vw; }
+            .sidebar h2, #operadorLogadoText, #cargoLogadoText { display: none; }
+            .menu-item { padding: 15px; font-size: 15px; border-left: none; border-bottom: 4px solid transparent; flex: 0 0 auto; }
+            .menu-item i { margin-right: 5px; width: auto; }
+            .menu-item span { opacity: 1; }
+            .menu-item.ativo { border-left-color: transparent; border-bottom-color: #38bdf8; background-color: transparent; color: #38bdf8; }
+            .main-content { padding: 10px; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; width: 100%; } 
+            .form-grupo div { min-width: 100%; } 
+            .botoes-caixa button, .btn-quadra { width: 100%; font-size: 16px; padding: 15px; margin-bottom: 5px; }
+            .linha-pag label { width:100%; margin-bottom:5px; }
+            .comandas-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div id="tela-auth" class="auth-container">
-        <div id="box-login" class="auth-box">
-            <img src="logo2.png" alt="Arena Vitale" class="auth-logo">
-            <h2 class="auth-title">Acesso ao Cliente</h2>
-            <input type="tel" id="loginPhone" class="auth-input" placeholder="Seu Telefone (Só números)">
-            <input type="password" id="loginPass" class="auth-input" placeholder="Sua Senha">
-            <button id="btnLogin" class="auth-btn" onclick="fazerLogin()">ENTRAR</button>
-            <div class="auth-link" onclick="mostrarCadastro()">Não tem conta? Cadastre-se</div>
-            <div class="auth-link" onclick="mostrarRecuperar()">Esqueci minha senha</div>
+<div id="tela-login">
+    <div class="login-box" id="caixa-login-inputs">
+        <h2>🔒 Acesso ao Sistema</h2>
+        <div id="status-login">Iniciando sistema...</div>
+        <div id="msg-login">Usuário ou senha incorretos!</div>
+        <input type="text" id="loginUsuario" placeholder="Usuário (Ex: edilson)" autocomplete="off" disabled>
+        <input type="password" id="loginSenha" placeholder="Senha" autocomplete="off" disabled>
+        <button type="button" id="btnEntrar" onclick="fazerLogin()" disabled>Entrar</button>
+    </div>
+    <div id="caixa-login-loading">
+        <h2>⏳ Preparando a Arena...</h2>
+        <p>A sincronizar os dados com o banco.</p>
+    </div>
+</div>
+
+<div id="tela-sincronizacao">
+    <img src="./raquete-raio.gif" alt="Aguarde..." class="loader-gif">
+    <div class="sync-text">A Processar...</div>
+</div>
+
+<div id="cupao-impressao"></div>
+
+<div class="sidebar">
+    <h2>🎯 Arena Vitale</h2>
+    <div id="operadorLogadoText">Operador: Nenhum</div>
+    <div id="cargoLogadoText">Cargo: Nenhum</div>
+    
+    <div class="menu-item ativo" onclick="mudarTela('tela-caixa', this)"><i>🛒</i> <span>Caixa</span></div>
+    <div class="menu-item" onclick="mudarTela('tela-comandas', this)"><i>📝</i> <span>Comandas</span></div>
+    <div class="menu-item" onclick="mudarTela('tela-clientes', this)"><i>👥</i> <span>Clientes</span></div>
+    <div class="menu-item" onclick="mudarTela('tela-livro', this)"><i>📠</i> <span>Controle de Caixa</span></div>
+    
+    <div class="menu-item" id="menu-estoque" onclick="mudarTela('tela-estoque', this)"><i>📦</i> <span>Estoque</span></div>
+    <div class="menu-item" id="menu-relatorios" onclick="mudarTela('tela-relatorios', this)"><i>📈</i> <span>Relatórios</span></div>
+    <div class="menu-item" id="menu-usuarios" onclick="mudarTela('tela-usuarios', this)"><i>⚙️</i> <span>Usuários</span></div>
+    
+    <div style="flex: 1;"></div> 
+    <div class="menu-item" style="color: #ef4444; margin-top: 20px; border-top: 1px solid #334155;" onclick="fazerLogout()"><i>🚪</i> <span>Sair do Sistema</span></div>
+</div>
+
+<div class="main-content">
+    <div id="status-bar" style="display:none; background: #e0f2fe; color: #0369a1; padding: 10px; text-align: center; font-weight: bold; border-radius: 5px; margin-bottom: 20px;"></div>
+
+    <div id="tela-caixa" class="tela ativa" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+        <div id="alerta-caixa" style="margin-bottom: 5px; padding: 10px; flex-shrink: 0;">⚠️ O CAIXA ESTÁ FECHADO! Vá em Controle de Caixa para abrir o turno.</div>
+        <div id="bannerEdicaoComanda" style="display:none; background:#fef3c7; border:1px solid #f59e0b; padding:8px; margin-bottom:5px; border-radius:5px; color:#b45309; font-weight:bold; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; flex-shrink: 0;">
+            <span>✏️ A editar a Comanda de <span id="nomeEdicaoComanda"></span></span>
+            <button type="button" class="btn-vermelho" style="padding:4px 8px; font-size:12px;" onclick="cancelarEdicaoComanda()">X Cancelar Edição</button>
         </div>
 
-        <div id="box-cadastro" class="auth-box" style="display:none;">
-            <img src="logo2.png" alt="Arena Vitale" class="auth-logo">
-            <h2 class="auth-title">Criar Conta</h2>
-            <input type="text" id="cadNome" class="auth-input" placeholder="Nome Completo">
-            <input type="tel" id="cadPhone" class="auth-input" placeholder="Telefone (DDD + 9 dígitos)">
-            <input type="password" id="cadPass" class="auth-input" placeholder="Crie uma Senha">
-            <button id="btnCadastrar" class="auth-btn" onclick="realizarCadastro()">CADASTRAR</button>
-            <div class="auth-link" onclick="mostrarLogin()">Voltar para Login</div>
-        </div>
+        <div style="background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; flex: 1; min-height: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 10px;">
+                <h2 style="margin:0; color:#111; font-size:20px; display:flex; align-items:center; gap:8px;">Nova Venda <span style="font-size:16px; color:#94a3b8;">💬</span></h2>
+                <div style="display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); flex: 1; min-width: 200px; position: relative;">
+                    <span style="color:#64748b;">🔍</span>
+                    <input type="text" id="codigoInput" placeholder="Nome do Produto ou Código" autocomplete="off" style="border:none; background:transparent; outline:none; flex: 1; min-width: 80px; font-size: 13px;" disabled>
+                    
+                    <div id="dropdownProdutos" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #cbd5e1; border-radius:8px; margin-top:5px; max-height:250px; overflow-y:auto; z-index:9999; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);"></div>
+                    
+                    <button type="button" id="btnAddCodigo" onclick="let inp=document.getElementById('codigoInput'); if(inp.value.trim()!==''){processarEntradaCodigo(inp.value.trim()); inp.value=''; document.getElementById('dropdownProdutos').style.display='none';}" disabled style="background:#10b981; color:#fff; border:none; border-radius:15px; padding:6px 12px; font-weight:bold; font-size:12px; cursor:pointer; box-shadow: 0 2px 4px rgba(16,185,129,0.3);">+ Inserir</button>
+                    <button type="button" class="btn-camera" id="btnCamera" onclick="alternarCamera('codigoInput')" disabled style="padding: 2px; font-size: 16px; background: transparent; border: none; color: #3b82f6;">📷</button>
+                </div>
+            </div>
 
-        <div id="box-recuperar" class="auth-box" style="display:none;">
-            <img src="logo2.png" alt="Arena Vitale" class="auth-logo">
-            <h2 class="auth-title">Recuperar Senha</h2>
-            <div id="etapa1-rec">
-                <input type="tel" id="recPhone" class="auth-input" placeholder="Seu Telefone (Com DDD)">
-                <button class="auth-btn" onclick="enviarCodigoRecuperacao()">GERAR CÓDIGO</button>
+            <div style="display: flex; gap: 10px; margin-bottom: 8px; flex-wrap: nowrap;">
+                <div style="flex:1; display:flex; align-items:center; border:1px solid #e2e8f0; border-radius:6px; padding:6px 12px; background: #f8fafc;">
+                    <span style="color:#64748b; margin-right:10px; font-size:12px; font-weight:bold;">👤 Cliente</span>
+                    <select id="selectClienteVenda" style="border:none; outline:none; flex:1; font-weight:bold; background:transparent; font-size:13px; color:#0f172a;">
+                        <option value="Consumidor Final">-</option>
+                    </select>
+                </div>
             </div>
-            <div id="etapa2-rec" style="display:none;">
-                <input type="number" id="recCodigo" class="auth-input" placeholder="Código Recebido">
-                <input type="password" id="recNovaSenha" class="auth-input" placeholder="Criar Nova Senha">
-                <button class="auth-btn" onclick="confirmarNovaSenha()">ALTERAR SENHA</button>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                <button type="button" style="flex:1; background:#3b82f6; color:#fff; border:none; padding:10px; border-radius:6px; font-weight:bold; font-size:13px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px;" onclick="abrirModalComandas()">
+                    🔍 Buscar Venda / Comanda <span style="font-size:10px; opacity:0.8; margin-left:6px;">F3</span>
+                </button>
             </div>
-            <div class="auth-link" onclick="mostrarLogin()">Cancelar</div>
+            
+            <div id="leitorCamera" style="margin-bottom: 5px;"></div>
+
+            <div class="botoes-quadra" style="margin-bottom: 8px; gap: 8px;">
+                <button type="button" class="btn-quadra" style="padding:6px; font-size:12px; border-radius:6px;" onclick="adicionarQuadraInteligente('Quadra Chicashoes')">🎾 Quadra Chicashoes</button>
+                <button type="button" class="btn-quadra" style="padding:6px; font-size:12px; border-radius:6px;" onclick="adicionarQuadraInteligente('Quadra Padaria do Helder')">🎾 Quadra Padaria do Helder</button>
+            </div>
+
+            <div style="border: 1px solid #e2e8f0; border-radius: 6px; flex: 1; display: flex; flex-direction: column; background: #fff; margin-bottom: 8px; overflow:hidden; min-height: 100px;">
+                <div style="display:flex; padding:6px 10px; background:#f8fafc; border-bottom:1px solid #e2e8f0; gap:8px; align-items:center;">
+                    <label style="font-weight:bold; color:#475569; font-size:12px;">Qtd para Bipe/Digitação:</label>
+                    <input type="number" id="qtdInput" value="1" min="1" style="width:60px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; text-align:center; font-weight:bold; font-size:12px;">
+                </div>
+                <div class="table-responsive" style="flex:1; margin:0; padding:0; overflow-y:auto;">
+                    <table style="margin-top:0; width:100%; border-collapse: collapse;">
+                        <thead style="background:#fff; border-bottom: 2px solid #f1f5f9; position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th style="padding:8px; color:#94a3b8; font-weight:bold; font-size:11px; text-transform:uppercase;">Código</th>
+                                <th style="padding:8px; color:#94a3b8; font-weight:bold; font-size:11px; text-transform:uppercase;">Produto</th>
+                                <th style="padding:8px; color:#94a3b8; font-weight:bold; font-size:11px; text-transform:uppercase;">Qtd</th>
+                                <th style="padding:8px; color:#94a3b8; font-weight:bold; font-size:11px; text-transform:uppercase;">Preço Un.</th>
+                                <th style="padding:8px; color:#94a3b8; font-weight:bold; font-size:11px; text-transform:uppercase;">Subtotal</th>
+                                <th style="padding:8px; color:#94a3b8; font-weight:bold; font-size:11px; text-transform:uppercase;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaCarrinho" style="font-size: 13px;"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div style="padding-top: 8px; border-top: 1px solid #e2e8f0; margin-bottom: 8px; flex-shrink: 0;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; font-weight:bold; color:#111;">
+                    <span>Subtotal</span>
+                    <span>R$ <span id="valorSubtotal">0,00</span></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px; font-weight:bold; color:#111; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span>Tx. Serviço</span>
+                        <button style="background:#3b82f6; color:#fff; border:none; border-radius:4px; padding:2px 8px; cursor:pointer; font-size:11px;">%</button>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span style="color:#64748b;">R$</span>
+                        <input type="text" value="0,00" disabled style="width:80px; text-align:right; border:1px solid #e2e8f0; border-radius:4px; padding:4px 6px; background:#fff; font-weight:bold; color:#111; font-size: 12px;">
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:20px; font-weight:900; color:#000; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+                    <span>Total</span>
+                    <span>R$ <span id="valorTotal">0,00</span></span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; flex-shrink: 0;">
+                <button type="button" style="background:#eab308; color:#fff; border:none; padding:10px 5px; border-radius:6px; font-weight:bold; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;" id="btnDescontoCaixa" onclick="verificarPermissaoGerente('Aplicar Desconto', aplicarDescontoCaixa)" disabled>
+                    <span style="font-size:15px;">%</span>
+                    <span style="font-size:11px;">Desconto</span>
+                </button>
+                <button type="button" style="background:#4ade80; color:#fff; border:none; padding:10px 5px; border-radius:6px; font-weight:bold; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;" onclick="alert('Acréscimo implementado em breve!')">
+                    <span style="font-size:15px;">+</span>
+                    <span style="font-size:11px;">Acréscimo</span>
+                </button>
+                <button type="button" style="background:#a855f7; color:#fff; border:none; padding:10px 5px; border-radius:6px; font-weight:bold; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;" onclick="alert('Imprima via Pagamento Direto!')">
+                    <span style="font-size:15px;">🖨️</span>
+                    <span style="font-size:11px;">Imprimir</span>
+                </button>
+                <button type="button" style="background:#0d9488; color:#fff; border:none; padding:10px 5px; border-radius:6px; font-weight:bold; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;" onclick="cliquePagamentoParcialCaixa()">
+                    <span style="font-size:15px;">💳</span>
+                    <span style="font-size:11px;">Pgto Parcial</span>
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0;">
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:6px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;" id="btnSalvarComanda" onclick="acaoBotaoComanda()" disabled>
+                    💾 Salvar <span style="font-size:11px; opacity:0.8;">F5</span>
+                </button>
+                <button type="button" style="background:#22c55e; color:#fff; border:none; padding:12px; border-radius:6px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;" id="btnFinalizarVenda" onclick="iniciarPagamentoCaixa()" disabled>
+                    💵 Pagamento <span style="font-size:11px; opacity:0.8;">F6</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <header class="navbar" id="navPrincipal">
-        <div class="nav-container">
-            <a onclick="navegarPara('tela-inicial')" class="nav-logo"><img src="logo.jpg" alt="Arena Vitale" class="nav-logo-img"></a>
-            <div class="hamburger" onclick="toggleMenu()">☰</div>
-            <ul class="nav-links" id="navLinks">
-                <li><a onclick="navegarPara('tela-agendamento')">Agendar</a></li>
-                <li><a onclick="navegarPara('tela-fidelidade')" style="color: var(--primary);">Fidelidade ⭐</a></li>
-                <li><a onclick="navegarPara('tela-local')">Onde Estamos</a></li>
-                <li><a onclick="navegarPara('tela-placar')">Marcar Placar</a></li>
-                <li><a onclick="fazerLogout()" style="color:red;">SAIR</a></li>
-            </ul>
+    <div id="tela-comandas" class="tela">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h1>Comandas Abertas</h1>
+            <span style="font-size: 12px; color: #64748b; font-weight: 500;">Dica: Arraste os cartões para organizar</span>
         </div>
-    </header>
+        <div class="comandas-grid" id="listaComandasGrid"></div>
+    </div>
 
-    <div id="relogioFlutuante" class="floating-clock">--:--:--</div>
-    <div class="btn-refresh-float" onclick="atualizarPagina()" title="Atualizar Dados">🔄</div>
+    <div id="tela-clientes" class="tela">
+        <h1>Gestão de Clientes</h1>
+        <div class="form-grupo">
+            <div><label>ID/Cartão</label><input type="text" id="novoIdCli" placeholder="Ex: 001" autocomplete="off"></div>
+            <div><label>Nome do Cliente</label><input type="text" id="novoNomeCli" autocomplete="off"></div>
+            <div><label>Telefone/WhatsApp</label><input type="text" id="novoTelCli" placeholder="Ex: 55889..." autocomplete="off"></div>
+            <button type="button" class="btn-verde" style="margin-bottom: 2px;" onclick="adicionarCliente()" id="btnAdicionarCli">Gravar Cliente</button>
+        </div>
+        <div class="table-responsive">
+            <table><thead><tr><th>ID</th><th>Nome</th><th>Telefone</th><th>Ação</th></tr></thead><tbody id="listaClientesGestao"></tbody></table>
+        </div>
+    </div>
 
-    <div id="tela-inicial">
-        <div class="ranking-widget" id="rankingWidget">
-            <h4>🏆 Top 5 do Mês</h4>
-            <ul class="ranking-list" id="rankingList"><li>A carregar...</li></ul>
+    <div id="tela-livro" class="tela">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">📠 Controle de Caixa</h2>
+            <button class="btn-caixas-fechados" style="background: #64748b; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="alert('Histórico de caixas fechados estará disponível em breve!')">🕒 Caixas Fechados</button>
         </div>
 
-        <div class="weather-widget" id="weather-widget">
-            <i class="fas fa-sun" id="weather-icon"></i>
-            <span id="clima-temp">--°C</span>
-            <span id="clima-desc" style="font-weight:normal; font-size:0.9rem;">Russas-CE</span>
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0; font-size: 18px; color: #0f172a;">Resumo do Caixa</h3>
+                <div style="display: flex; align-items: center; gap: 20px; font-size: 13px;">
+                    <span id="lblStatusCaixaLivro" style="color: #22c55e; font-weight: bold; display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:#22c55e; border-radius:50%; display:inline-block;"></span> Caixa Aberto</span>
+                    <span id="lblAberturaCaixa" style="color: #64748b; font-weight: 500;">Aberto em: --</span>
+                </div>
+            </div>
+            
+            <div class="livro-resumo-grid">
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #e0f2fe; color: #0ea5e9;">🚪</div>
+                    <div class="livro-card-text"><h4>Valor de Abertura</h4><p id="resumoLivroAbertura">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #dcfce7; color: #22c55e;">⬆️</div>
+                    <div class="livro-card-text"><h4>Entradas</h4><p id="resumoLivroEntradas">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #fee2e2; color: #ef4444;">⬇️</div>
+                    <div class="livro-card-text"><h4>Saídas</h4><p id="resumoLivroSaidas">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #fef3c7; color: #f59e0b;">💰</div>
+                    <div class="livro-card-text"><h4>Saldo do Caixa</h4><p id="resumoLivroSaldo">R$ 0,00</p></div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; gap: 10px;">
+                    <button style="background: #22c55e; color: #fff; padding: 10px 15px;" onclick="abrirModalMovimentacao('Entrada')">+ Adicionar Entrada</button>
+                    <button style="background: #f59e0b; color: #fff; padding: 10px 15px;" onclick="abrirModalMovimentacao('Saida')">- Adicionar Saída</button>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btnAcaoCaixa" style="padding: 10px 15px;" onclick="acaoCaixa()">🛑 Fechar Caixa</button>
+                    <button style="background: #0ea5e9; color: #fff; padding: 10px 15px;" onclick="window.print()">🖨️ Imprimir</button>
+                </div>
+            </div>
         </div>
+
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); flex: 1; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
+                <h3 style="margin: 0; font-size: 16px; color: #0f172a;">Histórico de Movimentações do Caixa</h3>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="pill-btn active" id="pill-Todos" onclick="setFiltroLivro('Todos')">📄 Todos</button>
+                    <button class="pill-btn" id="pill-Entrada" onclick="setFiltroLivro('Entrada')">⬆️ Entradas</button>
+                    <button class="pill-btn" id="pill-Saida" onclick="setFiltroLivro('Saida')">⬇️ Saídas</button>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="buscaLivroInput" placeholder="Pesquisar transações..." style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; outline: none;">
+                <input type="date" id="filtroDataInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <input type="date" id="filtroDataFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;" onclick="filtrarLivroCaixa()">
+                    🔍 Filtrar
+                </button>
+            </div>
+
+            <div class="table-responsive" style="flex: 1; border: 1px solid #e2e8f0; border-radius: 6px; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
+                    <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
+                        <tr>
+                            <th style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Data/Hora</th>
+                            <th style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Descrição</th>
+                            <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: center;">Tipo</th>
+                            <th style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Valor</th>
+                            <th style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Usuário</th>
+                            <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: center;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaCaixa"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="tela-estoque" class="tela">
+        <div id="alerta-estoque"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h1>Gestão de Estoque</h1>
+            <button type="button" class="btn-azul" onclick="abrirModalHistorico()">📜 Ver Histórico de Movimentações</button>
+        </div>
+        <div class="form-grupo">
+            <div style="flex-direction: row; gap: 5px;">
+                <div style="flex: 1;"><label>ID/Código</label><input type="text" id="novoId" placeholder="Bipe, digite ou câmera" autocomplete="off"></div>
+                <button type="button" class="btn-camera" style="margin-bottom: 0; align-self: flex-end;" onclick="alternarCamera('novoId')">📷</button>
+            </div>
+            <div><label>Nome do Produto</label><input type="text" id="novoNome" autocomplete="off"></div>
+            <div><label>Custo</label><input type="text" inputmode="decimal" id="novoCusto" placeholder="Ex: 2,50"></div>
+            <div><label>Venda</label><input type="text" inputmode="decimal" id="novoPreco" placeholder="Ex: 5,00"></div>
+            <div><label>Qtd</label><input type="number" id="novaQtd"></div>
+            <div><label>Estoque Mín.</label><input type="number" id="novoMinimo" placeholder="Ex: 10"></div>
+            <button type="button" class="btn-verde" style="margin-bottom: 2px;" onclick="salvarProdutoEstoque()" id="btnAdicionarEstoque">Salvar Produto</button>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead><tr><th>Código</th><th>Produto</th><th>Custo (R$)</th><th>Venda (R$)</th><th>Qtd</th><th>Mínimo</th><th>Ações</th></tr></thead>
+                <tbody id="listaGestao"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="tela-usuarios" class="tela">
+        <h1>Gestão de Operadores e Permissões</h1>
+        <div class="form-grupo">
+            <div><label>Novo Usuário</label><input type="text" id="novoUserLogin" placeholder="Ex: paulo" autocomplete="off"></div>
+            <div><label>Senha</label><input type="text" id="novoUserSenha" placeholder="Ex: 123456" autocomplete="off"></div>
+            <div><label>Cargo/Permissão</label>
+                <select id="novoUserCargo">
+                    <option value="Operador">Operador (Restrito)</option>
+                    <option value="Gerente">Gerente (Acesso Total)</option>
+                </select>
+            </div>
+            <button type="button" class="btn-verde" id="btnAdicionarUser" style="margin-bottom: 2px;" onclick="adicionarUsuarioSistema()">Criar Operador</button>
+        </div>
+        <div class="table-responsive">
+            <table><thead><tr><th>Usuário de Acesso</th><th>Cargo</th><th>Ação</th></tr></thead><tbody id="listaUsuariosGestao"></tbody></table>
+        </div>
+    </div>
+
+    <div id="tela-relatorios" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <h2 style="margin: 0 0 20px 0; color: #1e293b; display: flex; align-items: center; gap: 10px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">📈 Central de Relatórios</h2>
         
-        <img src="logo2.png" alt="Arena Vitale" class="hero-logo">
-        <p>A nova experiência do Beach Tennis de Russas e região.</p>
-        
-        <div class="hero-bottom-bar">
-            <div><button class="btn-main" onclick="navegarPara('tela-agendamento')">🔍 VERIFICAR HORÁRIOS</button></div>
-            <div class="partners-container">
-                <span class="partners-title">Nossos Parceiros:</span>
-                <div class="partners-grid">
-                    <a href="https://www.instagram.com/chicashoes_/" target="_blank" class="partner-card"><img src="quadra-chicashoes.jpg"></a>
-                    <a href="https://www.instagram.com/padariadohelder/" target="_blank" class="partner-card"><img src="quadra-panificadora.jpg"></a>
-                    <a href="https://www.instagram.com/vitale_blend/" target="_blank" class="partner-card"><img src="vitale.jpg"></a>
+        <div class="relatorios-grid">
+            <div class="relatorio-card" onclick="abrirRelatorioEstoque()">
+                <div class="rel-icon">📦</div>
+                <div class="rel-text">
+                    <h4>Relatório de Estoque</h4>
+                    <p>Valor total do estoque e lucros projetados</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="abrirRelatorioProdutos()">
+                <div class="rel-icon">📉</div>
+                <div class="rel-text">
+                    <h4>Produtos Mais/Menos Vendidos</h4>
+                    <p>Análise dos produtos com maior ou menor saída</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="abrirRelatorioFluxo()">
+                <div class="rel-icon">💲</div>
+                <div class="rel-text">
+                    <h4>Relatório Fluxo de Caixa</h4>
+                    <p>Confira as entradas e saídas detalhadas</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="abrirRelatorioLucro()">
+                <div class="rel-icon">📈</div>
+                <div class="rel-text">
+                    <h4>Relatório de Lucro nas Vendas</h4>
+                    <p>Análise de custos e lucro real das vendas</p>
+                </div>
+            </div>
+            <div class="relatorio-card" onclick="abrirRelatorioPagamentos()">
+                <div class="rel-icon">💳</div>
+                <div class="rel-text">
+                    <h4>Vendas por Forma de Pagamento</h4>
+                    <p>Análise das vendas por método recebido</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="tela-agendamento" class="secao-conteudo">
-        <h2 class="section-title">Agendamento</h2>
-        <div class="agenda-box">
-            <p style="color:white; font-weight:bold;">1. Escolha a Quadra:</p>
-            <div class="court-selector">
-                <button class="btn-court active" onclick="mudarQuadra(1, this)"><span>Quadra Chicashoes</span></button>
-                <button class="btn-court" onclick="mudarQuadra(2, this)"><span>Quadra padaria do Helder</span></button>
+    <div id="tela-relatorio-estoque" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Relatório de Estoque Atual
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div class="livro-resumo-grid">
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #fee2e2; color: #ef4444;">💰</div>
+                    <div class="livro-card-text"><h4>Custo Total no Estoque</h4><p id="relEstoqueTotalCusto">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #dcfce7; color: #22c55e;">🏷️</div>
+                    <div class="livro-card-text"><h4>Receita Bruta Projetada</h4><p id="relEstoqueTotalVenda">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card" style="border: 1px solid #3b82f6; background: #eff6ff;">
+                    <div class="livro-icon-box" style="background: #3b82f6; color: #fff;">📈</div>
+                    <div class="livro-card-text"><h4>Lucro Projetado</h4><p id="relEstoqueLucroProj" style="color: #3b82f6;">R$ 0,00</p></div>
+                </div>
             </div>
-            
-            <div class="day-navigation">
-                <button class="nav-btn" onclick="mudarDia(-1)">❮</button>
-                <div class="current-date-display" id="dateDisplay">A carregar...</div>
-                <button class="nav-btn" onclick="mudarDia(1)">❯</button>
-            </div>
-            
-            <div class="time-selector-container">
-                <p style="color:white; font-weight:bold;">2. Modalidade:</p>
-                <select id="selectModalidade" class="time-select"><option value="Beach Tennis">🎾 Beach Tennis</option><option value="Futevôlei">⚽ Futevôlei</option><option value="Vôlei de Praia">🏐 Vôlei de Praia</option></select>
-            </div>
-
-            <div class="duration-selector" style="margin-top:20px;">
-                <p style="color:white; font-weight:bold;">3. Tempo de jogo:</p>
-                <div style="display:flex; justify-content:center; gap:5px;"><button class="btn-duration active" onclick="setDuracao(1, this)">1h</button><button class="btn-duration" onclick="setDuracao(2, this)">2h</button><button class="btn-duration" onclick="setDuracao(3, this)">3h</button></div>
-                <div class="custom-time-box"><input type="number" id="customInput" class="custom-input" placeholder="0" oninput="usarPersonalizado(this.value)"><span>h</span></div>
-            </div>
-            
-            <div class="time-selector-container">
-                <p style="color:white; font-weight:bold;">4. Pagamento:</p>
-                <select id="selectPagamento" class="time-select" onchange="atualizarPrecoDisplay()"><option value="dinheiro">Espécie / Pix</option><option value="cartao">Cartão</option></select>
-            </div>
-            
-            <div class="time-selector-container">
-                <p style="color:white; font-weight:bold;">5. Horário:</p>
-                <div id="avisoPromocao" class="promo-alert">🏷️ Promoção Ativa!</div>
-                <div id="loading" class="loading-msg">A carregar...</div>
-                <select id="selectHora" class="time-select" onchange="liberarBotao()"></select>
-                <div id="priceDisplay" class="price-display">Valor: Selecione o horário</div>
-                <button id="btnAgendar" class="btn-agendar-final" onclick="prepararAgendamento()">✅ CONFIRMAR HORÁRIO</button>
+            <div class="table-responsive" style="max-height: 400px; overflow-y:auto; border: 1px solid #e2e8f0; border-radius: 4px;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
+                    <thead style="background: #f8fafc; position: sticky; top: 0;">
+                        <tr>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Produto</th>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Qtd em Estoque</th>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Custo Unit.</th>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Custo Total</th>
+                            <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Venda Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="relEstoqueTbody"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <div id="tela-fidelidade" class="secao-conteudo">
-        <h2 class="section-title">Fidelidade ⭐</h2>
-        <div class="fidelidade-box">
-            <p>Complete 10 jogos e ganhe 1 hora grátis!</p>
-            <div class="stamp-grid" id="stampGrid"></div>
-            <button id="btnResgatar" class="btn-resgate" onclick="resgatarPremio()">🎁 Resgatar Prémio</button>
+    <div id="tela-relatorio-produtos" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Produtos Mais e Menos Vendidos
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
         </div>
-    </div>
-
-    <div id="tela-placar" class="secao-conteudo">
-        <h2 class="section-title">Marcar Placar ⚡</h2>
-        <div class="scoreboard-container">
-            <div class="score-box">
-                <div class="team-score"><input type="text" value="Dupla A"><div class="points-display" id="scoreA" onclick="addPonto('A')">0</div></div>
-                <div class="team-score"><input type="text" value="Dupla B"><div class="points-display" id="scoreB" onclick="addPonto('B')">0</div></div>
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight:bold; color:#475569; font-size:14px;">Período:</label>
+                <input type="date" id="relProdDataInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <input type="date" id="relProdDataFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="gerarRelatorioProdutos()">🔍 Gerar</button>
             </div>
-            <button class="reset-btn" onclick="zerarPlacar()">🔄 Zerar</button>
+            
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <div style="flex:2; min-width:300px; height: 300px; position: relative;">
+                    <canvas id="graficoRelProdutos"></canvas>
+                </div>
+                <div style="flex:1; min-width:250px;">
+                    <div class="table-responsive" style="max-height: 300px; overflow-y:auto; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
+                            <thead style="background: #f8fafc; position: sticky; top: 0;">
+                                <tr><th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Produto</th><th style="padding:10px; text-align:right; border-bottom: 1px solid #e2e8f0;">Qtd Vendida</th></tr>
+                            </thead>
+                            <tbody id="relProdTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="modalCadastro" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Confirmar Reserva</h3>
-            <input type="text" id="cadNomeCompleto" disabled class="auth-input" style="background:#222">
-            <div class="terms-box">⚠️ Cancelamentos até 3h antes sem custo. Menos de 3h: taxa de 50%.</div>
-            <div class="checkbox-container"><input type="checkbox" id="checkTermos"><label for="checkTermos">Aceito os termos.</label></div>
-            <div class="modal-buttons"><button class="btn-cancel" onclick="fecharModal()">Sair</button><button class="btn-confirm" onclick="enviarAgendamento()">Confirmar</button></div>
+    <div id="tela-relatorio-lucro" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Relatório de Lucro nas Vendas (CMV)
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight:bold; color:#475569; font-size:14px;">Período:</label>
+                <input type="date" id="relLucroDataInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <input type="date" id="relLucroDataFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="gerarRelatorioLucro()">🔍 Gerar</button>
+            </div>
+            
+            <div class="livro-resumo-grid">
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #dcfce7; color: #22c55e;">📈</div>
+                    <div class="livro-card-text"><h4>Receita de Vendas</h4><p id="relLucroReceita">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #fee2e2; color: #ef4444;">📉</div>
+                    <div class="livro-card-text"><h4>Custo da Mercadoria (CMV)</h4><p id="relLucroCusto">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card" style="border: 1px solid #3b82f6; background: #eff6ff;">
+                    <div class="livro-icon-box" style="background: #3b82f6; color: #fff;">💰</div>
+                    <div class="livro-card-text"><h4>Lucro Bruto</h4><p id="relLucroBruto" style="color: #3b82f6;">R$ 0,00</p></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer id="footerPrincipal"><p>© 2026 Arena Vitale. Desenvolvido por Edilson Renovato.</p></footer>
-    <a href="https://wa.me/5588988229008" class="wa-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
-    <a href="https://www.instagram.com/arenavitale/" class="ig-float" target="_blank"><i class="fab fa-instagram"></i></a>
+    <div id="tela-relatorio-pagamentos" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Vendas por Forma de Pagamento
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight:bold; color:#475569; font-size:14px;">Período:</label>
+                <input type="date" id="relPagDataInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <input type="date" id="relPagDataFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="gerarRelatorioPagamentos()">🔍 Gerar</button>
+            </div>
+            
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <div style="flex:1; min-width:300px; height: 300px; position: relative;">
+                    <canvas id="graficoRelPagamentos"></canvas>
+                </div>
+                <div style="flex:1; min-width:250px;">
+                    <div class="table-responsive" style="border: 1px solid #e2e8f0; border-radius: 4px;">
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 14px;">
+                            <thead style="background: #f8fafc;">
+                                <tr><th style="padding:12px; border-bottom: 1px solid #e2e8f0;">Forma de Pagamento</th><th style="padding:12px; text-align:right; border-bottom: 1px solid #e2e8f0;">Total Recebido</th></tr>
+                            </thead>
+                            <tbody id="relPagTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx4Dj4kUKuY9Ji7FP-q5dMZLYESHW1XDW7jTCvnM9xl6RnYi8Z6aISv31ytR3klMCCa/exec"; 
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTlYbHI9mgBo8JbEzXjCddY-w5LJqZdFQDiKy1XkJS5m4mkRPoj0CCgTN5WldIRH-ciFxev14TRijP/pub?output=csv";
-        const whatsappNumber = "5588988229008";
+    <div id="tela-relatorio-fluxo" class="tela" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <button onclick="mudarTela('tela-relatorios')" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#3b82f6;">⬅️</button> 
+                Relatório de Fluxo de Caixa
+            </h2>
+            <button style="background: #0ea5e9; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        
+        <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight:bold; color:#475569; font-size:14px;">Período:</label>
+                <input type="date" id="relFluxoDataInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <input type="date" id="relFluxoDataFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; color: #64748b;">
+                <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="gerarRelatorioFluxo()">🔍 Gerar Relatório</button>
+            </div>
+            
+            <div class="livro-resumo-grid">
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #dcfce7; color: #22c55e;">⬆️</div>
+                    <div class="livro-card-text"><h4>Total Entradas</h4><p id="relFluxoEntradas">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card">
+                    <div class="livro-icon-box" style="background: #fee2e2; color: #ef4444;">⬇️</div>
+                    <div class="livro-card-text"><h4>Total Saídas</h4><p id="relFluxoSaidas">R$ 0,00</p></div>
+                </div>
+                <div class="livro-card" style="border: 1px solid #3b82f6; background: #eff6ff;">
+                    <div class="livro-icon-box" style="background: #3b82f6; color: #fff;">💰</div>
+                    <div class="livro-card-text"><h4>Saldo Líquido</h4><p id="relFluxoSaldo" style="color: #3b82f6;">R$ 0,00</p></div>
+                </div>
+            </div>
+        </div>
 
-        let usuarioLogado = null; let duracaoSelecionada = 1; let quadraSelecionada = 1; let dataVisualizada = new Date();
-        let promocaoAtual = null; let usouPromoFlag = false; let horariosOcupadosDoDia = [];
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            <div style="flex:2; min-width:300px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <h3 style="margin-top:0; color:#475569; text-align:center;">📊 Entradas vs Saídas Diárias</h3>
+                <div style="position: relative; height: 300px; width: 100%;">
+                    <canvas id="graficoRelFluxo"></canvas>
+                </div>
+            </div>
+            <div style="flex:1; min-width:250px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <h3 style="margin-top:0; color:#475569; text-align:center;">📑 Resumo por Categoria</h3>
+                <div class="table-responsive" style="max-height: 300px; overflow-y:auto; border: 1px solid #e2e8f0; border-radius: 4px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
+                        <thead style="background: #f8fafc; position: sticky; top: 0;">
+                            <tr><th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Categoria/Tipo</th><th style="padding:10px; text-align:right; border-bottom: 1px solid #e2e8f0;">Valor</th></tr>
+                        </thead>
+                        <tbody id="relFluxoCategorias"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        window.onload = function() {
-            const savedUser = localStorage.getItem('usuarioArenaVitale');
-            if(savedUser) {
-                usuarioLogado = JSON.parse(savedUser);
-                document.getElementById('tela-auth').style.display = 'none';
-                document.querySelector('.navbar').style.display = 'block';
-                document.getElementById('relogioFlutuante').style.display = 'block';
-                document.querySelector('.wa-float').style.display = 'flex';
-                document.querySelector('.ig-float').style.display = 'flex';
-                document.querySelector('footer').style.display = 'block';
-                navegarPara('tela-inicial');
-                carregarClima(); carregarRanking();
-            }
-        }
+</div>
 
-        async function carregarRanking() {
-            const widget = document.getElementById('rankingWidget');
-            const list = document.getElementById('rankingList');
-            fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ acao: "buscar_ranking" }) })
-            .then(r => r.json()).then(data => {
-                if(data.oculto) {
-                    widget.style.display = 'none';
-                    return;
+<div id="modalMovimentacao" class="modal-overlay">
+    <div class="modal-box" style="max-width: 400px; padding: 0; overflow: hidden; border-radius: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #e2e8f0;">
+            <h3 id="tituloModalMov" style="margin: 0; color: #0f172a; font-size: 18px;">Adicionar Movimentação</h3>
+            <button style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer; padding: 0;" onclick="fecharModalMovimentacao()">×</button>
+        </div>
+        <div style="padding: 20px; text-align: left;">
+            <input type="hidden" id="tipoMovimentoModal">
+            
+            <div id="boxCategoriaModal" style="display: none; margin-bottom: 15px;">
+                <label style="font-weight:bold; color:#475569; font-size:13px; display:block; margin-bottom:5px;">Categoria da Saída:</label>
+                <select id="categoriaDespesaModal" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:4px; font-size:14px; outline:none; background: #fff;">
+                    <option value="Fornecedores">Fornecedores (Estoque)</option>
+                    <option value="Funcionários">Funcionários</option>
+                    <option value="Manutenção">Manutenção/Limpeza</option>
+                    <option value="Contas">Contas de Consumo</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight:bold; color:#475569; font-size:13px; display:block; margin-bottom:5px;">Descrição/Motivo:</label>
+                <input type="text" id="descMovimentoModal" placeholder="Ex: Pagamento de Fornecedor" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:4px; font-size:14px; outline:none;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight:bold; color:#475569; font-size:13px; display:block; margin-bottom:5px;">Valor (R$):</label>
+                <input type="text" inputmode="decimal" id="valorMovimentoModal" placeholder="Ex: 50,00" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:4px; font-size:16px; font-weight:bold; outline:none; text-align: right; color: #0f172a;">
+            </div>
+
+            <button type="button" id="btnSalvarMov" style="width: 100%; background: #3b82f6; color: #fff; border: none; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 15px; cursor: pointer;" onclick="registrarCaixaModal()">Salvar Registro</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalComandas" class="modal-overlay">
+    <div class="modal-box" style="max-width: 700px; width: 95%; padding: 0; overflow: hidden; border-radius: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; background: #fff;">
+            <h3 style="margin: 0; color: #0f172a; font-size: 18px;">Buscar Venda / Comanda ou Mesa</h3>
+            <button style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer; padding: 0;" onclick="fecharModalComandas()">×</button>
+        </div>
+        <div style="padding: 20px; text-align: left; background: #fff;">
+            <label style="font-weight: bold; color: #475569; display: block; margin-bottom: 5px; font-size: 14px;">Número:</label>
+            <input type="text" id="buscaComandaInput" placeholder="Digite ou bipe o número da comanda..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; margin-bottom: 20px; outline: none;" oninput="filtrarModalComandas()">
+            <h4 style="margin: 0 0 10px 0; color: #334155; font-size: 14px;">Vendas / Comandas em Andamento</h4>
+            <div class="table-responsive" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 4px;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px;">
+                    <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
+                        <tr>
+                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Cliente</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Data/Hora</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Total</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaComandasModal"></tbody>
+                </table>
+            </div>
+        </div>
+        <div style="padding: 15px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <button type="button" style="background: #22c55e; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;" onclick="criarNovaComandaModal()"><span style="font-size:16px;">📂</span> Abrir Comanda</button>
+            <button type="button" style="background: #64748b; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="fecharModalComandas()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalHistorico" class="modal-overlay">
+    <div class="modal-box" style="max-width: 800px; width: 95%; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0; color:#0f172a;">📜 Histórico de Movimentações (Estoque)</h3>
+            <button class="no-print" style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer; padding: 0;" onclick="fecharModalHistorico()">×</button>
+        </div>
+
+        <div class="no-print" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+            <label style="font-weight:bold; color:#475569; font-size:14px;">Período:</label>
+            <input type="date" id="filtroHistInicio" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px;">
+            <input type="date" id="filtroHistFim" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px;">
+            <button type="button" style="background: #3b82f6; color: #fff; padding: 10px 15px; border-radius: 4px;" onclick="renderizarHistoricoModal()">🔍 Filtrar</button>
+            <button type="button" style="background: #0ea5e9; color: #fff; padding: 10px 15px; border-radius: 4px;" onclick="imprimirHistorico()">🖨️ Imprimir Período</button>
+        </div>
+
+        <div class="table-responsive" style="max-height: 400px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 4px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <thead style="background: #f8fafc; position: sticky; top: 0;">
+                    <tr>
+                        <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Data/Hora</th>
+                        <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Operador</th>
+                        <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Produto</th>
+                        <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Qtd</th>
+                        <th style="padding:10px; border-bottom: 1px solid #e2e8f0;">Motivo</th>
+                    </tr>
+                </thead>
+                <tbody id="listaHistoricoModal"></tbody>
+            </table>
+        </div>
+        <button type="button" class="btn-vermelho no-print" style="width: 100%; margin-top: 15px;" onclick="fecharModalHistorico()">Fechar Histórico</button>
+    </div>
+</div>
+
+<div id="modalPagamento" class="modal-overlay">
+    <div class="modal-box" style="max-width: 450px; padding: 0; border-radius: 8px; overflow: hidden; background: #f8fafc; display: flex; flex-direction: column; max-height: 90vh;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;">
+            <h3 id="tituloModalPagamento" style="margin: 0; color: #0f172a; font-size: 18px;">Formas de pagamento</h3>
+            <button style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer; padding: 0;" onclick="fecharModalPagamento()">×</button>
+        </div>
+        <div style="padding: 20px; text-align: left; overflow-y: auto; flex: 1;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('dinheiro', 'Dinheiro', '💵')">Dinheiro</button>
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('debito', 'Cartão de Débito', '💳')">Cartão de Débito</button>
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('credito', 'Cartão de Crédito', '💳')">Cartão de Crédito</button>
+                <button type="button" style="background:#3b82f6; color:#fff; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="addFormaPagamento('pix', 'Pix', '💠')">Pix</button>
+            </div>
+            <div id="boxNomePagador" style="display: none; margin-bottom: 20px;">
+                <label style="font-weight:bold; color:#475569; font-size:13px; display:block; margin-bottom:5px;">Nome de quem está pagando (Parcial):</label>
+                <input type="text" id="pagNomePagador" placeholder="Ex: João" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:4px; font-size:14px; outline:none;">
+            </div>
+            <div style="background:#fff; border:1px solid #e2e8f0; padding:15px; border-radius:6px; margin-bottom:20px; font-size:14px; color:#475569;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span>Subtotal</span><span style="font-weight:bold; color:#111;">R$ <span id="pagSubtotalVal">0.00</span></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #e2e8f0;">
+                    <span style="color:#3b82f6;">Taxa de Serviço</span><span style="color:#3b82f6; font-weight:bold;">+ R$ <span id="pagTaxaVal">0.00</span></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:16px; font-weight:bold; color:#111;">
+                    <span>Total</span><span>R$ <span id="pagTotalVal">0.00</span></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold; color:#22c55e;">
+                    <span>Pago</span><span>R$ <span id="pagPagoVal">0.00</span></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-weight:bold; color:#dc2626;">
+                    <span>Restante</span><span>R$ <span id="pagRestanteVal">0.00</span></span>
+                </div>
+            </div>
+            <div id="listaPagamentosAtivos" style="margin-bottom: 20px;"></div>
+            <div style="display:flex; align-items:center; justify-content:center; gap:10px; font-size:14px; color:#64748b; margin-bottom:10px;">
+                <span>Dividir a conta por:</span>
+                <input type="number" id="pagDividirInput" value="1" min="1" style="width:50px; padding:6px; border:1px solid #cbd5e1; border-radius:4px; text-align:center; outline:none;" oninput="calcularDivisao()">
+                <span style="color:#3b82f6; font-weight:bold;">R$ <span id="pagDivisaoResult">0.00</span> pra cada</span>
+            </div>
+        </div>
+        <div style="padding: 15px 20px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; flex-shrink: 0;">
+            <button type="button" id="btnFin1" style="flex:1; background:#22c55e; color:#fff; border:none; padding:14px; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="confirmarPagamentoMisto(false)" disabled>✓ Finalizar</button>
+            <button type="button" id="btnFin2" style="flex:2; background:#22c55e; color:#fff; border:none; padding:14px; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="confirmarPagamentoMisto(true)" disabled>🖨️ Finalizar e imprimir <span style="font-size:10px; opacity:0.8;">F6</span></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbz9zfoUJrNEq3kDqTf4_bksIr_Flme-HoC7ZH3bPNK_IM8Ocwx0cSDywCLsYJFuQ6nycw/exec";
+    
+    const TAXAS_CARTAO = { credito: 0.03, debito: 0.015, pix: 0, especie: 0 };
+
+    let bancoDeProdutos = [], bancoComandas = [], bancoCaixaGlobal = [], bancoClientes = [], bancoUsuarios = [], bancoVendas = [], bancoHistorico = [];
+    let turnoAtual = null, carrinho = [], total = 0, leitorHtml5 = null;
+    let inputCameraAlvo = "codigoInput", idEditandoEstoque = null, operadorAtual = "", cargoAtual = "";
+    
+    let chartFat = null, chartProd = null, chartRelFluxo = null, chartRelProdutos = null, chartRelPagamentos = null;
+    let acaoPagamentoPendente = null;
+    let idComandaEmEdicao = null;
+    let pagamentosComandaAtual = 0; 
+    let pagamentosAtivos = []; 
+    let filtroLivroTipo = 'Todos'; 
+
+    function formatarDataExibicao(dataStr) {
+        if (!dataStr) return ""; let str = String(dataStr || '');
+        if (str.includes('T')) { let d = new Date(str); let dia = String(d.getDate()).padStart(2, '0'); let mes = String(d.getMonth() + 1).padStart(2, '0'); let ano = d.getFullYear(); let hora = String(d.getHours()).padStart(2, '0'); let min = String(d.getMinutes()).padStart(2, '0'); return `${dia}/${mes}/${ano} ${hora}:${min}`; }
+        let limpa = str.replace(',', ''); let p = limpa.split(' '); if (p.length >= 2) return `${p[0]} ${p[1].substring(0,5)}`; return str;
+    }
+
+    function parseDataBR(dataStr) { 
+        if(!dataStr) return new Date(0); let str = String(dataStr || '');
+        if(str.includes('T')) return new Date(str); let partes = str.split(/[\s,]+/); let dma = partes[0].split('/'); if(dma.length === 3) return new Date(`${dma[2]}-${dma[1]}-${dma[0]}T12:00:00`); return new Date(0); 
+    }
+
+    async function reqPOST(dados) { 
+        document.getElementById('tela-sincronizacao').style.display = 'flex';
+        try {
+            let resposta = await fetch(API_URL, { method: 'POST', body: JSON.stringify(dados), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }); 
+            return resposta;
+        } finally {
+            setTimeout(() => {
+                if (document.getElementById('tela-sincronizacao').style.display === 'flex') {
+                    document.getElementById('tela-sincronizacao').style.display = 'none';
                 }
-                widget.style.display = 'block';
-                if(data.sucesso && data.ranking && data.ranking.length > 0) {
-                    list.innerHTML = '';
-                    data.ranking.forEach((r, i) => list.innerHTML += `<li>${i+1}º ${r.nome} <span>${r.horas}h</span></li>`);
-                } else { list.innerHTML = '<li>Sem registos ainda.</li>'; }
-            }).catch(e => { list.innerHTML = '<li>Erro ao carregar.</li>'; });
+            }, 3000);
         }
+    }
 
-        async function carregarClima() {
-            try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-4.9383&longitude=-37.9761&current_weather=true');
-                const data = await res.json();
-                document.getElementById('clima-temp').innerText = Math.round(data.current_weather.temperature) + '°C';
-            } catch (e) { document.getElementById('clima-temp').innerText = "28°C"; }
-        }
+    document.getElementById('loginSenha').addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); fazerLogin(); } });
 
-        function navegarPara(id) {
-            document.querySelectorAll('#tela-inicial, .secao-conteudo').forEach(t => t.style.display = 'none');
-            const target = document.getElementById(id);
-            if(id === 'tela-inicial') target.style.display = 'flex'; else target.style.display = 'block';
-            if(id === 'tela-agendamento') carregarDadosDoDia();
-            if(id === 'tela-fidelidade') renderizarFidelidade();
-        }
+    window.onload = () => {
+        let opSalvo = localStorage.getItem('arena_operador');
+        if (opSalvo) { document.getElementById('caixa-login-inputs').style.display = 'none'; document.getElementById('caixa-login-loading').style.display = 'block'; }
+        carregarDadosIniciais();
+    };
 
-        function mudarDia(delta) { dataVisualizada.setDate(dataVisualizada.getDate() + delta); carregarDadosDoDia(); }
-        function mudarQuadra(id, btn) { quadraSelecionada = id; document.querySelectorAll('.btn-court').forEach(b => b.classList.remove('active')); btn.classList.add('active'); carregarDadosDoDia(); }
-        function setDuracao(h, btn) { duracaoSelecionada = h; document.querySelectorAll('.btn-duration').forEach(b => b.classList.remove('active')); btn.classList.add('active'); carregarDadosDoDia(); }
+    async function carregarDadosIniciais() {
+        try {
+            const resposta = await fetch(API_URL); const dados = await resposta.json();
+            bancoDeProdutos = dados.produtos || []; bancoComandas = dados.comandas || [];
+            bancoCaixaGlobal = dados.caixa || []; bancoClientes = dados.clientes || [];
+            bancoUsuarios = dados.usuarios || []; bancoVendas = dados.vendas || []; bancoHistorico = dados.historico || [];
+            turnoAtual = (dados.turnos || []).find(t => String(t.Status || '') === "Aberto");
+            
+            let opSalvo = localStorage.getItem('arena_operador'); let nomeSalvo = localStorage.getItem('arena_operador_nome');
+            let cargoSalvo = localStorage.getItem('arena_operador_cargo');
+            
+            let userFound = bancoUsuarios.find(u => String(u.Login || '').toLowerCase() === opSalvo);
+            if (opSalvo && userFound) {
+                operadorAtual = nomeSalvo;
+                cargoAtual = cargoSalvo || userFound.Cargo || "Operador";
+                if(opSalvo.toLowerCase().includes("edilson")) cargoAtual = "Gerente"; 
 
-        async function carregarDadosDoDia() {
-            document.getElementById('dateDisplay').innerText = dataVisualizada.toLocaleDateString('pt-BR');
-            document.getElementById('loading').style.display = 'block';
-            const select = document.getElementById('selectHora');
-            select.innerHTML = '<option value="">A carregar...</option>';
-            try {
-                const res = await fetch(SHEET_URL + '&t=' + Date.now());
-                const csv = await res.text();
-                const rows = csv.split('\n').map(r => r.split(','));
-                horariosOcupadosDoDia = [];
-                const col = (quadraSelecionada === 2 ? 10 : 2) + (dataVisualizada.getDay() === 0 ? 6 : dataVisualizada.getDay() - 1);
-                rows.forEach((r, i) => { if(i>0 && r[col] && r[col].trim()) horariosOcupadosDoDia.push(parseInt(r[0])); });
-                atualizarMenuHorarios();
-            } catch(e) { console.log(e); } finally { document.getElementById('loading').style.display = 'none'; }
-        }
-
-        function atualizarMenuHorarios() {
-            const select = document.getElementById('selectHora');
-            select.innerHTML = '<option value="">Escolha o horário</option>';
-            for(let h=5; h<=22; h++) {
-                if(horariosOcupadosDoDia.includes(h)) {
-                    select.innerHTML += `<option disabled>${h}:00 - Ocupado</option>`;
+                document.getElementById('tela-login').style.display = 'none';
+                document.getElementById('operadorLogadoText').innerHTML = "Operador:<br>" + operadorAtual;
+                document.getElementById('cargoLogadoText').innerText = cargoAtual;
+                
+                // --- REGRA: SE FOR GERENTE MOSTRA TUDO, SE NÃO, OCULTA TUDO ISSO AQUI ---
+                if(cargoAtual === "Gerente" || opSalvo.toLowerCase().includes("edilson")) {
+                    document.getElementById('menu-usuarios').style.display = 'flex';
+                    document.getElementById('menu-estoque').style.display = 'flex';
+                    document.getElementById('menu-relatorios').style.display = 'flex';
                 } else {
-                    select.innerHTML += `<option value="${h}">${h}:00 - Livre</option>`;
+                    document.getElementById('menu-usuarios').style.display = 'none';
+                    document.getElementById('menu-estoque').style.display = 'none';
+                    document.getElementById('menu-relatorios').style.display = 'none';
                 }
+                
+                let tabSalva = localStorage.getItem('arena_tab') || 'tela-caixa';
+                
+                // Se o cara salvou a aba Relatorios e depois logou como operador, volta pro Caixa
+                if (cargoAtual !== "Gerente" && !opSalvo.toLowerCase().includes("edilson")) {
+                    if (tabSalva === 'tela-estoque' || tabSalva === 'tela-relatorios' || tabSalva === 'tela-usuarios' || tabSalva.includes('tela-relatorio-')) {
+                        tabSalva = 'tela-caixa';
+                    }
+                }
+                
+                mudarTela(tabSalva, document.querySelector(`.menu-item[onclick*="${tabSalva}"]`));
+            } else {
+                localStorage.removeItem('arena_operador');
+                document.getElementById('caixa-login-loading').style.display = 'none'; document.getElementById('caixa-login-inputs').style.display = 'block';
+                mudarTela('tela-caixa', null); document.getElementById('status-login').innerText = "✅ Conectado! Pode fazer login."; document.getElementById('status-login').style.color = "#10b981";
+                ['loginUsuario', 'loginSenha', 'btnEntrar'].forEach(id => document.getElementById(id).disabled = false);
+            }
+            atualizarTodasAsTelas();
+        } catch (erro) { document.getElementById('caixa-login-loading').style.display = 'none'; document.getElementById('caixa-login-inputs').style.display = 'block'; document.getElementById('status-login').innerHTML = "Erro de conexão.<br>Recarregue a página."; document.getElementById('status-login').style.color = "#ef4444"; }
+    }
+
+    function fazerLogin() {
+        let userTyped = document.getElementById('loginUsuario').value.trim().toLowerCase(); let passTyped = document.getElementById('loginSenha').value.trim();
+        let userEncontrado = bancoUsuarios.find(u => String(u.Login || '').toLowerCase() === userTyped && String(u.Senha || '') === passTyped);
+        
+        if(userEncontrado) {
+            operadorAtual = userTyped.charAt(0).toUpperCase() + userTyped.slice(1);
+            cargoAtual = userEncontrado.Cargo || "Operador";
+            if(userTyped.includes("edilson")) cargoAtual = "Gerente";
+
+            localStorage.setItem('arena_operador', userTyped); 
+            localStorage.setItem('arena_operador_nome', operadorAtual);
+            localStorage.setItem('arena_operador_cargo', cargoAtual);
+
+            document.getElementById('tela-login').style.display = 'none'; 
+            document.getElementById('operadorLogadoText').innerHTML = "Operador:<br>" + operadorAtual;
+            document.getElementById('cargoLogadoText').innerText = cargoAtual;
+            
+            // --- REGRA NA HORA DO LOGIN TAMBÉM ---
+            if(cargoAtual === "Gerente" || userTyped.includes("edilson")) {
+                document.getElementById('menu-usuarios').style.display = 'flex';
+                document.getElementById('menu-estoque').style.display = 'flex';
+                document.getElementById('menu-relatorios').style.display = 'flex';
+            } else {
+                document.getElementById('menu-usuarios').style.display = 'none';
+                document.getElementById('menu-estoque').style.display = 'none';
+                document.getElementById('menu-relatorios').style.display = 'none';
+            }
+
+            if(turnoAtual && window.innerWidth > 768) document.getElementById('codigoInput').focus();
+        } else { document.getElementById('msg-login').style.display = 'block'; }
+    }
+    
+    function fazerLogout() { localStorage.clear(); location.reload(); }
+
+    function verificarPermissaoGerente(acaoNome, callback) {
+        if(cargoAtual === "Gerente" || String(operadorAtual || '').toLowerCase().includes("edilson")) {
+            callback(); 
+        } else {
+            let senhaMestre = prompt(`🛡️ ACESSO RESTRITO\nA ação [${acaoNome}] requer aprovação. Digite a senha de um Gerente:`);
+            if(senhaMestre === null) return;
+            
+            let gerenteEncontrado = bancoUsuarios.find(u => 
+                (String(u.Cargo || '') === 'Gerente' || String(u.Login || '').toLowerCase().includes("edilson")) && String(u.Senha || '') === senhaMestre
+            );
+
+            if(gerenteEncontrado) {
+                callback();
+            } else {
+                alert("❌ Senha incorreta ou usuário não é gerente!");
             }
         }
+    }
 
-        function liberarBotao() { document.getElementById('btnAgendar').style.display = 'block'; atualizarPrecoDisplay(); }
-        function atualizarPrecoDisplay() {
-            const h = parseInt(document.getElementById('selectHora').value);
-            const pag = document.getElementById('selectPagamento').value;
-            let total = 0;
-            for(let i=0; i<duracaoSelecionada; i++) {
-                let hora = h + i;
-                if(hora >= 7 && hora <= 16) total += 35; else total += (pag === 'cartao' ? 50 : 45);
+    async function recarregarDadosSilencioso() {
+        document.getElementById('tela-sincronizacao').style.display = 'flex';
+        
+        try {
+            const resposta = await fetch(API_URL); const dados = await resposta.json();
+            bancoDeProdutos = dados.produtos || []; bancoComandas = dados.comandas || [];
+            bancoCaixaGlobal = dados.caixa || []; bancoClientes = dados.clientes || []; bancoUsuarios = dados.usuarios || []; bancoVendas = dados.vendas || []; bancoHistorico = dados.historico || [];
+            turnoAtual = (dados.turnos || []).find(t => String(t.Status || '') === "Aberto"); 
+            
+            atualizarTodasAsTelas();
+        } catch(e) { 
+            console.error("ERRO REAL DETECTADO NA BLINDAGEM:", e);
+            let statusBar = document.getElementById('status-bar');
+            if(statusBar) {
+                statusBar.style.display = 'block';
+                statusBar.innerText = "⚠️ Erro de Conexão. Verifique sua internet.";
+                statusBar.style.background = "#fee2e2";
+                statusBar.style.color = "#ef4444";
+                setTimeout(() => { statusBar.style.display = 'none'; }, 3000);
             }
-            document.getElementById('priceDisplay').innerText = `Total: R$ ${total},00`;
+        } finally {
+            document.getElementById('tela-sincronizacao').style.display = 'none';
+        }
+    }
+
+    function atualizarTodasAsTelas() {
+        atualizarInterfaceTurno(); atualizarTabelaEstoque(); atualizarTabelaComandas(); 
+        atualizarDashboardECaixa(); atualizarListasClientes(); atualizarListaUsuarios();
+        
+        // Se o modal do Histórico estiver aberto, atualiza a lista dele também
+        if(document.getElementById('modalHistorico').style.display === 'flex') {
+            renderizarHistoricoModal();
+        }
+    }
+
+    function mudarTela(idTela, elementoMenu) {
+        document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('ativo'));
+        
+        let painel = document.getElementById(idTela);
+        if(painel) painel.classList.add('ativa');
+        
+        if(idTela === 'tela-caixa' || idTela === 'tela-livro' || idTela === 'tela-relatorios' || idTela.includes('tela-relatorio-')) {
+            let statusBar = document.getElementById('status-bar');
+            if (statusBar) statusBar.style.display = 'none';
         }
 
-        function prepararAgendamento() {
-            document.getElementById('cadNomeCompleto').value = usuarioLogado.nome;
-            document.getElementById('modalCadastro').style.display = 'flex';
+        if(elementoMenu) elementoMenu.classList.add('ativo'); else { let el = document.querySelector(`.menu-item[onclick*="${idTela}"]`); if(el) el.classList.add('ativo'); }
+        localStorage.setItem('arena_tab', idTela);
+        if(leitorHtml5) fecharCamera(); 
+        if(idTela === 'tela-caixa' && turnoAtual && window.innerWidth > 768) document.getElementById('codigoInput').focus();
+    }
+
+    function abrirModalPagamento(valorTotal, acaoObj) {
+        pagamentosAtivos = [];
+        acaoPagamentoPendente = acaoObj;
+        
+        document.getElementById('pagSubtotalVal').innerText = valorTotal.toFixed(2);
+        document.getElementById('pagTaxaVal').innerText = "0.00";
+        document.getElementById('pagTotalVal').innerText = valorTotal.toFixed(2);
+        document.getElementById('pagDividirInput').value = "1";
+        
+        if(acaoObj.tipo === 'comanda_parcial') { 
+            document.getElementById('boxNomePagador').style.display = 'block'; 
+            document.getElementById('pagNomePagador').value = "";
+            document.getElementById('tituloModalPagamento').innerText = "Pagamento Parcial";
+        } else { 
+            document.getElementById('boxNomePagador').style.display = 'none'; 
+            document.getElementById('tituloModalPagamento').innerText = "Formas de pagamento";
+        }
+        
+        renderizarPagamentosAtivos();
+        document.getElementById('modalPagamento').style.display = 'flex'; 
+        
+        if(acaoObj.tipo === 'comanda_parcial' && window.innerWidth > 768) {
+            document.getElementById('pagNomePagador').focus();
+        }
+    }
+    
+    function fecharModalPagamento() { 
+        document.getElementById('modalPagamento').style.display = 'none'; 
+        acaoPagamentoPendente = null; 
+    }
+
+    function addFormaPagamento(tipo, nome, icone) {
+        let totalRequerido = parseFloat(document.getElementById('pagTotalVal').innerText.replace(',','.'));
+        let totalPago = pagamentosAtivos.reduce((sum, p) => sum + p.valor, 0);
+        let falta = totalRequerido - totalPago;
+        let valorSugerido = falta > 0 ? falta : 0;
+        
+        pagamentosAtivos.push({ id: Date.now(), tipo: tipo, nome: nome, icone: icone, valor: valorSugerido });
+        renderizarPagamentosAtivos();
+    }
+
+    function atualizarValorPag(index, val) {
+        pagamentosAtivos[index].valor = parseFloat(val.replace(',', '.')) || 0;
+        calcularResumoPag();
+    }
+
+    function removerPag(index) {
+        pagamentosAtivos.splice(index, 1);
+        renderizarPagamentosAtivos();
+    }
+
+    function renderizarPagamentosAtivos() {
+        let html = pagamentosAtivos.map((p, i) => `
+            <div style="display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:10px; font-weight:bold; color:#334155;">
+                    <span style="font-size:18px;">${p.icone}</span> ${p.nome}
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="text" inputmode="decimal" value="${p.valor ? p.valor.toFixed(2) : ''}" oninput="atualizarValorPag(${i}, this.value)" style="width:100px; text-align:right; font-weight:bold; font-size:16px; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none;">
+                    <button type="button" onclick="removerPag(${i})" style="background:#ef4444; color:white; border:none; border-radius:4px; width:32px; height:32px; font-weight:bold; cursor:pointer;">X</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('listaPagamentosAtivos').innerHTML = html;
+        calcularResumoPag();
+    }
+
+    function calcularResumoPag() {
+        let totalRequerido = parseFloat(document.getElementById('pagTotalVal').innerText.replace(',','.')) || 0;
+        let totalPago = pagamentosAtivos.reduce((sum, p) => sum + p.valor, 0);
+        let restante = totalRequerido - totalPago;
+
+        document.getElementById('pagPagoVal').innerText = totalPago.toFixed(2);
+        
+        let restEl = document.getElementById('pagRestanteVal');
+        let isParcial = acaoPagamentoPendente && acaoPagamentoPendente.tipo === 'comanda_parcial';
+
+        if (restante > 0.01) {
+            restEl.innerText = restante.toFixed(2);
+            restEl.style.color = "#dc2626";
+            
+            if (isParcial && totalPago > 0) {
+                document.getElementById('btnFin1').disabled = false;
+                document.getElementById('btnFin2').disabled = false;
+            } else {
+                document.getElementById('btnFin1').disabled = true;
+                document.getElementById('btnFin2').disabled = true;
+            }
+        } else if (restante < -0.01) {
+            restEl.innerText = "Troco: " + Math.abs(restante).toFixed(2);
+            restEl.style.color = "#eab308";
+            document.getElementById('btnFin1').disabled = false;
+            document.getElementById('btnFin2').disabled = false;
+        } else {
+            restEl.innerText = "0.00";
+            restEl.style.color = "#16a34a";
+            document.getElementById('btnFin1').disabled = false;
+            document.getElementById('btnFin2').disabled = false;
         }
 
-        function enviarAgendamento() {
-            const h = parseInt(document.getElementById('selectHora').value);
-            fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ acao: "agendar", nome: usuarioLogado.nome, telefone: usuarioLogado.phone, hora: h, quadra: quadraSelecionada, duracao: duracaoSelecionada, status: 'pendente', diaIndex: (dataVisualizada.getDay() === 0 ? 6 : dataVisualizada.getDay() - 1) }) })
-            .then(() => {
-                alert("Pedido enviado! Redirecionando para o WhatsApp...");
-                window.location.href = `https://wa.me/${whatsappNumber}?text=Reserva: ${usuarioLogado.nome} às ${h}:00`;
+        calcularDivisao();
+    }
+
+    function calcularDivisao() {
+        let total = parseFloat(document.getElementById('pagTotalVal').innerText.replace(',','.')) || 0;
+        let pessoas = parseInt(document.getElementById('pagDividirInput').value) || 1;
+        if(pessoas < 1) pessoas = 1;
+        document.getElementById('pagDivisaoResult').innerText = (total / pessoas).toFixed(2);
+    }
+
+    function confirmarPagamentoMisto(imprimirRecibo) {
+        if (pagamentosAtivos.length === 0) return alert("Adicione pelo menos uma forma de pagamento!");
+        
+        let pagNome = document.getElementById('pagNomePagador').value.trim() || "Não informado";
+        let totalPago = pagamentosAtivos.reduce((sum, p) => sum + p.valor, 0);
+        let formasStr = pagamentosAtivos.map(p => `${p.nome}: ${p.valor.toFixed(2)}`).join(" + ");
+        
+        let acaoSegura = acaoPagamentoPendente;
+        document.getElementById('btnFin1').innerText = "Aguarde..."; 
+        document.getElementById('btnFin1').disabled = true;
+        document.getElementById('btnFin2').disabled = true;
+        
+        executarAcaoPagamento(acaoSegura, formasStr, totalPago, pagNome, imprimirRecibo).then(() => {
+            document.getElementById('btnFin1').innerText = "✓ Finalizar"; 
+            fecharModalPagamento(); 
+        });
+    }
+
+    async function executarAcaoPagamento(acao, formaPagStr, totalPagoFinal, pagadorNome, imprimirRecibo) {
+        if(!acao) return;
+        if(acao.tipo === 'venda_direta') {
+            document.getElementById('btnFinalizarVenda').innerText = "Gravando..."; document.getElementById('btnFinalizarVenda').disabled = true;
+            await reqPOST({ acao: "venda", cliente: acao.cliente, total: acao.totalSalvo, carrinho: acao.carrinhoSalvo, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr });
+            limparCarrinhoNovaVenda(); recarregarDadosSilencioso();
+            document.getElementById('btnFinalizarVenda').innerHTML = '💵 Pagamento <span style="font-size:11px; opacity:0.8;">F6</span>'; document.getElementById('btnFinalizarVenda').disabled = false;
+            
+            if(imprimirRecibo) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, acao.carrinhoSalvo, acao.totalSalvo);
+            
+        } 
+        else if (acao.tipo === 'comanda') {
+            await reqPOST({ acao: "cobrar_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr + acao.msgExtra });
+            recarregarDadosSilencioso();
+            
+            let comandaImpressao = bancoComandas.find(c => String(c.ID_Comanda || '') === String(acao.id_comanda));
+            let iArr = comandaImpressao ? JSON.parse(comandaImpressao.Itens_JSON || "[]") : [];
+            
+            limparCarrinhoNovaVenda();
+            if(imprimirRecibo) imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.totalSalvo);
+        }
+        else if (acao.tipo === 'comanda_parcial') {
+            if (totalPagoFinal >= acao.valorTotal - 0.01) {
+                document.getElementById('tela-sincronizacao').style.display = 'flex';
+                
+                await reqPOST({ acao: "cobrar_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr + " (Liquidação Final)" });
+                recarregarDadosSilencioso();
+                limparCarrinhoNovaVenda();
+                
+                alert(`Atenção: Como este pagamento cobriu todo o saldo restante, a comanda foi liquidada e encerrada com sucesso!`);
+                if(imprimirRecibo) {
+                    let comandaImpressao = bancoComandas.find(c => String(c.ID_Comanda || '') === String(acao.id_comanda));
+                    let iArr = comandaImpressao ? JSON.parse(comandaImpressao.Itens_JSON || "[]") : [];
+                    imprimirCupao(pagadorNome !== "Não informado" ? pagadorNome : acao.cliente, iArr, acao.valorTotal);
+                }
+            } else {
+                await reqPOST({ acao: "pagamento_parcial_comanda", id_comanda: acao.id_comanda, operador: operadorAtual, pagador: pagadorNome, forma_pagamento: formaPagStr, valor_pago: totalPagoFinal });
+                recarregarDadosSilencioso();
+                pagamentosComandaAtual += totalPagoFinal;
+                atualizarCarrinho();
+                alert(`Pagamento parcial de R$ ${totalPagoFinal.toFixed(2)} recebido! Resta saldo a pagar.`);
+            }
+        }
+    }
+
+    function iniciarPagamentoCaixa() {
+        if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!");
+        let clienteSel = document.getElementById('selectClienteVenda').value;
+        
+        if (idComandaEmEdicao) {
+            let saldoDevedor = total - pagamentosComandaAtual;
+            if (saldoDevedor < 0) saldoDevedor = 0;
+            let itensJsonStr = encodeURIComponent(JSON.stringify(carrinho));
+            
+            abrirModalPagamento(saldoDevedor, { tipo: 'comanda', id_comanda: idComandaEmEdicao, cliente: clienteSel, itensJsonStr: itensJsonStr, totalSalvo: saldoDevedor, valorTotal: saldoDevedor, msgExtra: "" });
+        } else {
+            abrirModalPagamento(total, { tipo: 'venda_direta', cliente: clienteSel, carrinhoSalvo: [...carrinho], totalSalvo: total, valorTotal: total });
+        }
+    }
+
+    function cliquePagamentoParcialCaixa() {
+        if(!turnoAtual) return alert("Abra o caixa!");
+        if(carrinho.length === 0) return alert("Carrinho vazio!");
+        if (!idComandaEmEdicao) return alert("Para fazer pagamento parcial, primeiro abra (ou salve) uma comanda!");
+        
+        let clienteSel = document.getElementById('selectClienteVenda').value;
+        let saldoDevedor = total - pagamentosComandaAtual;
+        if (saldoDevedor <= 0) return alert("Esta comanda não tem saldo devedor para abater!");
+        
+        abrirModalPagamento(saldoDevedor, { tipo: 'comanda_parcial', id_comanda: idComandaEmEdicao, cliente: clienteSel, valorTotal: saldoDevedor });
+    }
+
+    function limparCarrinhoNovaVenda() {
+        carrinho = []; total = 0; pagamentosComandaAtual = 0; idComandaEmEdicao = null; 
+        document.getElementById('bannerEdicaoComanda').style.display = 'none';
+        document.getElementById('btnSalvarComanda').innerHTML = '💾 Salvar <span style="font-size:11px; opacity:0.8;">F5</span>'; 
+        document.getElementById('btnSalvarComanda').style.background = "#3b82f6";
+        atualizarCarrinho(); document.getElementById('selectClienteVenda').value = "Consumidor Final";
+    }
+
+    function adicionarQuadraInteligente(nomeQuadra) { 
+        let horasStr = prompt(`Quantas horas o cliente vai jogar na ${nomeQuadra}?`, "1"); 
+        if(!horasStr) return; let horas = parseInt(horasStr); if(isNaN(horas) || horas <= 0) return;
+
+        let horaInicio = prompt(`A que horas começa o jogo?\n(Digite apenas a hora inicial. Exemplo: 16 ou 19)`, new Date().getHours());
+        if(!horaInicio) return; let hInicial = parseInt(horaInicio); if(isNaN(hInicial)) return;
+        
+        let precoCalculado = 0; let hAtual = hInicial;
+        for(let i = 0; i < horas; i++) {
+            if(hAtual >= 17 && hAtual <= 22) { precoCalculado += 45; } else { precoCalculado += 35; }
+            hAtual++; if(hAtual > 23) hAtual = 0;
+        }
+
+        if(!confirm(`Início: ${hInicial}h | Duração: ${horas}h\nTotal Calculado: R$ ${precoCalculado.toFixed(2)}\n\nConfirmar adição?`)) return;
+
+        carrinho.push({ codigo: 'SERVICO', nome: `${nomeQuadra} (${horas}h a partir das ${hInicial}h)`, preco: precoCalculado, qtd: 1 }); 
+        total += precoCalculado; atualizarCarrinho(); 
+    }
+    
+    function aplicarDescontoCaixa() {
+        if(carrinho.length === 0) return alert("Adicione produtos primeiro!");
+        let descStr = prompt(`Total Atual: R$ ${total.toFixed(2)}\n\nDigite o valor do desconto (Ex: 10,00):`, "0,00");
+        if(!descStr) return; 
+        let valDesc = parseFloat(descStr.replace(',', '.')); 
+        if(isNaN(valDesc) || valDesc <= 0) return;
+        if(valDesc > total) return alert("O desconto não pode ser maior que o total da compra!");
+
+        let motivo = prompt("Qual o motivo do desconto?");
+        if (motivo === null) return; 
+        
+        let nomeDesconto = motivo.trim() !== "" ? `Desconto (${motivo.trim()})` : "Desconto (Motivo não informado)";
+
+        carrinho.push({ codigo: 'DESC', nome: nomeDesconto, preco: -valDesc, qtd: 1 });
+        total -= valDesc; 
+        atualizarCarrinho();
+    }
+
+    document.getElementById('codigoInput').addEventListener('keypress', function(e) { 
+        if (e.key === 'Enter' && this.value.trim() !== "") { 
+            e.preventDefault(); 
+            processarEntradaCodigo(this.value.trim()); 
+            this.value = ""; 
+            document.getElementById('dropdownProdutos').style.display = 'none';
+        } 
+    });
+
+    document.getElementById('codigoInput').addEventListener('input', function(e) {
+        let termo = this.value.trim().toLowerCase();
+        let dropdown = document.getElementById('dropdownProdutos');
+        
+        if (termo.length === 0) {
+            dropdown.style.display = 'none';
+            return;
+        }
+        
+        let filtrados = bancoDeProdutos.filter(p => {
+            if(!p.Nome_Produto || p.ID_Produto === 'SERVICO' || p.ID_Produto === 'DESC') return false;
+            return String(p.Nome_Produto).toLowerCase().includes(termo) || String(p.ID_Produto).toLowerCase().includes(termo);
+        });
+        
+        if (filtrados.length > 0) {
+            dropdown.innerHTML = filtrados.map(p => `
+                <div class="dropdown-item" onclick="selecionarProdutoDropdown('${p.ID_Produto}')">
+                    <span style="font-weight: 500;">${p.Nome_Produto}</span> 
+                    <span style="color:#10b981; font-weight: bold; font-size: 13px;">R$ ${parseFloat(String(p.Preco_Venda||0).replace(',','.')).toFixed(2)}</span>
+                </div>
+            `).join('');
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.innerHTML = `<div style="padding:15px; color:#94a3b8; font-size:13px; text-align:center;">Nenhum produto encontrado</div>`;
+            dropdown.style.display = 'block';
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target.id !== 'codigoInput') {
+            let dropdown = document.getElementById('dropdownProdutos');
+            if(dropdown) dropdown.style.display = 'none';
+        }
+    });
+
+    function selecionarProdutoDropdown(idProduto) {
+        document.getElementById('codigoInput').value = idProduto;
+        document.getElementById('dropdownProdutos').style.display = 'none';
+        processarEntradaCodigo(idProduto);
+        document.getElementById('codigoInput').value = ""; 
+    }
+
+    function processarEntradaCodigo(termo) { 
+        termo = String(termo || '').toLowerCase(); let prod = bancoDeProdutos.find(p => String(p.ID_Produto || '').toLowerCase() === termo || String(p.Nome_Produto || '').toLowerCase() === termo); 
+        if (!prod) { let achados = bancoDeProdutos.filter(p => String(p.Nome_Produto || '').toLowerCase().includes(termo)); if (achados.length === 1) prod = achados[0]; else if (achados.length > 1) { alert("Múltiplos produtos encontrados. Digite o código exato ou clique na lista."); return; } } 
+        if (prod) { 
+            let preco = parseFloat(String(prod.Preco_Venda || 0).replace(',','.')) || 0; let qtdMult = parseInt(document.getElementById('qtdInput').value) || 1;
+            let ext = carrinho.find(i => String(i.codigo) === String(prod.ID_Produto)); 
+            if(ext) { ext.qtd += qtdMult; } else { carrinho.push({ codigo: prod.ID_Produto, nome: prod.Nome_Produto, preco: preco, qtd: qtdMult }); } 
+            total += (preco * qtdMult); atualizarCarrinho(); document.getElementById('qtdInput').value = "1"; 
+        } else { alert("Produto não encontrado!"); } 
+    }
+    
+    function removerItemCarrinho(index) {
+        let confirmacao = confirm(`Deseja remover ${carrinho[index].nome} da venda atual?`);
+        if(confirmacao) { total -= (carrinho[index].preco * carrinho[index].qtd); carrinho.splice(index, 1); atualizarCarrinho(); }
+    }
+
+    function atualizarCarrinho() { 
+        let htmlCarrinho = carrinho.map((i, index) => `<tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding:6px 8px;">${i.codigo}</td><td style="padding:6px 8px;">${i.nome}</td><td style="padding:6px 8px; font-weight:bold;">${i.qtd}</td><td style="padding:6px 8px;">R$ ${i.preco.toFixed(2)}</td><td style="padding:6px 8px; color:#10b981; font-weight:bold;">R$ ${(i.preco * i.qtd).toFixed(2)}</td><td style="padding:6px 8px; text-align: right;"><button type="button" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:14px;" title="Remover" onclick="removerItemCarrinho(${index})">❌</button></td></tr>`).join(''); 
+        document.getElementById('listaCarrinho').innerHTML = htmlCarrinho; 
+        
+        let saldoFinal = total - pagamentosComandaAtual;
+        saldoFinal = Math.round(saldoFinal * 100) / 100;
+        if (saldoFinal < 0) saldoFinal = 0;
+
+        if (pagamentosComandaAtual > 0) {
+            document.getElementById('valorTotal').innerHTML = `<span style="font-size:14px; color:#ef4444; text-decoration:line-through; margin-right:8px;">${total.toFixed(2)}</span> ${saldoFinal.toFixed(2)}`; 
+        } else {
+            document.getElementById('valorTotal').innerText = total.toFixed(2); 
+        }
+        
+        document.getElementById('valorSubtotal').innerText = total.toFixed(2); 
+        
+        let temItem = carrinho.length > 0;
+        document.getElementById('btnDescontoCaixa').disabled = !temItem;
+        document.getElementById('btnSalvarComanda').disabled = !temItem;
+        document.getElementById('btnFinalizarVenda').disabled = !temItem;
+    }
+
+    function alternarCamera(alvoId) { inputCameraAlvo = alvoId; let divCamera = document.getElementById('leitorCamera'); if (divCamera.style.display === "block") fecharCamera(); else abrirCamera(); }
+    function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { alert("Sem acesso à câmara."); divCamera.style.display = "none"; }); }
+    function fecharCamera() { if(leitorHtml5) leitorHtml5.stop().then(() => { document.getElementById('leitorCamera').style.display = "none"; }).catch(e=>e); }
+
+    async function renomearComanda(idComanda, nomeAtual) {
+        let novoNome = prompt("Digite o novo nome para esta comanda:", nomeAtual);
+        if(novoNome !== null && novoNome.trim() !== "" && novoNome !== nomeAtual) {
+            let comanda = bancoComandas.find(c => String(c.ID_Comanda) === String(idComanda));
+            if(!comanda) return;
+            
+            let itensAtuais = [];
+            try { itensAtuais = JSON.parse(comanda.Itens_JSON || "[]"); } catch(e){}
+            let valorTotal = parseFloat(String(comanda.Total||0).replace(',','.')) || 0;
+
+            document.getElementById('tela-sincronizacao').style.display = 'flex';
+            await reqPOST({ acao: "atualizar_comanda", id_comanda: idComanda, cliente: novoNome.trim(), total: valorTotal, carrinho: itensAtuais, operador: operadorAtual });
+            recarregarDadosSilencioso();
+        }
+    }
+
+    function abrirModalComandas() { 
+        renderizarTabelaModalComandas(bancoComandas);
+        document.getElementById('buscaComandaInput').value = "";
+        document.getElementById('modalComandas').style.display = 'flex'; 
+        setTimeout(() => { if(window.innerWidth > 768) document.getElementById('buscaComandaInput').focus(); }, 100);
+    }
+    
+    function fecharModalComandas() { document.getElementById('modalComandas').style.display = 'none'; }
+    
+    function renderizarTabelaModalComandas(comandas) {
+        let lista = document.getElementById('listaComandasModal'); 
+        if(comandas.length === 0) { 
+            lista.innerHTML = "<tr><td colspan='4' style='text-align: center; padding: 20px;'>Nenhuma comanda em andamento.</td></tr>"; 
+            return; 
+        } 
+        
+        let comandasReversas = comandas.slice().reverse();
+
+        lista.innerHTML = comandasReversas.map(c => { 
+            let valor = 0;
+            try {
+                let its = JSON.parse(c.Itens_JSON || "[]");
+                if(its.length > 0) { valor = its.reduce((sum, i) => sum + ((parseFloat(i.preco)||0) * (parseInt(i.qtd)||0)), 0); } 
+                else { valor = parseFloat(String(c.Total || 0).replace(',','.')) || 0; }
+            } catch(e) { valor = parseFloat(String(c.Total || 0).replace(',','.')) || 0; }
+            
+            let clienteEscapado = String(c.Cliente || '').replace(/'/g, "\\'");
+            let btnSelecionar = `<button type="button" onclick="selecionarComandaModal('${c.ID_Comanda}', '${clienteEscapado}')" style="background:transparent; border:none; color:#3b82f6; cursor:pointer; font-size:16px; padding:0 5px;" title="Selecionar / Abrir">📂</button>`;
+            let btnRenomear = `<button type="button" onclick="renomearComanda('${c.ID_Comanda}', '${clienteEscapado}')" style="background:transparent; border:none; color:#eab308; cursor:pointer; font-size:16px; padding:0 5px;" title="Renomear">✏️</button>`;
+            let btnApagar = `<button type="button" onclick="verificarPermissaoGerente('Zerar Comanda', () => { excluirComanda('${c.ID_Comanda}'); fecharModalComandas(); })" style="background:transparent; border:none; color:#ef4444; cursor:pointer; font-size:16px; padding:0 5px;" title="Apagar">🗑️</button>`;
+
+            let dataC = c.Data_Hora || c.data_hora || c.Data || c.data || '--';
+            let dataFormatada = dataC !== '--' ? formatarDataExibicao(dataC) : '--';
+            let opC = c.Operador || c.operador || '--';
+
+            return `
+            <tr style="border-bottom: 1px solid #e2e8f0; transition: 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 10px;">${c.Cliente || 'Sem cliente'}</td>
+                <td style="padding: 10px; font-size: 12px; color: #64748b;">
+                    ${dataFormatada}<br>
+                    <span style="font-size: 10px; color: #94a3b8;">Op: ${opC}</span>
+                </td>
+                <td style="padding: 10px; font-weight: bold;">R$ ${valor.toFixed(2)}</td>
+                <td style="padding: 10px;">${btnSelecionar} ${btnRenomear} ${btnApagar}</td>
+            </tr>`; 
+        }).join('');
+    }
+
+    function filtrarModalComandas() {
+        let termo = String(document.getElementById('buscaComandaInput').value || '').toLowerCase();
+        let filtradas = bancoComandas.filter(c => 
+            String(c.ID_Comanda || '').toLowerCase().includes(termo) || 
+            String(c.Cliente || '').toLowerCase().includes(termo) ||
+            String(c.Operador || '').toLowerCase().includes(termo)
+        );
+        renderizarTabelaModalComandas(filtradas);
+    }
+
+    function selecionarComandaModal(idComanda, nomeCli) {
+        if(carrinho.length > 0) { adicionarNaComandaExistente(idComanda, nomeCli); } else { fecharModalComandas(); editarComanda(idComanda); }
+    }
+
+    async function criarNovaComandaModal() { 
+        fecharModalComandas(); 
+        let nome = prompt("Nome do Cliente para a NOVA comanda?"); 
+        if(!nome) return; 
+        await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho, operador: operadorAtual }); 
+        alert("Comanda criada!"); 
+        limparCarrinhoNovaVenda(); 
+        recarregarDadosSilencioso(); 
+    }
+    
+    async function adicionarNaComandaExistente(idComanda, nomeCli) { 
+        fecharModalComandas(); 
+        await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho, operador: operadorAtual }); 
+        alert(`Itens adicionados!`); 
+        limparCarrinhoNovaVenda(); 
+        recarregarDadosSilencioso(); 
+    }
+    
+    let draggedCard = null;
+
+    function handleDragStart(e) { draggedCard = this; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', this.dataset.id); setTimeout(() => this.style.opacity = '0.4', 0); }
+    function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; return false; }
+    function handleDragEnter(e) { this.classList.add('over'); }
+    function handleDragLeave(e) { this.classList.remove('over'); }
+    function handleDrop(e) { e.stopPropagation(); if (draggedCard !== this) { let grid = this.parentNode; let allCards = Array.from(grid.querySelectorAll('.comanda-card')); let draggedIndex = allCards.indexOf(draggedCard); let targetIndex = allCards.indexOf(this); if (draggedIndex < targetIndex) { grid.insertBefore(draggedCard, this.nextSibling); } else { grid.insertBefore(draggedCard, this); } } return false; }
+    function handleDragEnd(e) { this.style.opacity = '1'; document.querySelectorAll('.comanda-card').forEach(c => c.classList.remove('over')); }
+
+    function atualizarTabelaComandas() { 
+        let grid = document.getElementById('listaComandasGrid'); 
+        if(bancoComandas.length === 0) { grid.innerHTML = `<div style="text-align: center; width:100%; color:#64748b; padding: 20px;">Nenhuma comanda aberta no momento.</div>`; return; } 
+        
+        let comandasReversas = bancoComandas.slice().reverse();
+
+        grid.innerHTML = comandasReversas.map(c => { 
+            if(!c.ID_Comanda) return ''; 
+            let itensStr = "", itensObj = []; 
+            try { itensObj = JSON.parse(c.Itens_JSON || "[]"); itensStr = itensObj.map(i => `• ${i.qtd}x ${i.nome}`).join('<br>'); } catch(e) {} 
+            
+            let valorTotal = 0;
+            if(itensObj && itensObj.length > 0) { valorTotal = itensObj.reduce((sum, i) => sum + ((parseFloat(i.preco)||0) * (parseInt(i.qtd)||0)), 0); } 
+            else { valorTotal = parseFloat(String(c.Total || 0).replace(',','.')) || 0; }
+            
+            let pagamentosHtml = ""; let totalJaPago = 0; 
+            if(c.Pagamentos_JSON) {
+                try {
+                    let pags = JSON.parse(c.Pagamentos_JSON);
+                    if(pags.length > 0) {
+                        let strPags = pags.map(p => { totalJaPago += parseFloat(String(p.valor).replace(',','.')) || 0; let btnExcluir = p.id_transacao ? `<button type="button" onclick="removerPagamentoParcial('${c.ID_Comanda}', '${p.id_transacao}')" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:14px; padding:0; margin-left:5px;" title="Remover Pagamento">❌</button>` : ''; return `<b>${p.nome}</b> (R$ ${parseFloat(p.valor||0).toFixed(2)})${btnExcluir}`; }).join(' | ');
+                        pagamentosHtml = `<div style="font-size:12px; color:#16a34a; margin-top:10px; background:#dcfce7; padding:8px; border-radius:4px; border: 1px solid #bbf7d0;">✅ <b>Pgto Parcial:</b><br>${strPags}</div>`;
+                    }
+                } catch(e){}
+            }
+
+            let saldoDevedor = valorTotal - totalJaPago; 
+            saldoDevedor = Math.round(saldoDevedor * 100) / 100;
+
+            let valorExibicaoHtml = "";
+            if (totalJaPago > 0) {
+                if (saldoDevedor <= 0) { valorExibicaoHtml = `<div style="font-size: 14px; color: #64748b; text-decoration: line-through;">Total: R$ ${valorTotal.toFixed(2)}</div><div style="font-size: 20px; font-weight: bold; color: #16a34a;">✅ Conta Paga</div>`; } 
+                else { valorExibicaoHtml = `<div style="font-size: 14px; color: #64748b; text-decoration: line-through;">Total: R$ ${valorTotal.toFixed(2)}</div><div style="font-size: 20px; font-weight: bold; color: #dc2626;">Falta: R$ ${saldoDevedor.toFixed(2)}</div>`; }
+            } else { valorExibicaoHtml = `<div class="comanda-valor">R$ ${valorTotal.toFixed(2)}</div>`; }
+            
+            let clienteEscapado = String(c.Cliente || '').replace(/'/g, "\\'");
+            let dataC = c.Data_Hora || c.data_hora || c.Data || c.data || '--';
+            let dataFormatada = dataC !== '--' ? formatarDataExibicao(dataC) : '--';
+            let opC = c.Operador || c.operador || '--';
+
+            return `
+            <div class="comanda-card" draggable="true" data-id="${c.ID_Comanda}">
+                <div class="comanda-header">
+                    <h3>
+                        👤 <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;">${c.Cliente || 'Sem Nome'}</span>
+                        <button type="button" onclick="renomearComanda('${c.ID_Comanda}', '${clienteEscapado}')" style="background:transparent; border:none; cursor:pointer; font-size:14px; padding:0; margin-left:5px;" title="Renomear">✏️</button>
+                    </h3>
+                </div>
+                <div style="font-size: 11px; color: #64748b; margin-bottom: 10px; display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 5px;">
+                    <span>📅 ${dataFormatada}</span>
+                    <span>👤 Op: ${opC}</span>
+                </div>
+                <div class="comanda-body">
+                    <div class="itens">${itensStr}</div>
+                    ${pagamentosHtml}
+                </div>
+                <div style="text-align: right; margin-bottom: 15px;">${valorExibicaoHtml}</div>
+                <div class="comanda-actions">
+                    <button type="button" class="btn-azul" onclick="mudarTela('tela-caixa'); editarComanda('${c.ID_Comanda}')">📂 Abrir no Caixa</button>
+                    <button type="button" class="btn-vermelho" onclick="verificarPermissaoGerente('Zerar Comanda', () => excluirComanda('${c.ID_Comanda}'))">🗑️ Cancelar</button>
+                </div>
+            </div>`; 
+        }).join(''); 
+
+        let cards = document.querySelectorAll('.comanda-card');
+        cards.forEach(card => { card.addEventListener('dragstart', handleDragStart); card.addEventListener('dragover', handleDragOver); card.addEventListener('dragenter', handleDragEnter); card.addEventListener('dragleave', handleDragLeave); card.addEventListener('drop', handleDrop); card.addEventListener('dragend', handleDragEnd); });
+    }
+
+    function editarComanda(idComanda) {
+        let comanda = bancoComandas.find(c => String(c.ID_Comanda || '') === String(idComanda)); if(!comanda) return alert("Comanda não encontrada!");
+        idComandaEmEdicao = idComanda; try { carrinho = JSON.parse(comanda.Itens_JSON || "[]"); } catch(e) { carrinho = []; }
+        total = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
+        
+        pagamentosComandaAtual = 0;
+        if(comanda.Pagamentos_JSON) { try { let pags = JSON.parse(comanda.Pagamentos_JSON); pags.forEach(p => pagamentosComandaAtual += parseFloat(String(p.valor).replace(',','.')) || 0); } catch(e){} }
+
+        document.getElementById('bannerEdicaoComanda').style.display = 'flex'; document.getElementById('nomeEdicaoComanda').innerText = comanda.Cliente || 'Sem Nome';
+        let selectCli = document.getElementById('selectClienteVenda'); if(!Array.from(selectCli.options).some(opt => opt.value === comanda.Cliente)) { selectCli.add(new Option(comanda.Cliente, comanda.Cliente)); }
+        selectCli.value = comanda.Cliente; document.getElementById('btnSalvarComanda').innerHTML = '💾 Gravar Alterações <span style="font-size:11px; opacity:0.8;">F5</span>'; document.getElementById('btnSalvarComanda').style.background = "#eab308"; document.getElementById('btnSalvarComanda').disabled = false; 
+        
+        atualizarCarrinho(); 
+    }
+
+    function cancelarEdicaoComanda() { limparCarrinhoNovaVenda(); }
+    function acaoBotaoComanda() { if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!"); if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); } }
+    async function atualizarComandaExistente() { let clienteSel = document.getElementById('selectClienteVenda').value; await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda atualizada!"); cancelarEdicaoComanda(); recarregarDadosSilencioso(); }
+    
+    async function excluirComanda(idComanda) { if(confirm("ATENÇÃO: Deseja excluir a comanda e devolver TODOS os itens ao estoque sem cobrar?")) { await reqPOST({ acao: "excluir_comanda", id_comanda: idComanda, operador: operadorAtual }); recarregarDadosSilencioso(); } }
+
+    // --- NOVA LÓGICA DO HISTÓRICO DE ESTOQUE (COM FILTRO E IMPRESSÃO) ---
+    function abrirModalHistorico() {
+        setaDatasPadrao('filtroHistInicio', 'filtroHistFim');
+        renderizarHistoricoModal();
+        document.getElementById('modalHistorico').style.display = 'flex';
+    }
+
+    function renderizarHistoricoModal() {
+        let dIniStr = document.getElementById('filtroHistInicio').value;
+        let dFimStr = document.getElementById('filtroHistFim').value;
+        let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null;
+        let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
+
+        let tbody = document.getElementById('listaHistoricoModal');
+        let filtrados = bancoHistorico.filter(h => {
+            if(!h.Data_Hora) return false;
+            let recordDate = parseDataBR(h.Data_Hora);
+            if (dIni && recordDate < dIni) return false;
+            if (dFim && recordDate > dFim) return false;
+            return true;
+        });
+
+        tbody.innerHTML = filtrados.slice().reverse().map(h => {
+            let corQtd = String(h.Qtd || '').includes('-') ? 'color:#dc2626;' : 'color:#16a34a;';
+            return `<tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding:10px;">${formatarDataExibicao(h.Data_Hora)}</td>
+                <td style="padding:10px;">${h.Operador || ''}</td>
+                <td style="padding:10px;">${h.Produto || ''}</td>
+                <td style="padding:10px; font-weight:bold; ${corQtd}">${h.Qtd || ''}</td>
+                <td style="padding:10px;">${h.Motivo || ''}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    function imprimirHistorico() {
+        document.body.classList.add('imprimindo-modal');
+        window.print();
+        setTimeout(() => document.body.classList.remove('imprimindo-modal'), 1000);
+    }
+    
+    function fecharModalHistorico() { document.getElementById('modalHistorico').style.display = 'none'; }
+
+    function adicionarEntradaManual(idProduto, nomeProduto) {
+        let qtdStr = prompt(`Dar entrada no estoque: ${nomeProduto}\n\nQuantas unidades chegaram?`);
+        if(!qtdStr) return; let qtd = parseInt(qtdStr); if(isNaN(qtd) || qtd <= 0) return alert("Quantidade inválida!");
+        reqPOST({ acao: "entrada_estoque", id_produto: idProduto, qtd: qtd, operador: operadorAtual }).then(() => { alert(`Entrada de ${qtd} unidades registrada!`); recarregarDadosSilencioso(); });
+    }
+
+    function atualizarTabelaEstoque() { document.getElementById('listaGestao').innerHTML = bancoDeProdutos.map(p => { if(!p.ID_Produto) return ''; let pCusto = parseFloat(String(p.Preco_Custo||0).replace(',','.'))||0; let pVenda = parseFloat(String(p.Preco_Venda||0).replace(',','.'))||0; return `<tr><td>${p.ID_Produto}</td><td>${p.Nome_Produto||''}</td><td>R$ ${pCusto.toFixed(2)}</td><td>R$ ${pVenda.toFixed(2)}</td><td style="font-weight:bold;">${p.Quantidade||0}</td><td>${p.Estoque_Minimo || 0}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button type="button" class="btn-verde" onclick="adicionarEntradaManual('${p.ID_Produto}', '${String(p.Nome_Produto||'').replace(/'/g, "\\'")}')">+ Entrada</button><button type="button" class="btn-amarelo" onclick="prepararEdicaoEstoque('${p.ID_Produto}')">Editar</button><button type="button" class="btn-vermelho" onclick="removerProduto('${p.ID_Produto}')">Apagar</button></td></tr>`; }).join(''); }
+    function prepararEdicaoEstoque(id) { let p = bancoDeProdutos.find(x => String(x.ID_Produto||'') === String(id)); if(!p) return; document.getElementById('novoId').value = p.ID_Produto; document.getElementById('novoNome').value = p.Nome_Produto || ''; document.getElementById('novoCusto').value = p.Preco_Custo || '0'; document.getElementById('novoPreco').value = p.Preco_Venda || '0'; document.getElementById('novaQtd').value = p.Quantidade || 0; document.getElementById('novoMinimo').value = p.Estoque_Minimo || 0; idEditandoEstoque = id; document.getElementById('btnAdicionarEstoque').innerText = "Atualizar Produto"; document.getElementById('btnAdicionarEstoque').className = "btn-amarelo"; window.scrollTo(0, 0); }
+    
+    async function salvarProdutoEstoque() { 
+        let id = document.getElementById('novoId').value, nome = document.getElementById('novoNome').value; 
+        let custo = document.getElementById('novoCusto').value.replace(',','.'), preco = document.getElementById('novoPreco').value.replace(',','.'), qtd = document.getElementById('novaQtd').value, min = document.getElementById('novoMinimo').value || 0; 
+        if(!id || !nome || !preco || !qtd) return alert("Preencha Código, Nome, Venda e Qtd!"); 
+        let acaoReq = idEditandoEstoque ? "editar_produto" : "adicionar"; 
+        await reqPOST({ acao: acaoReq, id_antigo: idEditandoEstoque, id: id, nome: nome, custo: custo, preco: preco, quantidade: qtd, estoque_minimo: min }); 
+        document.getElementById('novoId').value = ""; document.getElementById('novoNome').value = ""; document.getElementById('novoCusto').value = ""; document.getElementById('novoPreco').value = ""; document.getElementById('novaQtd').value = ""; document.getElementById('novoMinimo').value = ""; idEditandoEstoque = null; document.getElementById('btnAdicionarEstoque').innerText = "Salvar Produto"; document.getElementById('btnAdicionarEstoque').className = "btn-verde"; recarregarDadosSilencioso(); 
+    }
+    async function removerProduto(id) { if(confirm("Apagar produto?")) { await reqPOST({ acao: "remover", id: id }); recarregarDadosSilencioso(); } }
+
+    function setFiltroLivro(tipo) {
+        filtroLivroTipo = tipo;
+        document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('pill-' + tipo).classList.add('active');
+        filtrarLivroCaixa();
+    }
+
+    function atualizarDashboardECaixa() {
+        let abertura = 0, entradas = 0, saidas = 0;
+        let hj = new Date().toLocaleDateString('pt-BR'); 
+        
+        bancoCaixaGlobal.forEach(m => { 
+            if(!m.ID_Transacao) return; 
+            let v = parseFloat(String(m.Valor || 0).replace(',','.'))||0; 
+            let desc = String(m.Descricao || '').toLowerCase();
+            
+            if(turnoAtual && m.ID_Transacao >= turnoAtual.ID_Turno) { 
+                if(desc.includes('troco inicial')) { abertura += v; } else if(String(m.Tipo || '') === "Entrada") { entradas += v; } else if(String(m.Tipo || '') === "Saida") { saidas += v; }
+            } 
+        });
+        
+        let saldoAtual = abertura + entradas - saidas;
+
+        let elAbertura = document.getElementById('resumoLivroAbertura'); if(elAbertura) elAbertura.innerText = "R$ " + abertura.toFixed(2);
+        let elEntradas = document.getElementById('resumoLivroEntradas'); if(elEntradas) elEntradas.innerText = "R$ " + entradas.toFixed(2);
+        let elSaidas = document.getElementById('resumoLivroSaidas'); if(elSaidas) elSaidas.innerText = "R$ " + saidas.toFixed(2);
+        let elSaldo = document.getElementById('resumoLivroSaldo'); if(elSaldo) elSaldo.innerText = "R$ " + saldoAtual.toFixed(2);
+        
+        let lblAbertura = document.getElementById('lblAberturaCaixa'); let lblStatusLivro = document.getElementById('lblStatusCaixaLivro');
+
+        if (turnoAtual && lblAbertura && lblStatusLivro) {
+            lblAbertura.innerText = "Aberto em: " + formatarDataExibicao(turnoAtual.Data_Hora) + " por " + (turnoAtual.Operador || 'Sistema');
+            lblStatusLivro.innerHTML = '<span style="width:8px; height:8px; background:#22c55e; border-radius:50%; display:inline-block;"></span> Caixa Aberto';
+            lblStatusLivro.style.color = "#22c55e";
+        } else if (lblAbertura && lblStatusLivro) {
+            lblAbertura.innerText = "Caixa não está aberto.";
+            lblStatusLivro.innerHTML = '<span style="width:8px; height:8px; background:#ef4444; border-radius:50%; display:inline-block;"></span> Caixa Fechado';
+            lblStatusLivro.style.color = "#ef4444";
+        }
+
+        let itensBaixos = bancoDeProdutos.filter(p => p.ID_Produto && p.ID_Produto !== 'SERVICO' && parseInt(p.Quantidade||0) <= parseInt(p.Estoque_Minimo || 0));
+        let alertaBox = document.getElementById('alerta-estoque');
+        
+        if (alertaBox) {
+            if(itensBaixos.length > 0) { 
+                alertaBox.style.display = 'block'; alertaBox.innerHTML = `<h3 style="color:#b91c1c; margin-top:0;">⚠️ Alerta de Reposição de Estoque</h3>` + itensBaixos.map(i => `<div>- <b>${i.Nome_Produto}</b> (Restam: ${i.Quantidade||0})</div>`).join(''); 
+            } else { alertaBox.style.display = 'none'; }
+        }
+        
+        filtrarLivroCaixa();
+    }
+
+    function filtrarLivroCaixa() {
+        let dIni = document.getElementById('filtroDataInicio') ? (document.getElementById('filtroDataInicio').value ? new Date(document.getElementById('filtroDataInicio').value + "T00:00:00") : null) : null; 
+        let dFim = document.getElementById('filtroDataFim') ? (document.getElementById('filtroDataFim').value ? new Date(document.getElementById('filtroDataFim').value + "T23:59:59") : null) : null;
+        let buscaInput = document.getElementById('buscaLivroInput'); let buscaTexto = buscaInput ? buscaInput.value.toLowerCase() : "";
+        let htmlTabela = ""; let listaCaixa = document.getElementById('listaCaixa'); if(!listaCaixa) return;
+
+        bancoCaixaGlobal.slice().reverse().forEach(m => {
+            if(!m.ID_Transacao) return;
+            
+            let recordDate = parseDataBR(m.Data_Hora);
+            if (dIni && recordDate < dIni) return; 
+            if (dFim && recordDate > dFim) return;
+            if (filtroLivroTipo !== 'Todos' && String(m.Tipo || '') !== filtroLivroTipo) return;
+
+            let descStr = String(m.Descricao || '').toLowerCase(); let opStr = String(m.Operador || '').toLowerCase();
+            if (buscaTexto && !descStr.includes(buscaTexto) && !opStr.includes(buscaTexto)) return;
+
+            let v = parseFloat(String(m.Valor || 0).replace(',','.'))||0; let hData = formatarDataExibicao(m.Data_Hora);
+            let corTipo = String(m.Tipo || '').toUpperCase() === 'ENTRADA' ? '#22c55e' : '#ef4444';
+            let txtTipo = String(m.Tipo || '').toUpperCase();
+            if(descStr.includes('troco inicial')) { corTipo = '#3b82f6'; txtTipo = 'ABERTURA'; }
+
+            htmlTabela += `
+            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 12px; color: #475569;">${hData}</td>
+                <td style="padding: 12px; font-weight: 500;">${m.Descricao || ''}</td>
+                <td style="padding: 12px; text-align: center; color: ${corTipo}; font-weight: bold; font-size: 11px;">${txtTipo}</td>
+                <td style="padding: 12px; font-weight: bold; color: ${corTipo};">R$ ${v.toFixed(2)}</td>
+                <td style="padding: 12px; color: #475569;">${m.Operador || ''}</td>
+                <td style="padding: 12px; text-align: center;"><button type="button" onclick="excluirItemCaixa('${m.ID_Transacao}')" style="background:transparent; border:none; color:#ef4444; cursor:pointer; font-size:16px; padding:0;" title="Cancelar Transação">❌</button></td>
+            </tr>`; 
+        });
+
+        listaCaixa.innerHTML = htmlTabela; 
+    }
+
+    let buscaLivroInput = document.getElementById('buscaLivroInput'); if(buscaLivroInput) buscaLivroInput.addEventListener('input', filtrarLivroCaixa);
+    let filtroDataInicio = document.getElementById('filtroDataInicio'); if(filtroDataInicio) filtroDataInicio.addEventListener('change', filtrarLivroCaixa);
+    let filtroDataFim = document.getElementById('filtroDataFim'); if(filtroDataFim) filtroDataFim.addEventListener('change', filtrarLivroCaixa);
+
+    function abrirModalMovimentacao(tipo) {
+        if(!turnoAtual) return alert("Você precisa abrir o caixa primeiro!");
+        document.getElementById('tipoMovimentoModal').value = tipo; document.getElementById('tituloModalMov').innerText = tipo === 'Entrada' ? '+ Adicionar Entrada' : '- Adicionar Saída';
+        document.getElementById('boxCategoriaModal').style.display = tipo === 'Saida' ? 'block' : 'none'; document.getElementById('descMovimentoModal').value = ""; document.getElementById('valorMovimentoModal').value = ""; document.getElementById('modalMovimentacao').style.display = 'flex';
+        setTimeout(() => { if(window.innerWidth > 768) document.getElementById('descMovimentoModal').focus(); }, 100);
+    }
+
+    function fecharModalMovimentacao() { document.getElementById('modalMovimentacao').style.display = 'none'; }
+
+    async function registrarCaixaModal() {
+        let t = document.getElementById('tipoMovimentoModal').value; let d = document.getElementById('descMovimentoModal').value.trim(); let v = document.getElementById('valorMovimentoModal').value.replace(',','.'); 
+        if(!d || !v) return alert("Preencha a descrição e o valor!");
+        if(t === "Saida") { let cat = document.getElementById('categoriaDespesaModal').value; d = `[${cat}] ` + d; }
+        document.getElementById('btnSalvarMov').innerText = "Salvando..."; document.getElementById('btnSalvarMov').disabled = true;
+        await reqPOST({ acao: "caixa", tipo: t, descricao: d, valor: v, operador: operadorAtual }); 
+        document.getElementById('btnSalvarMov').innerText = "Salvar Registro"; document.getElementById('btnSalvarMov').disabled = false; fecharModalMovimentacao(); recarregarDadosSilencioso();
+    }
+
+    function excluirItemCaixa(idTrans) { verificarPermissaoGerente('Cancelar Movimentação Caixa', async () => { if(confirm("Apagar este registro do Caixa?")) { await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans, operador: operadorAtual }); recarregarDadosSilencioso(); } }); }
+    
+    async function acaoCaixa() { 
+        if(!turnoAtual) { 
+            let pVal = prompt("Troco inicial na gaveta (Ex: 50,00):", "0,00"); 
+            if(pVal!==null) { let f = parseFloat(pVal.replace(',','.')); await reqPOST({ acao: "abrir_caixa", fundo: f||0, operador: operadorAtual }); recarregarDadosSilencioso(); } 
+        } else { 
+            let esp = 0, totalEntradas = 0, totalSaidas = 0; 
+            bancoCaixaGlobal.forEach(m => { 
+                if(m.ID_Transacao >= turnoAtual.ID_Turno) { 
+                    let v = parseFloat(String(m.Valor || 0).replace(',','.'))||0; 
+                    if(String(m.Tipo || '')==="Entrada") { esp+=v; totalEntradas+=v; } if(String(m.Tipo || '')==="Saida") { esp-=v; totalSaidas+=v; }
+                } 
+            }); 
+            let apStr = prompt("Valor na gaveta:", "0,00"); 
+            if(apStr!==null) { 
+                let ap = parseFloat(apStr.replace(',','.'))||0; let dif = ap - esp; 
+                if(confirm(`Esperado: R$ ${esp.toFixed(2)}\nContado: R$ ${ap.toFixed(2)}\nConfirmar fechamento?`)) { 
+                    await reqPOST({ acao: "fechar_caixa", valor_apurado: ap, diferenca: dif, operador: operadorAtual }); recarregarDadosSilencioso(); 
+                    if(confirm("Enviar resumo do Fechamento de Caixa para o WhatsApp do grupo?")) { let textoFechamento = `*📊 FECHAMENTO DE CAIXA*%0A*Operador:* ${operadorAtual}%0A*Data:* ${new Date().toLocaleString('pt-BR')}%0A----------------%0A*Total Entradas:* R$ ${totalEntradas.toFixed(2)}%0A*Total Saídas (Despesas):* R$ ${totalSaidas.toFixed(2)}%0A----------------%0A*Esperado (Sistema):* R$ ${esp.toFixed(2)}%0A*Apurado (Gaveta):* R$ ${ap.toFixed(2)}%0A*Diferença:* R$ ${dif.toFixed(2)}%0A----------------%0A*Turno Encerrado.*`; window.open(`https://wa.me/5588988229008?text=${textoFechamento}`, '_blank'); }
+                } 
+            } 
+        } 
+    }
+    
+    function atualizarInterfaceTurno() { 
+        let s = turnoAtual ? ["#22c55e", "Caixa Aberto", "🛑 Fechar Caixa", "btn-vermelho", "none", false] : ["#ef4444", "Caixa Fechado", "🟢 Abrir Caixa", "btn-verde", "block", true]; 
+        let lblStatus = document.getElementById('lblStatusCaixaLivro');
+        if(lblStatus) { lblStatus.innerHTML = `<span style="width:8px; height:8px; background:${s[0]}; border-radius:50%; display:inline-block;"></span> ${s[1]}`; lblStatus.style.color = s[0]; }
+        let btnAcao = document.getElementById('btnAcaoCaixa'); if(btnAcao) { btnAcao.innerHTML = s[2]; btnAcao.className = s[3]; }
+        let alertaCaixa = document.getElementById('alerta-caixa'); if(alertaCaixa) alertaCaixa.style.display = s[4]; 
+        ['codigoInput','btnAddCodigo','btnCamera','btnSalvarComanda','btnFinalizarVenda'].forEach(id => { let el = document.getElementById(id); if(el) el.disabled = s[5]; }); 
+    }
+
+    function atualizarListaUsuarios() { let tbody = document.getElementById('listaUsuariosGestao'); tbody.innerHTML = ""; bancoUsuarios.forEach(u => { if(!u.Login) return; let btnApagar = String(u.Login).toLowerCase() === 'edilson' ? `<span style="color:#94a3b8; font-size:12px;">Admin Fixo</span>` : `<button type="button" class="btn-vermelho" onclick="removerUsuarioSistema('${u.Login}')">Excluir</button>`; tbody.innerHTML += `<tr><td style="font-weight:bold;">${u.Login}</td><td>${u.Cargo || 'Operador'}</td><td>${btnApagar}</td></tr>`; }); }
+    
+    async function adicionarUsuarioSistema() { 
+        let l = document.getElementById('novoUserLogin').value.trim(); let s = document.getElementById('novoUserSenha').value.trim(); let c = document.getElementById('novoUserCargo').value; 
+        if(!l || !s) return alert("Preencha Login e Senha!"); 
+        if(bancoUsuarios.find(u => String(u.Login||'').toLowerCase() === l.toLowerCase())) return alert("Login já existe!"); 
+        let btn = document.getElementById('btnAdicionarUser'); btn.innerText = "Aguarde..."; btn.disabled = true;
+        try { await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; await recarregarDadosSilencioso(); alert("Usuário criado com sucesso!"); } catch (error) { alert("Falha na comunicação. Verifique se o Google Apps Script está aceitando o campo 'cargo'."); } finally { btn.innerText = "Criar Operador"; btn.disabled = false; }
+    }
+    
+    async function removerUsuarioSistema(login) { if(confirm(`Remover acesso de ${login}?`)) { await reqPOST({ acao: "remover_usuario", login: login }); recarregarDadosSilencioso(); } }
+
+    async function adicionarCliente() { let id = document.getElementById('novoIdCli').value, nome = document.getElementById('novoNomeCli').value, tel = document.getElementById('novoTelCli').value; if(!id || !nome) return alert("Preencha ID e Nome!"); await reqPOST({ acao: "adicionar_cliente", id: id, nome: nome, telefone: tel }); recarregarDadosSilencioso(); }
+    async function removerCliente(id) { if(confirm("Apagar cliente?")) { await reqPOST({ acao: "remover_cliente", id: id }); recarregarDadosSilencioso(); } }
+    function atualizarListasClientes() { let tbody = document.getElementById('listaClientesGestao'); let selectVenda = document.getElementById('selectClienteVenda'); tbody.innerHTML = ""; selectVenda.innerHTML = '<option value="Consumidor Final">Consumidor Final</option>'; bancoClientes.forEach(c => { if(!c.ID_Cliente) return; tbody.innerHTML += `<tr><td>${c.ID_Cliente}</td><td>${c.Nome||''}</td><td>${c.Telefone||''}</td><td><button type="button" class="btn-vermelho" onclick="removerCliente('${c.ID_Cliente}')">Apagar</button></td></tr>`; selectVenda.innerHTML += `<option value="${c.Nome||''}">${c.Nome||''}</option>`; }); }
+
+    function enviarWhatsApp(clienteNome, itensCart, valorT) { let resumo = itensCart.map(i => `${i.qtd}x ${i.nome}`).join('%0A'); let texto = `*ARENA VITALE*%0AOlá ${clienteNome}, aqui está o resumo da sua compra:%0A%0A${resumo}%0A%0A*Total: R$ ${valorT.toFixed(2)}*%0A%0AObrigado!`; window.open(`https://wa.me/?text=${texto}`, '_blank'); }
+    
+    function imprimirCupao(clienteNome, itensCart, valorT) { 
+        let cupao = document.getElementById('cupao-impressao'); let data = new Date().toLocaleString('pt-BR'); 
+        let itensHtml = itensCart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:2px;"><span>${i.qtd}x ${i.nome}</span><span>R$ ${(i.preco * i.qtd).toFixed(2)}</span></div>`).join(''); 
+        cupao.innerHTML = `<div style="text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 5px;">ARENA VITALE</div><div style="text-align: center; font-size: 10px; margin-bottom: 10px;">Russas - CE</div><div style="text-align: center; font-size: 12px; margin-bottom: 10px;">Recibo Não Fiscal</div><div>Data: ${data}</div><div>Operador: ${operadorAtual}</div><div>Cliente: ${clienteNome}</div><hr style="border-top: 1px dashed #000; margin: 5px 0;">${itensHtml}<hr style="border-top: 1px dashed #000; margin: 5px 0;"><div style="text-align: right; font-weight: bold; font-size: 14px;">TOTAL: R$ ${valorT.toFixed(2)}</div><div style="text-align: center; margin-top: 15px; font-size: 10px;">Obrigado e volte sempre!</div>`; 
+        
+        // ADICIONA CLASSE PARA SABER QUE É O CUPOM
+        document.body.classList.add('imprimindo-cupom');
+        window.print(); 
+        setTimeout(() => document.body.classList.remove('imprimindo-cupom'), 1000);
+    }
+
+    document.addEventListener('keydown', e => { 
+        if(turnoAtual && document.getElementById('tela-login').style.display === 'none') { 
+            if(e.key==='F3'){e.preventDefault();abrirModalComandas();} 
+            if(e.key==='F2'){e.preventDefault();limparCarrinhoNovaVenda();} 
+            if(e.key==='F5'){e.preventDefault();acaoBotaoComanda();} 
+            if(e.key==='F6'){
+                e.preventDefault();
+                if(document.getElementById('modalPagamento').style.display === 'flex') {
+                    if(!document.getElementById('btnFin2').disabled) confirmarPagamentoMisto(true);
+                } else { iniciarPagamentoCaixa(); }
+            } 
+        } 
+    });
+
+    // --- NOVA LÓGICA DOS RELATÓRIOS ---
+    function setaDatasPadrao(idIni, idFim) {
+        let hoje = new Date();
+        let primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+        document.getElementById(idIni).value = primeiroDia.toISOString().split('T')[0];
+        document.getElementById(idFim).value = hoje.toISOString().split('T')[0];
+    }
+
+    // 1. FLUXO DE CAIXA
+    function abrirRelatorioFluxo() { setaDatasPadrao('relFluxoDataInicio', 'relFluxoDataFim'); mudarTela('tela-relatorio-fluxo'); gerarRelatorioFluxo(); }
+
+    function gerarRelatorioFluxo() {
+        let dIniStr = document.getElementById('relFluxoDataInicio').value; let dFimStr = document.getElementById('relFluxoDataFim').value;
+        let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null; let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
+
+        let totalEntradas = 0, totalSaidas = 0; let dadosPorDia = {}, dadosPorCategoria = {};
+
+        bancoCaixaGlobal.forEach(m => {
+            if(!m.ID_Transacao) return;
+            let recordDate = parseDataBR(m.Data_Hora);
+            if (dIni && recordDate < dIni) return;
+            if (dFim && recordDate > dFim) return;
+
+            let v = parseFloat(String(m.Valor || 0).replace(',','.')) || 0;
+            let diaStr = String(m.Data_Hora || '').split(/[\s,T]+/)[0]; 
+
+            if(!dadosPorDia[diaStr]) dadosPorDia[diaStr] = { entradas: 0, saidas: 0 };
+
+            let categoria = "Vendas/Outros"; let descStr = String(m.Descricao || '');
+            let catMatch = descStr.match(/\[(.*?)\]/);
+            
+            if(catMatch) categoria = catMatch[1];
+            else if(descStr.toLowerCase().includes('venda') || descStr.toLowerCase().includes('pgto comanda')) categoria = "Vendas / Recebimentos";
+            else if(descStr.toLowerCase().includes('troco inicial')) categoria = "Abertura de Caixa";
+
+            if(!dadosPorCategoria[categoria]) dadosPorCategoria[categoria] = 0;
+
+            if (String(m.Tipo||'') === 'Entrada') { totalEntradas += v; dadosPorDia[diaStr].entradas += v; dadosPorCategoria[categoria] += v; } 
+            else { totalSaidas += v; dadosPorDia[diaStr].saidas += v; dadosPorCategoria[categoria] -= v; }
+        });
+
+        document.getElementById('relFluxoEntradas').innerText = "R$ " + totalEntradas.toFixed(2);
+        document.getElementById('relFluxoSaidas').innerText = "R$ " + totalSaidas.toFixed(2);
+        document.getElementById('relFluxoSaldo').innerText = "R$ " + (totalEntradas - totalSaidas).toFixed(2);
+
+        let htmlCat = Object.keys(dadosPorCategoria).sort((a,b) => dadosPorCategoria[b] - dadosPorCategoria[a]).map(cat => {
+            let val = dadosPorCategoria[cat]; let cor = val >= 0 ? '#16a34a' : '#dc2626';
+            return `<tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding:10px; font-weight:500; color: #334155;">${cat}</td><td style="padding:10px; text-align:right; color:${cor}; font-weight:bold;">R$ ${Math.abs(val).toFixed(2)}</td></tr>`;
+        }).join('');
+        document.getElementById('relFluxoCategorias').innerHTML = htmlCat;
+
+        let labels = Object.keys(dadosPorDia).sort((a,b) => parseDataBR(a) - parseDataBR(b)); 
+        let valEntradas = labels.map(l => dadosPorDia[l].entradas); let valSaidas = labels.map(l => dadosPorDia[l].saidas);
+
+        if(chartRelFluxo) chartRelFluxo.destroy();
+        let ctx = document.getElementById('graficoRelFluxo');
+        if (ctx) { chartRelFluxo = new Chart(ctx, { type: 'bar', data: { labels: labels.map(l => String(l).substring(0,5)), datasets: [ { label: 'Entradas', data: valEntradas, backgroundColor: '#22c55e', borderRadius: 4 }, { label: 'Saídas', data: valSaidas, backgroundColor: '#ef4444', borderRadius: 4 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } } }); }
+    }
+
+    // 2. RELATÓRIO DE ESTOQUE ATUAL
+    function abrirRelatorioEstoque() {
+        mudarTela('tela-relatorio-estoque');
+        let totalCusto = 0, totalVenda = 0, html = '';
+        
+        bancoDeProdutos.forEach(p => {
+            if(!p.ID_Produto || p.ID_Produto === 'SERVICO') return;
+            let qtd = parseInt(p.Quantidade) || 0; let custo = parseFloat(String(p.Preco_Custo || 0).replace(',','.')) || 0; let preco = parseFloat(String(p.Preco_Venda || 0).replace(',','.')) || 0;
+            
+            let tCusto = qtd * custo; let tVenda = qtd * preco;
+            totalCusto += tCusto; totalVenda += tVenda;
+            
+            html += `<tr style="border-bottom: 1px solid #e2e8f0; transition: 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'"><td style="padding:10px; font-weight:bold; color:#334155;">${p.Nome_Produto || ''}</td><td style="padding:10px;">${qtd}</td><td style="padding:10px;">R$ ${custo.toFixed(2)}</td><td style="padding:10px; color:#ef4444;">R$ ${tCusto.toFixed(2)}</td><td style="padding:10px; color:#22c55e; font-weight:bold;">R$ ${tVenda.toFixed(2)}</td></tr>`;
+        });
+        
+        document.getElementById('relEstoqueTbody').innerHTML = html;
+        document.getElementById('relEstoqueTotalCusto').innerText = "R$ " + totalCusto.toFixed(2);
+        document.getElementById('relEstoqueTotalVenda').innerText = "R$ " + totalVenda.toFixed(2);
+        document.getElementById('relEstoqueLucroProj').innerText = "R$ " + (totalVenda - totalCusto).toFixed(2);
+    }
+
+    // 3. PRODUTOS MAIS/MENOS VENDIDOS
+    function abrirRelatorioProdutos() { setaDatasPadrao('relProdDataInicio', 'relProdDataFim'); mudarTela('tela-relatorio-produtos'); gerarRelatorioProdutos(); }
+
+    function gerarRelatorioProdutos() {
+        let dIniStr = document.getElementById('relProdDataInicio').value; let dFimStr = document.getElementById('relProdDataFim').value;
+        let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null; let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
+        let contagem = {};
+        
+        bancoVendas.forEach(v => {
+            let recordDate = parseDataBR(v.Data_Hora);
+            if (dIni && recordDate < dIni) return; if (dFim && recordDate > dFim) return;
+            if(!v.Itens_Vendidos) return; 
+            
+            let itensStr = String(v.Itens_Vendidos || '').split('(')[0];
+            itensStr.split(',').forEach(item => { 
+                let match = item.trim().match(/^(\d+)x\s+(.+)$/); 
+                if(match) { let qtd = parseInt(match[1]); let nome = match[2].trim(); if(nome !== "SERVICO" && !nome.includes("Quadra") && !nome.includes("Desconto Aplicado")) { contagem[nome] = (contagem[nome] || 0) + qtd; } } 
             });
-        }
+        });
 
-        function fazerLogin() {
-            const p = document.getElementById('loginPhone').value; const s = document.getElementById('loginPass').value;
-            fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ acao: "login", telefone: p, senha: s }) })
-            .then(r => r.json()).then(d => {
-                if(d.sucesso) { localStorage.setItem('usuarioArenaVitale', JSON.stringify(d)); location.reload(); } else alert("Erro!");
+        let arrayProds = Object.keys(contagem).map(k => ({ nome: k, qtd: contagem[k] })).sort((a,b) => b.qtd - a.qtd);
+        let html = arrayProds.map(p => `<tr style="border-bottom: 1px solid #e2e8f0; transition: 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'"><td style="padding:10px; font-weight:bold; color:#334155;">${p.nome}</td><td style="padding:10px; text-align:right; color:#3b82f6; font-weight:bold;">${p.qtd} un.</td></tr>`).join('');
+        document.getElementById('relProdTbody').innerHTML = html;
+
+        let top10 = arrayProds.slice(0, 10);
+        if(chartRelProdutos) chartRelProdutos.destroy();
+        let ctx = document.getElementById('graficoRelProdutos');
+        if(ctx) { chartRelProdutos = new Chart(ctx, { type: 'bar', data: { labels: top10.map(p => p.nome), datasets: [{ label: 'Qtd Vendida (Top 10)', data: top10.map(p => p.qtd), backgroundColor: '#3b82f6', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } }); }
+    }
+
+    // 4. RELATÓRIO DE LUCRO (CMV)
+    function abrirRelatorioLucro() { setaDatasPadrao('relLucroDataInicio', 'relLucroDataFim'); mudarTela('tela-relatorio-lucro'); gerarRelatorioLucro(); }
+
+    function gerarRelatorioLucro() {
+        let dIniStr = document.getElementById('relLucroDataInicio').value; let dFimStr = document.getElementById('relLucroDataFim').value;
+        let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null; let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
+        let receitaVendas = 0; let custoVendas = 0;
+
+        bancoVendas.forEach(v => {
+            let recordDate = parseDataBR(v.Data_Hora);
+            if (dIni && recordDate < dIni) return; if (dFim && recordDate > dFim) return;
+
+            let totalVenda = parseFloat(String(v.Total || 0).replace(',','.')) || 0;
+            receitaVendas += totalVenda;
+
+            if(v.Itens_Vendidos) {
+                let itensStr = String(v.Itens_Vendidos || '').split('(')[0];
+                itensStr.split(',').forEach(item => { 
+                    let match = item.trim().match(/^(\d+)x\s+(.+)$/); 
+                    if(match) { let qtd = parseInt(match[1]); let nome = match[2].trim(); let prodDb = bancoDeProdutos.find(p => p.Nome_Produto === nome); if(prodDb) { let custoUn = parseFloat(String(prodDb.Preco_Custo || 0).replace(',','.')) || 0; custoVendas += (custoUn * qtd); } } 
+                });
+            }
+        });
+
+        document.getElementById('relLucroReceita').innerText = "R$ " + receitaVendas.toFixed(2); document.getElementById('relLucroCusto').innerText = "R$ " + custoVendas.toFixed(2); document.getElementById('relLucroBruto').innerText = "R$ " + (receitaVendas - custoVendas).toFixed(2);
+    }
+
+    // 5. VENDAS POR FORMA DE PAGAMENTO
+    function abrirRelatorioPagamentos() { setaDatasPadrao('relPagDataInicio', 'relPagDataFim'); mudarTela('tela-relatorio-pagamentos'); gerarRelatorioPagamentos(); }
+
+    function gerarRelatorioPagamentos() {
+        let dIniStr = document.getElementById('relPagDataInicio').value; let dFimStr = document.getElementById('relPagDataFim').value;
+        let dIni = dIniStr ? new Date(dIniStr + "T00:00:00") : null; let dFim = dFimStr ? new Date(dFimStr + "T23:59:59") : null;
+        let totais = {};
+
+        bancoVendas.forEach(v => {
+            let recordDate = parseDataBR(v.Data_Hora);
+            if (dIni && recordDate < dIni) return; if (dFim && recordDate > dFim) return;
+
+            let fStr = String(v.Forma_Pagamento || "Não informada"); let partes = fStr.split('+');
+            partes.forEach(parte => {
+                if(parte.includes(':')) { let pedaco = parte.split(':'); let nome = pedaco[0].trim(); let valor = parseFloat(pedaco[1].trim()) || 0; totais[nome] = (totais[nome] || 0) + valor; } 
+                else { let nome = parte.trim(); let valorTotal = parseFloat(String(v.Total || 0).replace(',','.')) || 0; totais[nome] = (totais[nome] || 0) + valorTotal; }
             });
-        }
+        });
 
-        function fecharModal() { document.getElementById('modalCadastro').style.display = 'none'; }
-        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
-        function atualizarRelogio() { document.getElementById('relogioFlutuante').innerText = new Date().toLocaleTimeString(); }
-        setInterval(atualizarRelogio, 1000);
-        function zerarPlacar() { document.getElementById('scoreA').innerText = 0; document.getElementById('scoreB').innerText = 0; }
-        function addPonto(t) { let e = document.getElementById('score' + t); e.innerText = parseInt(e.innerText) + 1; }
-        function fazerLogout() { localStorage.clear(); location.reload(); }
-        function atualizarPagina() { location.reload(); }
-    </script>
+        let totalGeral = Object.values(totais).reduce((a,b)=>a+b, 0);
+        let html = Object.keys(totais).sort((a,b) => totais[b] - totais[a]).map(k => `<tr style="border-bottom: 1px solid #e2e8f0; transition: 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'"><td style="padding:12px; font-weight:bold; color:#334155;">${k}</td><td style="padding:12px; text-align:right; color:#10b981; font-weight:bold;">R$ ${totais[k].toFixed(2)}</td></tr>`).join('');
+        html += `<tr style="background:#f8fafc;"><td style="padding:12px; font-weight:900;">Total Processado</td><td style="padding:12px; text-align:right; font-weight:900;">R$ ${totalGeral.toFixed(2)}</td></tr>`;
+        document.getElementById('relPagTbody').innerHTML = html;
+
+        let cores = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#64748b'];
+        if(chartRelPagamentos) chartRelPagamentos.destroy();
+        let ctx = document.getElementById('graficoRelPagamentos');
+        if(ctx) { chartRelPagamentos = new Chart(ctx, { type: 'doughnut', data: { labels: Object.keys(totais), datasets: [{ data: Object.values(totais), backgroundColor: cores }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } }); }
+    }
+
+    async function removerPagamentoParcial(idComanda, idTransacao) {
+        verificarPermissaoGerente('Estornar Pagamento Parcial', async () => {
+            if(confirm("Deseja realmente estornar este pagamento parcial?\\nO valor voltará a ficar como 'Falta' na comanda.")) {
+                document.getElementById('status-bar').style.display = 'block'; document.getElementById('status-bar').innerText = "A estornar pagamento...";
+                await reqPOST({ acao: "remover_pagamento_parcial", id_comanda: idComanda, id_transacao: idTransacao, operador: operadorAtual });
+                alert("Pagamento estornado com sucesso!"); recarregarDadosSilencioso();
+            }
+        });
+    }
+
+</script>
+
 </body>
 </html>
