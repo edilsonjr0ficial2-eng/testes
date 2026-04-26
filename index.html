@@ -265,7 +265,7 @@
                         <label style="font-weight:bold; color:#475569; font-size:12px;">Qtd:</label>
                         <input type="number" id="qtdInput" value="1" min="1" style="width:50px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; text-align:center; font-weight:bold; font-size:12px;">
                     </div>
-                    <div style="display:flex; align-items:center; gap:5px; flex:1; min-width: 150px;">
+                    <div style="display:none; align-items:center; gap:5px; flex:1; min-width: 150px;">
                         <label style="font-weight:bold; color:#475569; font-size:12px;">Quem pegou?</label>
                         <input type="text" id="consumidorInput" placeholder="Nome (Opcional)" style="flex:1; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px; outline:none;">
                     </div>
@@ -1341,16 +1341,67 @@
         atualizarCarrinho();
     }
 
-    document.getElementById('codigoInput').addEventListener('keypress', function(e) { 
-        if (e.key === 'Enter' && this.value.trim() !== "") { 
-            e.preventDefault(); 
-            processarEntradaCodigo(this.value.trim()); 
-            this.value = ""; 
-            document.getElementById('dropdownProdutos').style.display = 'none';
-        } 
+    // --- NOVA LÓGICA DE TECLADO NAS SETAS (SUBSTITUI O KEYPRESS ANTIGO) ---
+    let indexFocadoDropdown = -1; // Controle da posição da seta
+
+    document.getElementById('codigoInput').addEventListener('keydown', function(e) {
+        let dropdown = document.getElementById('dropdownProdutos');
+        let itens = dropdown.getElementsByClassName('dropdown-item');
+
+        // Se a lista não estiver visível ou não tiver itens, manter o comportamento do Enter para a busca
+        if (dropdown.style.display === 'none' || itens.length === 0) {
+            if (e.key === 'Enter' && this.value.trim() !== "") {
+                e.preventDefault();
+                processarEntradaCodigo(this.value.trim());
+                this.value = "";
+                dropdown.style.display = 'none';
+            }
+            return;
+        }
+
+        // Navegação nas setas
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            indexFocadoDropdown++;
+            if (indexFocadoDropdown >= itens.length) indexFocadoDropdown = 0;
+            atualizarDestaqueDropdown(itens);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            indexFocadoDropdown--;
+            if (indexFocadoDropdown < 0) indexFocadoDropdown = itens.length - 1;
+            atualizarDestaqueDropdown(itens);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            // Se tiver um item focado nas setas, seleciona ele
+            if (indexFocadoDropdown > -1 && itens[indexFocadoDropdown]) {
+                itens[indexFocadoDropdown].click();
+            } else if (this.value.trim() !== "") {
+                // Se não tiver item focado e apertar enter, busca normalmente
+                processarEntradaCodigo(this.value.trim());
+                this.value = "";
+                dropdown.style.display = 'none';
+            }
+            indexFocadoDropdown = -1; // Reseta posição
+        }
     });
 
+    // Função para mudar a cor de fundo do item selecionado na seta
+    function atualizarDestaqueDropdown(itens) {
+        for (let i = 0; i < itens.length; i++) {
+            itens[i].style.backgroundColor = '';
+            itens[i].style.color = '#334155'; // Volta para a cor original
+        }
+        if (indexFocadoDropdown > -1 && itens[indexFocadoDropdown]) {
+            itens[indexFocadoDropdown].style.backgroundColor = '#f8fafc'; // Fundo do hover
+            itens[indexFocadoDropdown].style.color = '#0ea5e9'; // Texto azul
+            itens[indexFocadoDropdown].scrollIntoView({ block: 'nearest' });
+        }
+    }
+    // --- FIM DA NOVA LÓGICA DO TECLADO ---
+
     document.getElementById('codigoInput').addEventListener('input', function(e) {
+        indexFocadoDropdown = -1; // Resetar o foco da seta ao começar a digitar
+
         let termo = this.value.trim().toLowerCase();
         let dropdown = document.getElementById('dropdownProdutos');
         
@@ -1403,15 +1454,8 @@
         } 
         
         if (prod) { 
-            // --- INÍCIO DA MUDANÇA: POPUP IMEDIATO ---
+            // Ocultado e removido popup de "Quem pegou" conforme solicitado
             let consumidorNome = document.getElementById('consumidorInput').value.trim();
-
-            if (consumidorNome === "" && prod.ID_Produto !== 'SERVICO' && prod.ID_Produto !== 'DESC') {
-                let quemPegou = prompt(`Quem pegou o(a) ${prod.Nome_Produto}?`, "");
-                if (quemPegou === null) return; 
-                consumidorNome = quemPegou.trim();
-            }
-            // --- FIM DA MUDANÇA ---
 
             let preco = parseFloat(String(prod.Preco_Venda || 0).replace(',','.')) || 0; 
             let qtdMult = parseInt(document.getElementById('qtdInput').value) || 1;
