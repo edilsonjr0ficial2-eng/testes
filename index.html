@@ -260,9 +260,15 @@
             </div>
 
             <div style="border: 1px solid #e2e8f0; border-radius: 6px; flex: 1; display: flex; flex-direction: column; background: #fff; margin-bottom: 8px; overflow:hidden; min-height: 100px;">
-                <div style="display:flex; padding:6px 10px; background:#f8fafc; border-bottom:1px solid #e2e8f0; gap:8px; align-items:center;">
-                    <label style="font-weight:bold; color:#475569; font-size:12px;">Qtd para Bipe/Digitação:</label>
-                    <input type="number" id="qtdInput" value="1" min="1" style="width:60px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; text-align:center; font-weight:bold; font-size:12px;">
+                <div style="display:flex; padding:6px 10px; background:#f8fafc; border-bottom:1px solid #e2e8f0; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <label style="font-weight:bold; color:#475569; font-size:12px;">Qtd:</label>
+                        <input type="number" id="qtdInput" value="1" min="1" style="width:50px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; text-align:center; font-weight:bold; font-size:12px;">
+                    </div>
+                    <div style="display:flex; align-items:center; gap:5px; flex:1; min-width: 150px;">
+                        <label style="font-weight:bold; color:#475569; font-size:12px;">Quem pegou?</label>
+                        <input type="text" id="consumidorInput" placeholder="Nome (Opcional)" style="flex:1; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px; outline:none;">
+                    </div>
                 </div>
                 <div class="table-responsive" style="flex:1; margin:0; padding:0; overflow-y:auto;">
                     <table style="margin-top:0; width:100%; border-collapse: collapse;">
@@ -1033,7 +1039,7 @@
             if(gerenteEncontrado) {
                 callback();
             } else {
-                mostrarToast("Senha incorreta ou usuário não é gerente!", "erro");
+                mostrarToast("Senha incorreta ou utilizador não é gerente!", "erro");
             }
         }
     }
@@ -1052,7 +1058,7 @@
             let statusBar = document.getElementById('status-bar');
             if(statusBar) {
                 statusBar.style.display = 'block';
-                statusBar.innerText = "⚠️ Erro de Conexão. Verifique sua internet.";
+                statusBar.innerText = "⚠️ Erro de Conexão. Verifique a sua internet.";
                 statusBar.style.background = "#fee2e2";
                 statusBar.style.color = "#ef4444";
                 setTimeout(() => { statusBar.style.display = 'none'; }, 3000);
@@ -1313,7 +1319,7 @@
 
         if(!confirm(`Início: ${hInicial}h | Duração: ${horas}h\nTotal Calculado: R$ ${precoCalculado.toFixed(2)}\n\nConfirmar adição?`)) return;
 
-        carrinho.push({ codigo: 'SERVICO', nome: `${nomeQuadra} (${horas}h a partir das ${hInicial}h)`, preco: precoCalculado, qtd: 1 }); 
+        carrinho.push({ codigo: 'SERVICO', nome: `${nomeQuadra} (${horas}h a partir das ${hInicial}h)`, preco: precoCalculado, qtd: 1, consumidor: "" }); 
         total += precoCalculado; atualizarCarrinho(); 
     }
     
@@ -1330,7 +1336,7 @@
         
         let nomeDesconto = motivo.trim() !== "" ? `Desconto (${motivo.trim()})` : "Desconto (Motivo não informado)";
 
-        carrinho.push({ codigo: 'DESC', nome: nomeDesconto, preco: -valDesc, qtd: 1 });
+        carrinho.push({ codigo: 'DESC', nome: nomeDesconto, preco: -valDesc, qtd: 1, consumidor: "" });
         total -= valDesc; 
         atualizarCarrinho();
     }
@@ -1387,27 +1393,58 @@
     }
 
     function processarEntradaCodigo(termo) { 
-        termo = String(termo || '').toLowerCase(); let prod = bancoDeProdutos.find(p => String(p.ID_Produto || '').toLowerCase() === termo || String(p.Nome_Produto || '').toLowerCase() === termo); 
+        termo = String(termo || '').toLowerCase(); 
+        let prod = bancoDeProdutos.find(p => String(p.ID_Produto || '').toLowerCase() === termo || String(p.Nome_Produto || '').toLowerCase() === termo); 
+        
         if (!prod) { 
             let achados = bancoDeProdutos.filter(p => String(p.Nome_Produto || '').toLowerCase().includes(termo)); 
             if (achados.length === 1) prod = achados[0]; 
             else if (achados.length > 1) { mostrarToast("Múltiplos produtos encontrados. Use a lista.", "aviso"); return; } 
         } 
+        
         if (prod) { 
-            let preco = parseFloat(String(prod.Preco_Venda || 0).replace(',','.')) || 0; let qtdMult = parseInt(document.getElementById('qtdInput').value) || 1;
-            let ext = carrinho.find(i => String(i.codigo) === String(prod.ID_Produto)); 
-            if(ext) { ext.qtd += qtdMult; } else { carrinho.push({ codigo: prod.ID_Produto, nome: prod.Nome_Produto, preco: preco, qtd: qtdMult }); } 
-            total += (preco * qtdMult); atualizarCarrinho(); document.getElementById('qtdInput').value = "1"; 
-        } else { mostrarToast("Produto não encontrado!", "erro"); } 
+            let preco = parseFloat(String(prod.Preco_Venda || 0).replace(',','.')) || 0; 
+            let qtdMult = parseInt(document.getElementById('qtdInput').value) || 1;
+            let consumidorNome = document.getElementById('consumidorInput').value.trim();
+
+            let ext = carrinho.find(i => String(i.codigo) === String(prod.ID_Produto) && String(i.consumidor || '') === consumidorNome); 
+            if(ext) { 
+                ext.qtd += qtdMult; 
+            } else { 
+                carrinho.push({ codigo: prod.ID_Produto, nome: prod.Nome_Produto, preco: preco, qtd: qtdMult, consumidor: consumidorNome }); 
+            } 
+            
+            total += (preco * qtdMult); 
+            atualizarCarrinho(); 
+            
+            document.getElementById('qtdInput').value = "1"; 
+            document.getElementById('consumidorInput').value = ""; 
+            if (window.innerWidth > 768) document.getElementById('codigoInput').focus();
+        } else { 
+            mostrarToast("Produto não encontrado!", "erro"); 
+        } 
     }
     
     function removerItemCarrinho(index) {
-        let confirmacao = confirm(`Deseja remover ${carrinho[index].nome} da venda atual?`);
+        let nomeVisual = carrinho[index].consumidor ? `${carrinho[index].nome} (${carrinho[index].consumidor})` : carrinho[index].nome;
+        let confirmacao = confirm(`Deseja remover ${nomeVisual} da venda atual?`);
         if(confirmacao) { total -= (carrinho[index].preco * carrinho[index].qtd); carrinho.splice(index, 1); atualizarCarrinho(); }
     }
 
     function atualizarCarrinho() { 
-        let htmlCarrinho = carrinho.map((i, index) => `<tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding:6px 8px;">${i.codigo}</td><td style="padding:6px 8px;">${i.nome}</td><td style="padding:6px 8px; font-weight:bold;">${i.qtd}</td><td style="padding:6px 8px;">R$ ${i.preco.toFixed(2)}</td><td style="padding:6px 8px; color:#10b981; font-weight:bold;">R$ ${(i.preco * i.qtd).toFixed(2)}</td><td style="padding:6px 8px; text-align: right;"><button type="button" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:14px;" title="Remover" onclick="removerItemCarrinho(${index})">❌</button></td></tr>`).join(''); 
+        let htmlCarrinho = carrinho.map((i, index) => `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding:6px 8px;">${i.codigo}</td>
+                <td style="padding:6px 8px;">
+                    ${i.nome}
+                    ${i.consumidor ? `<br><span style="font-size:11px; color:#3b82f6; font-weight:bold;">👤 ${i.consumidor}</span>` : ''}
+                </td>
+                <td style="padding:6px 8px; font-weight:bold;">${i.qtd}</td>
+                <td style="padding:6px 8px;">R$ ${i.preco.toFixed(2)}</td>
+                <td style="padding:6px 8px; color:#10b981; font-weight:bold;">R$ ${(i.preco * i.qtd).toFixed(2)}</td>
+                <td style="padding:6px 8px; text-align: right;"><button type="button" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:14px;" title="Remover" onclick="removerItemCarrinho(${index})">❌</button></td>
+            </tr>
+        `).join(''); 
         document.getElementById('listaCarrinho').innerHTML = htmlCarrinho; 
         
         let saldoFinal = total - pagamentosComandaAtual;
@@ -1537,7 +1574,10 @@
         grid.innerHTML = comandasReversas.map(c => { 
             if(!c.ID_Comanda) return ''; 
             let itensStr = "", itensObj = []; 
-            try { itensObj = JSON.parse(c.Itens_JSON || "[]"); itensStr = itensObj.map(i => `• ${i.qtd}x ${i.nome}`).join('<br>'); } catch(e) {} 
+            try { 
+                itensObj = JSON.parse(c.Itens_JSON || "[]"); 
+                itensStr = itensObj.map(i => `• ${i.qtd}x ${i.nome} ${i.consumidor ? `<span style="color:#3b82f6; font-size:11px;">(${i.consumidor})</span>` : ''}`).join('<br>'); 
+            } catch(e) {} 
             
             let valorTotal = 0;
             if(itensObj && itensObj.length > 0) { valorTotal = itensObj.reduce((sum, i) => sum + ((parseFloat(i.preco)||0) * (parseInt(i.qtd)||0)), 0); } 
@@ -1622,7 +1662,6 @@
     async function atualizarComandaExistente() { 
         let clienteSel = document.getElementById('selectClienteVenda').value; 
         
-        // Trava para evitar o bug do "Consumidor Final" acidental
         if(clienteSel === "Consumidor Final" && idComandaEmEdicao) {
             let comandaOrig = bancoComandas.find(c => String(c.ID_Comanda) === String(idComandaEmEdicao));
             if(comandaOrig && comandaOrig.Cliente && comandaOrig.Cliente !== "Consumidor Final") {
@@ -1683,7 +1722,7 @@
         let qtdStr = prompt(`Dar entrada no estoque: ${nomeProduto}\n\nQuantas unidades chegaram?`);
         if(!qtdStr) return; let qtd = parseInt(qtdStr); 
         if(isNaN(qtd) || qtd <= 0) { mostrarToast("Quantidade inválida!", "erro"); return; }
-        reqPOST({ acao: "entrada_estoque", id_produto: idProduto, qtd: qtd, operador: operadorAtual }).then(() => { mostrarToast(`Entrada de ${qtd} unidades registrada!`, "sucesso"); recarregarDadosSilencioso(); });
+        reqPOST({ acao: "entrada_estoque", id_produto: idProduto, qtd: qtd, operador: operadorAtual }).then(() => { mostrarToast(`Entrada de ${qtd} unidades registada!`, "sucesso"); recarregarDadosSilencioso(); });
     }
 
     function atualizarTabelaEstoque() { document.getElementById('listaGestao').innerHTML = bancoDeProdutos.map(p => { if(!p.ID_Produto) return ''; let pCusto = parseFloat(String(p.Preco_Custo||0).replace(',','.'))||0; let pVenda = parseFloat(String(p.Preco_Venda||0).replace(',','.'))||0; return `<tr><td>${p.ID_Produto}</td><td>${p.Nome_Produto||''}</td><td>R$ ${pCusto.toFixed(2)}</td><td>R$ ${pVenda.toFixed(2)}</td><td style="font-weight:bold;">${p.Quantidade||0}</td><td>${p.Estoque_Minimo || 0}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button type="button" class="btn-verde" onclick="adicionarEntradaManual('${p.ID_Produto}', '${String(p.Nome_Produto||'').replace(/'/g, "\\'")}')">+ Entrada</button><button type="button" class="btn-amarelo" onclick="prepararEdicaoEstoque('${p.ID_Produto}')">Editar</button><button type="button" class="btn-vermelho" onclick="removerProduto('${p.ID_Produto}')">Apagar</button></td></tr>`; }).join(''); }
@@ -1707,7 +1746,7 @@
     }
 
     function atualizarDashboardECaixa() {
-        let abertura = 0, entradas = 0, saidas = 0;
+        let abertura = 0, entradas = 0, saídas = 0;
         let hj = new Date().toLocaleDateString('pt-BR'); 
         
         bancoCaixaGlobal.forEach(m => { 
@@ -1716,15 +1755,15 @@
             let desc = String(m.Descricao || '').toLowerCase();
             
             if(turnoAtual && m.ID_Transacao >= turnoAtual.ID_Turno) { 
-                if(desc.includes('troco inicial')) { abertura += v; } else if(String(m.Tipo || '') === "Entrada") { entradas += v; } else if(String(m.Tipo || '') === "Saida") { saidas += v; }
+                if(desc.includes('troco inicial')) { abertura += v; } else if(String(m.Tipo || '') === "Entrada") { entradas += v; } else if(String(m.Tipo || '') === "Saida") { saídas += v; }
             } 
         });
         
-        let saldoAtual = abertura + entradas - saidas;
+        let saldoAtual = abertura + entradas - saídas;
 
         let elAbertura = document.getElementById('resumoLivroAbertura'); if(elAbertura) elAbertura.innerText = "R$ " + abertura.toFixed(2);
         let elEntradas = document.getElementById('resumoLivroEntradas'); if(elEntradas) elEntradas.innerText = "R$ " + entradas.toFixed(2);
-        let elSaidas = document.getElementById('resumoLivroSaidas'); if(elSaidas) elSaidas.innerText = "R$ " + saidas.toFixed(2);
+        let elSaidas = document.getElementById('resumoLivroSaidas'); if(elSaidas) elSaidas.innerText = "R$ " + saídas.toFixed(2);
         let elSaldo = document.getElementById('resumoLivroSaldo'); if(elSaldo) elSaldo.innerText = "R$ " + saldoAtual.toFixed(2);
         
         let lblAbertura = document.getElementById('lblAberturaCaixa'); let lblStatusLivro = document.getElementById('lblStatusCaixaLivro');
@@ -1792,7 +1831,7 @@
     let filtroDataFim = document.getElementById('filtroDataFim'); if(filtroDataFim) filtroDataFim.addEventListener('change', filtrarLivroCaixa);
 
     function abrirModalMovimentacao(tipo) {
-        if(!turnoAtual) { mostrarToast("Você precisa abrir o caixa primeiro!", "erro"); return; }
+        if(!turnoAtual) { mostrarToast("Tem de abrir o caixa primeiro!", "erro"); return; }
         document.getElementById('tipoMovimentoModal').value = tipo; document.getElementById('tituloModalMov').innerText = tipo === 'Entrada' ? '+ Adicionar Entrada' : '- Adicionar Saída';
         document.getElementById('boxCategoriaModal').style.display = tipo === 'Saida' ? 'block' : 'none'; document.getElementById('descMovimentoModal').value = ""; document.getElementById('valorMovimentoModal').value = ""; document.getElementById('modalMovimentacao').style.display = 'flex';
         setTimeout(() => { if(window.innerWidth > 768) document.getElementById('descMovimentoModal').focus(); }, 100);
@@ -1806,10 +1845,10 @@
         if(t === "Saida") { let cat = document.getElementById('categoriaDespesaModal').value; d = `[${cat}] ` + d; }
         document.getElementById('btnSalvarMov').innerText = "Salvando..."; document.getElementById('btnSalvarMov').disabled = true;
         await reqPOST({ acao: "caixa", tipo: t, descricao: d, valor: v, operador: operadorAtual }); 
-        document.getElementById('btnSalvarMov').innerText = "Salvar Registro"; document.getElementById('btnSalvarMov').disabled = false; fecharModalMovimentacao(); recarregarDadosSilencioso();
+        document.getElementById('btnSalvarMov').innerText = "Salvar Registo"; document.getElementById('btnSalvarMov').disabled = false; fecharModalMovimentacao(); recarregarDadosSilencioso();
     }
 
-    function excluirItemCaixa(idTrans) { verificarPermissaoGerente('Cancelar Movimentação Caixa', async () => { if(confirm("Apagar este registro do Caixa?")) { await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans, operador: operadorAtual }); recarregarDadosSilencioso(); } }); }
+    function excluirItemCaixa(idTrans) { verificarPermissaoGerente('Cancelar Movimentação Caixa', async () => { if(confirm("Apagar este registo do Caixa?")) { await reqPOST({ acao: "excluir_caixa", id_transacao: idTrans, operador: operadorAtual }); recarregarDadosSilencioso(); } }); }
     
     async function acaoCaixa() { 
         if(!turnoAtual) { 
@@ -1826,9 +1865,9 @@
             let apStr = prompt("Valor na gaveta:", "0,00"); 
             if(apStr!==null) { 
                 let ap = parseFloat(apStr.replace(',','.'))||0; let dif = ap - esp; 
-                if(confirm(`Esperado: R$ ${esp.toFixed(2)}\nContado: R$ ${ap.toFixed(2)}\nConfirmar fechamento?`)) { 
+                if(confirm(`Esperado: R$ ${esp.toFixed(2)}\nContado: R$ ${ap.toFixed(2)}\nConfirmar fecho?`)) { 
                     await reqPOST({ acao: "fechar_caixa", valor_apurado: ap, diferenca: dif, operador: operadorAtual }); recarregarDadosSilencioso(); 
-                    if(confirm("Enviar resumo do Fechamento de Caixa para o WhatsApp do grupo?")) { let textoFechamento = `*📊 FECHAMENTO DE CAIXA*%0A*Operador:* ${operadorAtual}%0A*Data:* ${new Date().toLocaleString('pt-BR')}%0A----------------%0A*Total Entradas:* R$ ${totalEntradas.toFixed(2)}%0A*Total Saídas (Despesas):* R$ ${totalSaidas.toFixed(2)}%0A----------------%0A*Esperado (Sistema):* R$ ${esp.toFixed(2)}%0A*Apurado (Gaveta):* R$ ${ap.toFixed(2)}%0A*Diferença:* R$ ${dif.toFixed(2)}%0A----------------%0A*Turno Encerrado.*`; window.open(`https://wa.me/5588988229008?text=${textoFechamento}`, '_blank'); }
+                    if(confirm("Enviar resumo do Fecho de Caixa para o WhatsApp do grupo?")) { let textoFechamento = `*📊 FECHAMENTO DE CAIXA*%0A*Operador:* ${operadorAtual}%0A*Data:* ${new Date().toLocaleString('pt-BR')}%0A----------------%0A*Total Entradas:* R$ ${totalEntradas.toFixed(2)}%0A*Total Saídas (Despesas):* R$ ${totalSaidas.toFixed(2)}%0A----------------%0A*Esperado (Sistema):* R$ ${esp.toFixed(2)}%0A*Apurado (Gaveta):* R$ ${ap.toFixed(2)}%0A*Diferença:* R$ ${dif.toFixed(2)}%0A----------------%0A*Turno Encerrado.*`; window.open(`https://wa.me/5588988229008?text=${textoFechamento}`, '_blank'); }
                 } 
             } 
         } 
@@ -1850,7 +1889,7 @@
         if(!l || !s) { mostrarToast("Preencha Login e Senha!", "erro"); return; } 
         if(bancoUsuarios.find(u => String(u.Login||'').toLowerCase() === l.toLowerCase())) { mostrarToast("Login já existe!", "erro"); return; } 
         let btn = document.getElementById('btnAdicionarUser'); btn.innerText = "Aguarde..."; btn.disabled = true;
-        try { await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; await recarregarDadosSilencioso(); mostrarToast("Usuário criado com sucesso!", "sucesso"); } catch (error) { mostrarToast("Falha na comunicação.", "erro"); } finally { btn.innerText = "Criar Operador"; btn.disabled = false; }
+        try { await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; await recarregarDadosSilencioso(); mostrarToast("Utilizador criado com sucesso!", "sucesso"); } catch (error) { mostrarToast("Falha na comunicação.", "erro"); } finally { btn.innerText = "Criar Operador"; btn.disabled = false; }
     }
     
     async function removerUsuarioSistema(login) { if(confirm(`Remover acesso de ${login}?`)) { await reqPOST({ acao: "remover_usuario", login: login }); recarregarDadosSilencioso(); } }
@@ -1883,11 +1922,14 @@
         selectVenda.value = clienteSelecionadoAtual;
     }
 
-    function enviarWhatsApp(clienteNome, itensCart, valorT) { let resumo = itensCart.map(i => `${i.qtd}x ${i.nome}`).join('%0A'); let texto = `*ARENA VITALE*%0AOlá ${clienteNome}, aqui está o resumo da sua compra:%0A%0A${resumo}%0A%0A*Total: R$ ${valorT.toFixed(2)}*%0A%0AObrigado!`; window.open(`https://wa.me/?text=${texto}`, '_blank'); }
+    function enviarWhatsApp(clienteNome, itensCart, valorT) { 
+        let resumo = itensCart.map(i => `${i.qtd}x ${i.nome} ${i.consumidor ? `(${i.consumidor})` : ''}`).join('%0A'); 
+        let texto = `*ARENA VITALE*%0AOlá ${clienteNome}, aqui está o resumo da sua compra:%0A%0A${resumo}%0A%0A*Total: R$ ${valorT.toFixed(2)}*%0A%0AObrigado!`; window.open(`https://wa.me/?text=${texto}`, '_blank'); 
+    }
     
     function imprimirCupao(clienteNome, itensCart, valorT) { 
         let cupao = document.getElementById('cupao-impressao'); let data = new Date().toLocaleString('pt-BR'); 
-        let itensHtml = itensCart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:2px;"><span>${i.qtd}x ${i.nome}</span><span>R$ ${(i.preco * i.qtd).toFixed(2)}</span></div>`).join(''); 
+        let itensHtml = itensCart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:2px;"><span>${i.qtd}x ${i.nome} ${i.consumidor ? `(${i.consumidor})` : ''}</span><span>R$ ${(i.preco * i.qtd).toFixed(2)}</span></div>`).join(''); 
         cupao.innerHTML = `<div style="text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 5px;">ARENA VITALE</div><div style="text-align: center; font-size: 10px; margin-bottom: 10px;">Russas - CE</div><div style="text-align: center; font-size: 12px; margin-bottom: 10px;">Recibo Não Fiscal</div><div>Data: ${data}</div><div>Operador: ${operadorAtual}</div><div>Cliente: ${clienteNome}</div><hr style="border-top: 1px dashed #000; margin: 5px 0;">${itensHtml}<hr style="border-top: 1px dashed #000; margin: 5px 0;"><div style="text-align: right; font-weight: bold; font-size: 14px;">TOTAL: R$ ${valorT.toFixed(2)}</div><div style="text-align: center; margin-top: 15px; font-size: 10px;">Obrigado e volte sempre!</div>`; 
         
         document.body.classList.add('imprimindo-cupom');
@@ -1933,7 +1975,7 @@
             let v = parseFloat(String(m.Valor || 0).replace(',','.')) || 0;
             let diaStr = String(m.Data_Hora || '').split(/[\s,T]+/)[0]; 
 
-            if(!dadosPorDia[diaStr]) dadosPorDia[diaStr] = { entradas: 0, saidas: 0 };
+            if(!dadosPorDia[diaStr]) dadosPorDia[diaStr] = { entradas: 0, saídas: 0 };
 
             let categoria = "Vendas/Outros"; let descStr = String(m.Descricao || '');
             let catMatch = descStr.match(/\[(.*?)\]/);
@@ -1945,7 +1987,7 @@
             if(!dadosPorCategoria[categoria]) dadosPorCategoria[categoria] = 0;
 
             if (String(m.Tipo||'') === 'Entrada') { totalEntradas += v; dadosPorDia[diaStr].entradas += v; dadosPorCategoria[categoria] += v; } 
-            else { totalSaidas += v; dadosPorDia[diaStr].saidas += v; dadosPorCategoria[categoria] -= v; }
+            else { totalSaidas += v; dadosPorDia[diaStr].saídas += v; dadosPorCategoria[categoria] -= v; }
         });
 
         document.getElementById('relFluxoEntradas').innerText = "R$ " + totalEntradas.toFixed(2);
@@ -1959,7 +2001,7 @@
         document.getElementById('relFluxoCategorias').innerHTML = htmlCat;
 
         let labels = Object.keys(dadosPorDia).sort((a,b) => parseDataBR(a) - parseDataBR(b)); 
-        let valEntradas = labels.map(l => dadosPorDia[l].entradas); let valSaidas = labels.map(l => dadosPorDia[l].saidas);
+        let valEntradas = labels.map(l => dadosPorDia[l].entradas); let valSaidas = labels.map(l => dadosPorDia[l].saídas);
 
         if(chartRelFluxo) chartRelFluxo.destroy();
         let ctx = document.getElementById('graficoRelFluxo');
