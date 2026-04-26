@@ -15,12 +15,10 @@
         
         /* --- REGRAS DE IMPRESSÃO CORRIGIDAS --- */
         @media print { 
-            /* 1. SE FOR IMPRIMIR O CUPOM (TÉRMICA) */
             body.imprimindo-cupom * { visibility: hidden; display: none !important; } 
             body.imprimindo-cupom #cupao-impressao, body.imprimindo-cupom #cupao-impressao * { visibility: visible; display: block !important; } 
             body.imprimindo-cupom #cupao-impressao { position: absolute; left: 0; top: 0; width: 58mm; padding: 0; margin: 0; font-family: monospace; font-size: 12px; color: #000; } 
 
-            /* 2. SE FOR IMPRIMIR RELATÓRIOS (A4 normal) */
             body:not(.imprimindo-cupom) { padding-left: 0 !important; background: #fff !important; height: auto !important; overflow: visible !important; }
             body:not(.imprimindo-cupom) .sidebar, 
             body:not(.imprimindo-cupom) button, 
@@ -31,12 +29,21 @@
             body:not(.imprimindo-cupom) .table-responsive { max-height: none !important; overflow: visible !important; border: none !important; }
             body:not(.imprimindo-cupom) canvas { max-width: 100% !important; height: auto !important; page-break-inside: avoid; }
 
-            /* 3. SE FOR IMPRIMIR UM MODAL ESPECÍFICO (Ex: Histórico) */
             body.imprimindo-modal .main-content { display: none !important; }
             body.imprimindo-modal .modal-overlay { position: static !important; background: #fff !important; display: block !important; align-items: flex-start !important; }
             body.imprimindo-modal .modal-box { width: 100% !important; max-width: none !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-height: none !important; overflow: visible !important; }
             body.imprimindo-modal .no-print { display: none !important; }
         }
+
+        /* --- NOTIFICAÇÕES TOAST (NOVO) --- */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 99999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: #10b981; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out forwards; min-width: 250px; }
+        .toast.erro { background: #ef4444; }
+        .toast.aviso { background: #f59e0b; }
+        .toast.info { background: #3b82f6; }
+        .toast.fade-out { animation: fadeOut 0.3s ease-in forwards; }
+        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
 
         #tela-login { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 999999; flex-direction: column; }
         .login-box { background: #fff; padding: 40px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
@@ -163,6 +170,8 @@
     </style>
 </head>
 <body>
+
+<div id="toast-container"></div>
 
 <div id="tela-login">
     <div class="login-box" id="caixa-login-inputs">
@@ -298,11 +307,11 @@
                     <span style="font-size:15px;">%</span>
                     <span style="font-size:11px;">Desconto</span>
                 </button>
-                <button type="button" style="background:#4ade80; color:#fff; border:none; padding:10px 5px; border-radius:6px; font-weight:bold; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;" onclick="alert('Acréscimo implementado em breve!')">
+                <button type="button" style="background:#4ade80; color:#fff; border:none; padding:10px 5px; border-radius:6px; font-weight:bold; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;" onclick="mostrarToast('Acréscimo implementado em breve!', 'aviso')">
                     <span style="font-size:15px;">+</span>
                     <span style="font-size:11px;">Acréscimo</span>
                 </button>
-                <button type="button" style="background:#a855f7; color:#fff; border:none; padding:10px 5px; border-radius:6px; font-weight:bold; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;" onclick="alert('Imprima via Pagamento Direto!')">
+                <button type="button" style="background:#a855f7; color:#fff; border:none; padding:10px 5px; border-radius:6px; font-weight:bold; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;" onclick="mostrarToast('Imprima via Pagamento Direto!', 'info')">
                     <span style="font-size:15px;">🖨️</span>
                     <span style="font-size:11px;">Imprimir</span>
                 </button>
@@ -346,7 +355,7 @@
     <div id="tela-livro" class="tela">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
             <h2 style="margin: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">📠 Controle de Caixa</h2>
-            <button class="btn-caixas-fechados" style="background: #64748b; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="alert('Histórico de caixas fechados estará disponível em breve!')">🕒 Caixas Fechados</button>
+            <button class="btn-caixas-fechados" style="background: #64748b; color: #fff; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="mostrarToast('Histórico de caixas fechados estará disponível em breve!', 'info')">🕒 Caixas Fechados</button>
         </div>
 
         <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
@@ -872,6 +881,28 @@
     let pagamentosAtivos = []; 
     let filtroLivroTipo = 'Todos'; 
 
+    // --- NOVA FUNÇÃO DE TOAST ---
+    function mostrarToast(mensagem, tipo = 'sucesso') {
+        let container = document.getElementById('toast-container');
+        if(!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = `toast ${tipo}`;
+        let icone = '✅';
+        if(tipo === 'erro') icone = '❌';
+        if(tipo === 'aviso') icone = '⚠️';
+        if(tipo === 'info') icone = 'ℹ️';
+        toast.innerHTML = `<span style="font-size:18px;">${icone}</span> <span>${mensagem}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            toast.addEventListener('animationend', () => toast.remove());
+        }, 3000);
+    }
+
     function formatarDataExibicao(dataStr) {
         if (!dataStr) return ""; let str = String(dataStr || '');
         if (str.includes('T')) { let d = new Date(str); let dia = String(d.getDate()).padStart(2, '0'); let mes = String(d.getMonth() + 1).padStart(2, '0'); let ano = d.getFullYear(); let hora = String(d.getHours()).padStart(2, '0'); let min = String(d.getMinutes()).padStart(2, '0'); return `${dia}/${mes}/${ano} ${hora}:${min}`; }
@@ -926,7 +957,6 @@
                 document.getElementById('operadorLogadoText').innerHTML = "Operador:<br>" + operadorAtual;
                 document.getElementById('cargoLogadoText').innerText = cargoAtual;
                 
-                // --- REGRA: SE FOR GERENTE MOSTRA TUDO, SE NÃO, OCULTA TUDO ISSO AQUI ---
                 if(cargoAtual === "Gerente" || opSalvo.toLowerCase().includes("edilson")) {
                     document.getElementById('menu-usuarios').style.display = 'flex';
                     document.getElementById('menu-estoque').style.display = 'flex';
@@ -939,7 +969,6 @@
                 
                 let tabSalva = localStorage.getItem('arena_tab') || 'tela-caixa';
                 
-                // Se o cara salvou a aba Relatorios e depois logou como operador, volta pro Caixa
                 if (cargoAtual !== "Gerente" && !opSalvo.toLowerCase().includes("edilson")) {
                     if (tabSalva === 'tela-estoque' || tabSalva === 'tela-relatorios' || tabSalva === 'tela-usuarios' || tabSalva.includes('tela-relatorio-')) {
                         tabSalva = 'tela-caixa';
@@ -974,7 +1003,6 @@
             document.getElementById('operadorLogadoText').innerHTML = "Operador:<br>" + operadorAtual;
             document.getElementById('cargoLogadoText').innerText = cargoAtual;
             
-            // --- REGRA NA HORA DO LOGIN TAMBÉM ---
             if(cargoAtual === "Gerente" || userTyped.includes("edilson")) {
                 document.getElementById('menu-usuarios').style.display = 'flex';
                 document.getElementById('menu-estoque').style.display = 'flex';
@@ -1005,7 +1033,7 @@
             if(gerenteEncontrado) {
                 callback();
             } else {
-                alert("❌ Senha incorreta ou usuário não é gerente!");
+                mostrarToast("Senha incorreta ou usuário não é gerente!", "erro");
             }
         }
     }
@@ -1021,7 +1049,6 @@
             
             atualizarTodasAsTelas();
         } catch(e) { 
-            console.error("ERRO REAL DETECTADO NA BLINDAGEM:", e);
             let statusBar = document.getElementById('status-bar');
             if(statusBar) {
                 statusBar.style.display = 'block';
@@ -1039,7 +1066,6 @@
         atualizarInterfaceTurno(); atualizarTabelaEstoque(); atualizarTabelaComandas(); 
         atualizarDashboardECaixa(); atualizarListasClientes(); atualizarListaUsuarios();
         
-        // Se o modal do Histórico estiver aberto, atualiza a lista dele também
         if(document.getElementById('modalHistorico').style.display === 'flex') {
             renderizarHistoricoModal();
         }
@@ -1174,7 +1200,7 @@
     }
 
     function confirmarPagamentoMisto(imprimirRecibo) {
-        if (pagamentosAtivos.length === 0) return alert("Adicione pelo menos uma forma de pagamento!");
+        if (pagamentosAtivos.length === 0) { mostrarToast("Adicione pelo menos uma forma de pagamento!", "erro"); return; }
         
         let pagNome = document.getElementById('pagNomePagador').value.trim() || "Não informado";
         let totalPago = pagamentosAtivos.reduce((sum, p) => sum + p.valor, 0);
@@ -1220,7 +1246,7 @@
                 recarregarDadosSilencioso();
                 limparCarrinhoNovaVenda();
                 
-                alert(`Atenção: Como este pagamento cobriu todo o saldo restante, a comanda foi liquidada e encerrada com sucesso!`);
+                mostrarToast("Comanda liquidada e encerrada com sucesso!", "sucesso");
                 if(imprimirRecibo) {
                     let comandaImpressao = bancoComandas.find(c => String(c.ID_Comanda || '') === String(acao.id_comanda));
                     let iArr = comandaImpressao ? JSON.parse(comandaImpressao.Itens_JSON || "[]") : [];
@@ -1231,13 +1257,14 @@
                 recarregarDadosSilencioso();
                 pagamentosComandaAtual += totalPagoFinal;
                 atualizarCarrinho();
-                alert(`Pagamento parcial de R$ ${totalPagoFinal.toFixed(2)} recebido! Resta saldo a pagar.`);
+                mostrarToast(`Pagamento parcial de R$ ${totalPagoFinal.toFixed(2)} recebido!`, "sucesso");
             }
         }
     }
 
     function iniciarPagamentoCaixa() {
-        if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!");
+        if(!turnoAtual) { mostrarToast("Abra o caixa!", "erro"); return; } 
+        if(carrinho.length === 0) { mostrarToast("Carrinho vazio!", "erro"); return; }
         let clienteSel = document.getElementById('selectClienteVenda').value;
         
         if (idComandaEmEdicao) {
@@ -1252,13 +1279,13 @@
     }
 
     function cliquePagamentoParcialCaixa() {
-        if(!turnoAtual) return alert("Abra o caixa!");
-        if(carrinho.length === 0) return alert("Carrinho vazio!");
-        if (!idComandaEmEdicao) return alert("Para fazer pagamento parcial, primeiro abra (ou salve) uma comanda!");
+        if(!turnoAtual) { mostrarToast("Abra o caixa!", "erro"); return; }
+        if(carrinho.length === 0) { mostrarToast("Carrinho vazio!", "erro"); return; }
+        if (!idComandaEmEdicao) { mostrarToast("Para fazer pagamento parcial, primeiro abra (ou salve) uma comanda!", "erro"); return; }
         
         let clienteSel = document.getElementById('selectClienteVenda').value;
         let saldoDevedor = total - pagamentosComandaAtual;
-        if (saldoDevedor <= 0) return alert("Esta comanda não tem saldo devedor para abater!");
+        if (saldoDevedor <= 0) { mostrarToast("Esta comanda não tem saldo devedor para abater!", "erro"); return; }
         
         abrirModalPagamento(saldoDevedor, { tipo: 'comanda_parcial', id_comanda: idComandaEmEdicao, cliente: clienteSel, valorTotal: saldoDevedor });
     }
@@ -1291,12 +1318,12 @@
     }
     
     function aplicarDescontoCaixa() {
-        if(carrinho.length === 0) return alert("Adicione produtos primeiro!");
+        if(carrinho.length === 0) { mostrarToast("Adicione produtos primeiro!", "erro"); return; }
         let descStr = prompt(`Total Atual: R$ ${total.toFixed(2)}\n\nDigite o valor do desconto (Ex: 10,00):`, "0,00");
         if(!descStr) return; 
         let valDesc = parseFloat(descStr.replace(',', '.')); 
         if(isNaN(valDesc) || valDesc <= 0) return;
-        if(valDesc > total) return alert("O desconto não pode ser maior que o total da compra!");
+        if(valDesc > total) { mostrarToast("Desconto maior que o total!", "erro"); return; }
 
         let motivo = prompt("Qual o motivo do desconto?");
         if (motivo === null) return; 
@@ -1361,13 +1388,17 @@
 
     function processarEntradaCodigo(termo) { 
         termo = String(termo || '').toLowerCase(); let prod = bancoDeProdutos.find(p => String(p.ID_Produto || '').toLowerCase() === termo || String(p.Nome_Produto || '').toLowerCase() === termo); 
-        if (!prod) { let achados = bancoDeProdutos.filter(p => String(p.Nome_Produto || '').toLowerCase().includes(termo)); if (achados.length === 1) prod = achados[0]; else if (achados.length > 1) { alert("Múltiplos produtos encontrados. Digite o código exato ou clique na lista."); return; } } 
+        if (!prod) { 
+            let achados = bancoDeProdutos.filter(p => String(p.Nome_Produto || '').toLowerCase().includes(termo)); 
+            if (achados.length === 1) prod = achados[0]; 
+            else if (achados.length > 1) { mostrarToast("Múltiplos produtos encontrados. Use a lista.", "aviso"); return; } 
+        } 
         if (prod) { 
             let preco = parseFloat(String(prod.Preco_Venda || 0).replace(',','.')) || 0; let qtdMult = parseInt(document.getElementById('qtdInput').value) || 1;
             let ext = carrinho.find(i => String(i.codigo) === String(prod.ID_Produto)); 
             if(ext) { ext.qtd += qtdMult; } else { carrinho.push({ codigo: prod.ID_Produto, nome: prod.Nome_Produto, preco: preco, qtd: qtdMult }); } 
             total += (preco * qtdMult); atualizarCarrinho(); document.getElementById('qtdInput').value = "1"; 
-        } else { alert("Produto não encontrado!"); } 
+        } else { mostrarToast("Produto não encontrado!", "erro"); } 
     }
     
     function removerItemCarrinho(index) {
@@ -1398,7 +1429,7 @@
     }
 
     function alternarCamera(alvoId) { inputCameraAlvo = alvoId; let divCamera = document.getElementById('leitorCamera'); if (divCamera.style.display === "block") fecharCamera(); else abrirCamera(); }
-    function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { alert("Sem acesso à câmara."); divCamera.style.display = "none"; }); }
+    function abrirCamera() { let divCamera = document.getElementById('leitorCamera'); divCamera.style.display = "block"; if (!leitorHtml5) leitorHtml5 = new Html5Qrcode("leitorCamera"); leitorHtml5.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (codigoLido) => { fecharCamera(); document.getElementById(inputCameraAlvo).value = codigoLido; if(inputCameraAlvo === 'codigoInput') processarEntradaCodigo(codigoLido); }, (erro) => {}).catch(err => { mostrarToast("Sem acesso à câmara.", "erro"); divCamera.style.display = "none"; }); }
     function fecharCamera() { if(leitorHtml5) leitorHtml5.stop().then(() => { document.getElementById('leitorCamera').style.display = "none"; }).catch(e=>e); }
 
     async function renomearComanda(idComanda, nomeAtual) {
@@ -1484,7 +1515,7 @@
         let nome = prompt("Nome do Cliente para a NOVA comanda?"); 
         if(!nome) return; 
         await reqPOST({ acao: "abrir_comanda", cliente: nome, total: total, carrinho: carrinho, operador: operadorAtual }); 
-        alert("Comanda criada!"); 
+        mostrarToast("Comanda criada!", "sucesso"); 
         limparCarrinhoNovaVenda(); 
         recarregarDadosSilencioso(); 
     }
@@ -1492,7 +1523,7 @@
     async function adicionarNaComandaExistente(idComanda, nomeCli) { 
         fecharModalComandas(); 
         await reqPOST({ acao: "adicionar_item_comanda", id_comanda: idComanda, total: total, carrinho: carrinho, operador: operadorAtual }); 
-        alert(`Itens adicionados!`); 
+        mostrarToast(`Itens adicionados!`, "sucesso"); 
         limparCarrinhoNovaVenda(); 
         recarregarDadosSilencioso(); 
     }
@@ -1563,8 +1594,11 @@
     }
 
     function editarComanda(idComanda) {
-        let comanda = bancoComandas.find(c => String(c.ID_Comanda || '') === String(idComanda)); if(!comanda) return alert("Comanda não encontrada!");
-        idComandaEmEdicao = idComanda; try { carrinho = JSON.parse(comanda.Itens_JSON || "[]"); } catch(e) { carrinho = []; }
+        let comanda = bancoComandas.find(c => String(c.ID_Comanda || '') === String(idComanda)); 
+        if(!comanda) { mostrarToast("Comanda não encontrada!", "erro"); return; }
+        
+        idComandaEmEdicao = idComanda; 
+        try { carrinho = JSON.parse(comanda.Itens_JSON || "[]"); } catch(e) { carrinho = []; }
         total = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
         
         pagamentosComandaAtual = 0;
@@ -1578,12 +1612,32 @@
     }
 
     function cancelarEdicaoComanda() { limparCarrinhoNovaVenda(); }
-    function acaoBotaoComanda() { if(!turnoAtual) return alert("Abra o caixa!"); if(carrinho.length === 0) return alert("Carrinho vazio!"); if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); } }
-    async function atualizarComandaExistente() { let clienteSel = document.getElementById('selectClienteVenda').value; await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho, operador: operadorAtual }); alert("Comanda atualizada!"); cancelarEdicaoComanda(); recarregarDadosSilencioso(); }
+    
+    function acaoBotaoComanda() { 
+        if(!turnoAtual) { mostrarToast("Abra o caixa!", "erro"); return; } 
+        if(carrinho.length === 0) { mostrarToast("Carrinho vazio!", "erro"); return; } 
+        if(idComandaEmEdicao) { atualizarComandaExistente(); } else { abrirModalComandas(); } 
+    }
+    
+    async function atualizarComandaExistente() { 
+        let clienteSel = document.getElementById('selectClienteVenda').value; 
+        
+        // Trava para evitar o bug do "Consumidor Final" acidental
+        if(clienteSel === "Consumidor Final" && idComandaEmEdicao) {
+            let comandaOrig = bancoComandas.find(c => String(c.ID_Comanda) === String(idComandaEmEdicao));
+            if(comandaOrig && comandaOrig.Cliente && comandaOrig.Cliente !== "Consumidor Final") {
+                clienteSel = comandaOrig.Cliente;
+            }
+        }
+
+        await reqPOST({ acao: "atualizar_comanda", id_comanda: idComandaEmEdicao, cliente: clienteSel, total: total, carrinho: carrinho, operador: operadorAtual }); 
+        mostrarToast("Comanda atualizada com sucesso!", "sucesso"); 
+        cancelarEdicaoComanda(); 
+        recarregarDadosSilencioso(); 
+    }
     
     async function excluirComanda(idComanda) { if(confirm("ATENÇÃO: Deseja excluir a comanda e devolver TODOS os itens ao estoque sem cobrar?")) { await reqPOST({ acao: "excluir_comanda", id_comanda: idComanda, operador: operadorAtual }); recarregarDadosSilencioso(); } }
 
-    // --- NOVA LÓGICA DO HISTÓRICO DE ESTOQUE (COM FILTRO E IMPRESSÃO) ---
     function abrirModalHistorico() {
         setaDatasPadrao('filtroHistInicio', 'filtroHistFim');
         renderizarHistoricoModal();
@@ -1627,8 +1681,9 @@
 
     function adicionarEntradaManual(idProduto, nomeProduto) {
         let qtdStr = prompt(`Dar entrada no estoque: ${nomeProduto}\n\nQuantas unidades chegaram?`);
-        if(!qtdStr) return; let qtd = parseInt(qtdStr); if(isNaN(qtd) || qtd <= 0) return alert("Quantidade inválida!");
-        reqPOST({ acao: "entrada_estoque", id_produto: idProduto, qtd: qtd, operador: operadorAtual }).then(() => { alert(`Entrada de ${qtd} unidades registrada!`); recarregarDadosSilencioso(); });
+        if(!qtdStr) return; let qtd = parseInt(qtdStr); 
+        if(isNaN(qtd) || qtd <= 0) { mostrarToast("Quantidade inválida!", "erro"); return; }
+        reqPOST({ acao: "entrada_estoque", id_produto: idProduto, qtd: qtd, operador: operadorAtual }).then(() => { mostrarToast(`Entrada de ${qtd} unidades registrada!`, "sucesso"); recarregarDadosSilencioso(); });
     }
 
     function atualizarTabelaEstoque() { document.getElementById('listaGestao').innerHTML = bancoDeProdutos.map(p => { if(!p.ID_Produto) return ''; let pCusto = parseFloat(String(p.Preco_Custo||0).replace(',','.'))||0; let pVenda = parseFloat(String(p.Preco_Venda||0).replace(',','.'))||0; return `<tr><td>${p.ID_Produto}</td><td>${p.Nome_Produto||''}</td><td>R$ ${pCusto.toFixed(2)}</td><td>R$ ${pVenda.toFixed(2)}</td><td style="font-weight:bold;">${p.Quantidade||0}</td><td>${p.Estoque_Minimo || 0}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button type="button" class="btn-verde" onclick="adicionarEntradaManual('${p.ID_Produto}', '${String(p.Nome_Produto||'').replace(/'/g, "\\'")}')">+ Entrada</button><button type="button" class="btn-amarelo" onclick="prepararEdicaoEstoque('${p.ID_Produto}')">Editar</button><button type="button" class="btn-vermelho" onclick="removerProduto('${p.ID_Produto}')">Apagar</button></td></tr>`; }).join(''); }
@@ -1637,7 +1692,7 @@
     async function salvarProdutoEstoque() { 
         let id = document.getElementById('novoId').value, nome = document.getElementById('novoNome').value; 
         let custo = document.getElementById('novoCusto').value.replace(',','.'), preco = document.getElementById('novoPreco').value.replace(',','.'), qtd = document.getElementById('novaQtd').value, min = document.getElementById('novoMinimo').value || 0; 
-        if(!id || !nome || !preco || !qtd) return alert("Preencha Código, Nome, Venda e Qtd!"); 
+        if(!id || !nome || !preco || !qtd) { mostrarToast("Preencha todos os campos do produto!", "erro"); return; } 
         let acaoReq = idEditandoEstoque ? "editar_produto" : "adicionar"; 
         await reqPOST({ acao: acaoReq, id_antigo: idEditandoEstoque, id: id, nome: nome, custo: custo, preco: preco, quantidade: qtd, estoque_minimo: min }); 
         document.getElementById('novoId').value = ""; document.getElementById('novoNome').value = ""; document.getElementById('novoCusto').value = ""; document.getElementById('novoPreco').value = ""; document.getElementById('novaQtd').value = ""; document.getElementById('novoMinimo').value = ""; idEditandoEstoque = null; document.getElementById('btnAdicionarEstoque').innerText = "Salvar Produto"; document.getElementById('btnAdicionarEstoque').className = "btn-verde"; recarregarDadosSilencioso(); 
@@ -1737,7 +1792,7 @@
     let filtroDataFim = document.getElementById('filtroDataFim'); if(filtroDataFim) filtroDataFim.addEventListener('change', filtrarLivroCaixa);
 
     function abrirModalMovimentacao(tipo) {
-        if(!turnoAtual) return alert("Você precisa abrir o caixa primeiro!");
+        if(!turnoAtual) { mostrarToast("Você precisa abrir o caixa primeiro!", "erro"); return; }
         document.getElementById('tipoMovimentoModal').value = tipo; document.getElementById('tituloModalMov').innerText = tipo === 'Entrada' ? '+ Adicionar Entrada' : '- Adicionar Saída';
         document.getElementById('boxCategoriaModal').style.display = tipo === 'Saida' ? 'block' : 'none'; document.getElementById('descMovimentoModal').value = ""; document.getElementById('valorMovimentoModal').value = ""; document.getElementById('modalMovimentacao').style.display = 'flex';
         setTimeout(() => { if(window.innerWidth > 768) document.getElementById('descMovimentoModal').focus(); }, 100);
@@ -1747,7 +1802,7 @@
 
     async function registrarCaixaModal() {
         let t = document.getElementById('tipoMovimentoModal').value; let d = document.getElementById('descMovimentoModal').value.trim(); let v = document.getElementById('valorMovimentoModal').value.replace(',','.'); 
-        if(!d || !v) return alert("Preencha a descrição e o valor!");
+        if(!d || !v) { mostrarToast("Preencha a descrição e o valor!", "erro"); return; }
         if(t === "Saida") { let cat = document.getElementById('categoriaDespesaModal').value; d = `[${cat}] ` + d; }
         document.getElementById('btnSalvarMov').innerText = "Salvando..."; document.getElementById('btnSalvarMov').disabled = true;
         await reqPOST({ acao: "caixa", tipo: t, descricao: d, valor: v, operador: operadorAtual }); 
@@ -1792,35 +1847,32 @@
     
     async function adicionarUsuarioSistema() { 
         let l = document.getElementById('novoUserLogin').value.trim(); let s = document.getElementById('novoUserSenha').value.trim(); let c = document.getElementById('novoUserCargo').value; 
-        if(!l || !s) return alert("Preencha Login e Senha!"); 
-        if(bancoUsuarios.find(u => String(u.Login||'').toLowerCase() === l.toLowerCase())) return alert("Login já existe!"); 
+        if(!l || !s) { mostrarToast("Preencha Login e Senha!", "erro"); return; } 
+        if(bancoUsuarios.find(u => String(u.Login||'').toLowerCase() === l.toLowerCase())) { mostrarToast("Login já existe!", "erro"); return; } 
         let btn = document.getElementById('btnAdicionarUser'); btn.innerText = "Aguarde..."; btn.disabled = true;
-        try { await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; await recarregarDadosSilencioso(); alert("Usuário criado com sucesso!"); } catch (error) { alert("Falha na comunicação. Verifique se o Google Apps Script está aceitando o campo 'cargo'."); } finally { btn.innerText = "Criar Operador"; btn.disabled = false; }
+        try { await reqPOST({ acao: "adicionar_usuario", login: l, senha: s, cargo: c }); document.getElementById('novoUserLogin').value = ""; document.getElementById('novoUserSenha').value = ""; await recarregarDadosSilencioso(); mostrarToast("Usuário criado com sucesso!", "sucesso"); } catch (error) { mostrarToast("Falha na comunicação.", "erro"); } finally { btn.innerText = "Criar Operador"; btn.disabled = false; }
     }
     
     async function removerUsuarioSistema(login) { if(confirm(`Remover acesso de ${login}?`)) { await reqPOST({ acao: "remover_usuario", login: login }); recarregarDadosSilencioso(); } }
 
-    async function adicionarCliente() { let id = document.getElementById('novoIdCli').value, nome = document.getElementById('novoNomeCli').value, tel = document.getElementById('novoTelCli').value; if(!id || !nome) return alert("Preencha ID e Nome!"); await reqPOST({ acao: "adicionar_cliente", id: id, nome: nome, telefone: tel }); recarregarDadosSilencioso(); }
+    async function adicionarCliente() { let id = document.getElementById('novoIdCli').value, nome = document.getElementById('novoNomeCli').value, tel = document.getElementById('novoTelCli').value; if(!id || !nome) { mostrarToast("Preencha ID e Nome!", "erro"); return; } await reqPOST({ acao: "adicionar_cliente", id: id, nome: nome, telefone: tel }); recarregarDadosSilencioso(); }
     async function removerCliente(id) { if(confirm("Apagar cliente?")) { await reqPOST({ acao: "remover_cliente", id: id }); recarregarDadosSilencioso(); } }
     
     function atualizarListasClientes() { 
         let tbody = document.getElementById('listaClientesGestao'); 
         let selectVenda = document.getElementById('selectClienteVenda'); 
         
-        // Guarda quem está selecionado no momento na tela do caixa
         let clienteSelecionadoAtual = selectVenda.value; 
         
         tbody.innerHTML = ""; 
         selectVenda.innerHTML = '<option value="Consumidor Final">Consumidor Final</option>'; 
         
-        // Constrói a lista com os clientes do banco
         bancoClientes.forEach(c => { 
             if(!c.ID_Cliente) return; 
             tbody.innerHTML += `<tr><td>${c.ID_Cliente}</td><td>${c.Nome||''}</td><td>${c.Telefone||''}</td><td><button type="button" class="btn-vermelho" onclick="removerCliente('${c.ID_Cliente}')">Apagar</button></td></tr>`; 
             selectVenda.innerHTML += `<option value="${c.Nome||''}">${c.Nome||''}</option>`; 
         }); 
         
-        // Se o cliente que estava selecionado (ex: cliente não cadastrado) sumiu, adicionamos ele de volta!
         if (clienteSelecionadoAtual && clienteSelecionadoAtual !== "Consumidor Final") {
             let jaExiste = Array.from(selectVenda.options).some(opt => opt.value === clienteSelecionadoAtual);
             if (!jaExiste) {
@@ -1828,7 +1880,6 @@
             }
         }
         
-        // Devolve a seleção para o nome correto
         selectVenda.value = clienteSelecionadoAtual;
     }
 
@@ -1839,7 +1890,6 @@
         let itensHtml = itensCart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:2px;"><span>${i.qtd}x ${i.nome}</span><span>R$ ${(i.preco * i.qtd).toFixed(2)}</span></div>`).join(''); 
         cupao.innerHTML = `<div style="text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 5px;">ARENA VITALE</div><div style="text-align: center; font-size: 10px; margin-bottom: 10px;">Russas - CE</div><div style="text-align: center; font-size: 12px; margin-bottom: 10px;">Recibo Não Fiscal</div><div>Data: ${data}</div><div>Operador: ${operadorAtual}</div><div>Cliente: ${clienteNome}</div><hr style="border-top: 1px dashed #000; margin: 5px 0;">${itensHtml}<hr style="border-top: 1px dashed #000; margin: 5px 0;"><div style="text-align: right; font-weight: bold; font-size: 14px;">TOTAL: R$ ${valorT.toFixed(2)}</div><div style="text-align: center; margin-top: 15px; font-size: 10px;">Obrigado e volte sempre!</div>`; 
         
-        // ADICIONA CLASSE PARA SABER QUE É O CUPOM
         document.body.classList.add('imprimindo-cupom');
         window.print(); 
         setTimeout(() => document.body.classList.remove('imprimindo-cupom'), 1000);
@@ -1859,7 +1909,6 @@
         } 
     });
 
-    // --- NOVA LÓGICA DOS RELATÓRIOS ---
     function setaDatasPadrao(idIni, idFim) {
         let hoje = new Date();
         let primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
@@ -1867,7 +1916,6 @@
         document.getElementById(idFim).value = hoje.toISOString().split('T')[0];
     }
 
-    // 1. FLUXO DE CAIXA
     function abrirRelatorioFluxo() { setaDatasPadrao('relFluxoDataInicio', 'relFluxoDataFim'); mudarTela('tela-relatorio-fluxo'); gerarRelatorioFluxo(); }
 
     function gerarRelatorioFluxo() {
@@ -1918,7 +1966,6 @@
         if (ctx) { chartRelFluxo = new Chart(ctx, { type: 'bar', data: { labels: labels.map(l => String(l).substring(0,5)), datasets: [ { label: 'Entradas', data: valEntradas, backgroundColor: '#22c55e', borderRadius: 4 }, { label: 'Saídas', data: valSaidas, backgroundColor: '#ef4444', borderRadius: 4 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } } }); }
     }
 
-    // 2. RELATÓRIO DE ESTOQUE ATUAL
     function abrirRelatorioEstoque() {
         mudarTela('tela-relatorio-estoque');
         let totalCusto = 0, totalVenda = 0, html = '';
@@ -1939,7 +1986,6 @@
         document.getElementById('relEstoqueLucroProj').innerText = "R$ " + (totalVenda - totalCusto).toFixed(2);
     }
 
-    // 3. PRODUTOS MAIS/MENOS VENDIDOS
     function abrirRelatorioProdutos() { setaDatasPadrao('relProdDataInicio', 'relProdDataFim'); mudarTela('tela-relatorio-produtos'); gerarRelatorioProdutos(); }
 
     function gerarRelatorioProdutos() {
@@ -1969,7 +2015,6 @@
         if(ctx) { chartRelProdutos = new Chart(ctx, { type: 'bar', data: { labels: top10.map(p => p.nome), datasets: [{ label: 'Qtd Vendida (Top 10)', data: top10.map(p => p.qtd), backgroundColor: '#3b82f6', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } }); }
     }
 
-    // 4. RELATÓRIO DE LUCRO (CMV)
     function abrirRelatorioLucro() { setaDatasPadrao('relLucroDataInicio', 'relLucroDataFim'); mudarTela('tela-relatorio-lucro'); gerarRelatorioLucro(); }
 
     function gerarRelatorioLucro() {
@@ -1996,7 +2041,6 @@
         document.getElementById('relLucroReceita').innerText = "R$ " + receitaVendas.toFixed(2); document.getElementById('relLucroCusto').innerText = "R$ " + custoVendas.toFixed(2); document.getElementById('relLucroBruto').innerText = "R$ " + (receitaVendas - custoVendas).toFixed(2);
     }
 
-    // 5. VENDAS POR FORMA DE PAGAMENTO
     function abrirRelatorioPagamentos() { setaDatasPadrao('relPagDataInicio', 'relPagDataFim'); mudarTela('tela-relatorio-pagamentos'); gerarRelatorioPagamentos(); }
 
     function gerarRelatorioPagamentos() {
@@ -2031,7 +2075,7 @@
             if(confirm("Deseja realmente estornar este pagamento parcial?\\nO valor voltará a ficar como 'Falta' na comanda.")) {
                 document.getElementById('status-bar').style.display = 'block'; document.getElementById('status-bar').innerText = "A estornar pagamento...";
                 await reqPOST({ acao: "remover_pagamento_parcial", id_comanda: idComanda, id_transacao: idTransacao, operador: operadorAtual });
-                alert("Pagamento estornado com sucesso!"); recarregarDadosSilencioso();
+                mostrarToast("Pagamento estornado com sucesso!", "sucesso"); recarregarDadosSilencioso();
             }
         });
     }
