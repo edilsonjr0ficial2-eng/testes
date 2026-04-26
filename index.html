@@ -1802,7 +1802,35 @@
 
     async function adicionarCliente() { let id = document.getElementById('novoIdCli').value, nome = document.getElementById('novoNomeCli').value, tel = document.getElementById('novoTelCli').value; if(!id || !nome) return alert("Preencha ID e Nome!"); await reqPOST({ acao: "adicionar_cliente", id: id, nome: nome, telefone: tel }); recarregarDadosSilencioso(); }
     async function removerCliente(id) { if(confirm("Apagar cliente?")) { await reqPOST({ acao: "remover_cliente", id: id }); recarregarDadosSilencioso(); } }
-    function atualizarListasClientes() { let tbody = document.getElementById('listaClientesGestao'); let selectVenda = document.getElementById('selectClienteVenda'); tbody.innerHTML = ""; selectVenda.innerHTML = '<option value="Consumidor Final">Consumidor Final</option>'; bancoClientes.forEach(c => { if(!c.ID_Cliente) return; tbody.innerHTML += `<tr><td>${c.ID_Cliente}</td><td>${c.Nome||''}</td><td>${c.Telefone||''}</td><td><button type="button" class="btn-vermelho" onclick="removerCliente('${c.ID_Cliente}')">Apagar</button></td></tr>`; selectVenda.innerHTML += `<option value="${c.Nome||''}">${c.Nome||''}</option>`; }); }
+    
+    function atualizarListasClientes() { 
+        let tbody = document.getElementById('listaClientesGestao'); 
+        let selectVenda = document.getElementById('selectClienteVenda'); 
+        
+        // Guarda quem está selecionado no momento na tela do caixa
+        let clienteSelecionadoAtual = selectVenda.value; 
+        
+        tbody.innerHTML = ""; 
+        selectVenda.innerHTML = '<option value="Consumidor Final">Consumidor Final</option>'; 
+        
+        // Constrói a lista com os clientes do banco
+        bancoClientes.forEach(c => { 
+            if(!c.ID_Cliente) return; 
+            tbody.innerHTML += `<tr><td>${c.ID_Cliente}</td><td>${c.Nome||''}</td><td>${c.Telefone||''}</td><td><button type="button" class="btn-vermelho" onclick="removerCliente('${c.ID_Cliente}')">Apagar</button></td></tr>`; 
+            selectVenda.innerHTML += `<option value="${c.Nome||''}">${c.Nome||''}</option>`; 
+        }); 
+        
+        // Se o cliente que estava selecionado (ex: cliente não cadastrado) sumiu, adicionamos ele de volta!
+        if (clienteSelecionadoAtual && clienteSelecionadoAtual !== "Consumidor Final") {
+            let jaExiste = Array.from(selectVenda.options).some(opt => opt.value === clienteSelecionadoAtual);
+            if (!jaExiste) {
+                selectVenda.add(new Option(clienteSelecionadoAtual, clienteSelecionadoAtual));
+            }
+        }
+        
+        // Devolve a seleção para o nome correto
+        selectVenda.value = clienteSelecionadoAtual;
+    }
 
     function enviarWhatsApp(clienteNome, itensCart, valorT) { let resumo = itensCart.map(i => `${i.qtd}x ${i.nome}`).join('%0A'); let texto = `*ARENA VITALE*%0AOlá ${clienteNome}, aqui está o resumo da sua compra:%0A%0A${resumo}%0A%0A*Total: R$ ${valorT.toFixed(2)}*%0A%0AObrigado!`; window.open(`https://wa.me/?text=${texto}`, '_blank'); }
     
