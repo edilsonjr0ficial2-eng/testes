@@ -16,229 +16,121 @@
       --input-bg: #fff;
     }
 
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-color);
-      background-image: linear-gradient(#e5eaf5 1px, transparent 1px), linear-gradient(90deg, #e5eaf5 1px, transparent 1px);
-      background-size: 20px 20px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      background-color: var(--brand-black);
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo {
-      font-size: 20px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--brand-yellow);
-    }
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .avatar {
-      width: 32px; height: 32px;
-      background-color: var(--brand-black);
-      border-radius: 50%;
-      display: flex; justify-content: center; align-items: center;
-      border: 2px solid var(--brand-yellow);
-      color: var(--brand-yellow);
-      font-weight: bold;
-    }
-
-    .top-nav {
-      display: flex;
-      background: white;
-      border-bottom: 1px solid var(--border-color);
-    }
-    .top-nav-item {
-      flex: 1; text-align: center; padding: 15px 0;
-      color: var(--text-gray); font-size: 14px; text-decoration: none;
-      display: flex; flex-direction: column; align-items: center; gap: 5px;
-    }
-    .top-nav-item.active {
-      color: var(--brand-black); font-weight: bold;
-      border-bottom: 3px solid var(--brand-yellow);
-    }
-
-    .content {
-      padding: 20px; flex: 1; display: flex; flex-direction: column; padding-bottom: 90px;
-    }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); background-image: linear-gradient(#e5eaf5 1px, transparent 1px), linear-gradient(90deg, #e5eaf5 1px, transparent 1px); background-size: 20px 20px; min-height: 100vh; display: flex; flex-direction: column; }
+    header { background-color: var(--brand-black); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 8px; color: var(--brand-yellow); }
+    .user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; text-transform: uppercase; }
+    .avatar { width: 32px; height: 32px; background-color: var(--brand-black); border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid var(--brand-yellow); color: var(--brand-yellow); font-weight: bold; }
+    .top-nav { display: flex; background: white; border-bottom: 1px solid var(--border-color); }
+    .top-nav-item { flex: 1; text-align: center; padding: 15px 0; color: var(--text-gray); font-size: 14px; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .top-nav-item.active { color: var(--brand-black); font-weight: bold; border-bottom: 3px solid var(--brand-yellow); }
+    .content { padding: 20px; flex: 1; display: flex; flex-direction: column; padding-bottom: 90px; }
     
-    .btn-criar {
-      background-color: var(--brand-yellow); color: var(--brand-black);
-      border: none; padding: 12px 20px; border-radius: 8px;
-      font-size: 16px; font-weight: 600; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
-      width: fit-content; margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    .btn-criar:hover { opacity: 0.9; }
-
-    .toggle-group {
-      display: flex; background-color: #e5eaf5; border-radius: 8px;
-      overflow: hidden; margin-bottom: 20px;
-    }
-    .toggle-btn {
-      flex: 1; padding: 12px; text-align: center;
-      font-weight: 600; font-size: 14px; cursor: pointer;
-    }
+    .btn-criar { background-color: var(--brand-yellow); color: var(--brand-black); border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; width: fit-content; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .toggle-group { display: flex; background-color: #e5eaf5; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
+    .toggle-btn { flex: 1; padding: 12px; text-align: center; font-weight: 600; font-size: 14px; cursor: pointer; }
     .toggle-btn.active { background-color: var(--brand-black); color: var(--brand-yellow); }
-
-    .torneio-card {
-      background: white; border-radius: 10px; padding: 15px 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex;
-      justify-content: space-between; align-items: center; cursor: pointer;
-      border-left: 5px solid var(--brand-yellow); margin-bottom: 10px;
-    }
-    .torneio-card:hover { background: #fafafa; }
-    
-    .btn-apagar-torneio {
-      background: none; border: none; color: #ef4444; font-size: 18px; 
-      cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center;
-    }
-    .btn-apagar-torneio:hover { color: #dc2626; }
-
-    .empty-state {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; padding: 40px 0; text-align: center; color: #333;
-    }
+    .torneio-card { background: white; border-radius: 10px; padding: 15px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-left: 5px solid var(--brand-yellow); margin-bottom: 10px; }
+    .btn-apagar-torneio { background: none; border: none; color: #ef4444; font-size: 18px; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; }
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center; color: #333; }
     .empty-state i { font-size: 60px; color: #d1d5db; margin-bottom: 15px; }
 
     /* Modais */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background-color: rgba(0, 0, 0, 0.6); display: none;
-      justify-content: center; align-items: center; z-index: 1000;
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
     .modal-overlay.active { display: flex; }
-    .modal-content {
-      background-color: white; border-radius: 12px; width: 90%; max-width: 600px;
-      max-height: 90vh; overflow-y: auto; padding: 25px; position: relative;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-    .modal-close {
-      position: absolute; top: 15px; right: 15px; background: none; border: none;
-      font-size: 20px; cursor: pointer; color: var(--text-gray);
-    }
+    .modal-content { background-color: white; border-radius: 12px; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; padding: 25px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .modal-close { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-gray); }
     .modal-header { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 25px; color: var(--brand-black); }
 
     /* Tela Gestão */
     #telaGestao { display: none; flex-direction: column; flex: 1; }
-    .gestao-top { display: flex; align-items: center; margin-bottom: 15px; }
-    .btn-voltar {
-      background: none; border: none; font-size: 14px; font-weight: 600;
-      color: var(--brand-black); cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
-    }
+    .gestao-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+    .btn-voltar { background: none; border: none; font-size: 14px; font-weight: 600; color: var(--brand-black); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
     .torneio-titulo-header { font-size: 20px; font-weight: bold; color: var(--brand-black); margin-bottom: 15px; }
-
-    /* Abas Internas */
-    .abas-internas {
-      display: flex; background: #e5eaf5; border-radius: 8px; padding: 4px; margin-bottom: 20px; gap: 4px;
-      overflow-x: auto;
-    }
-    .aba-btn {
-      flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; min-width: 110px;
-      border: none; background: transparent; border-radius: 6px; cursor: pointer;
-      color: var(--text-gray); display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
+    .abas-internas { display: flex; background: #e5eaf5; border-radius: 8px; padding: 4px; margin-bottom: 20px; gap: 4px; overflow-x: auto; }
+    .aba-btn { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; min-width: 110px; border: none; background: transparent; border-radius: 6px; cursor: pointer; color: var(--text-gray); display: flex; align-items: center; justify-content: center; gap: 6px; }
     .aba-btn.active { background: white; color: var(--brand-black); box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
     .conteudo-aba { display: none; }
     .conteudo-aba.active { display: block; }
 
-    /* Formulários */
+    /* Forms */
     .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
     .form-group label { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-dark); }
     .form-row { display: flex; gap: 15px; }
     .form-row .form-group { flex: 1; }
-    input[type="text"], input[type="number"], select, textarea {
-      width: 100%; padding: 10px 12px; border: 1px solid var(--border-color);
-      border-radius: 6px; font-size: 14px; box-sizing: border-box; background-color: var(--input-bg);
-      font-family: inherit;
-    }
-    
-    .btn-confirmar {
-      background-color: var(--brand-black); color: var(--brand-yellow); border: none;
-      padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px;
-    }
+    input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; box-sizing: border-box; background-color: var(--input-bg); font-family: inherit; }
+    .btn-confirmar { background-color: var(--brand-black); color: var(--brand-yellow); border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
+    .btn-secundario { background-color: var(--brand-yellow); color: var(--brand-black); border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 
-    /* Aba Participantes e Grupos (Estilos mantidos) */
-    .cadastro-jogadores-box { border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 20px; background-color: #fafafa; }
-    .cadastro-header { font-size: 15px; font-weight: bold; margin-bottom: 15px; color: var(--brand-black); text-align: center; }
-    .btn-secundario { background-color: var(--brand-yellow); color: var(--brand-black); border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 250px; }
-    .lista-participantes-card { background: white; border-radius: 8px; padding: 12px 15px; margin-bottom: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500; }
+    /* Grupos & Partidas */
     .btn-sortear-topo { background-color: var(--brand-black); color: var(--brand-yellow); border: none; padding: 8px 15px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-    .grupo-titulo-imagem { font-size: 15px; font-weight: 500; color: #333; margin-bottom: 10px; margin-top: 25px; font-family: inherit; }
+    .grupo-titulo-imagem { font-size: 15px; font-weight: 500; color: #333; margin-bottom: 10px; margin-top: 10px; font-family: inherit; }
     .tabela-grupo-container { background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 25px; }
     .tabela-header { background-color: var(--brand-black); color: var(--brand-yellow); display: grid; grid-template-columns: 50px 1fr 75px 45px 45px 45px; padding: 14px 10px; font-weight: 700; font-size: 12px; text-align: center; align-items: center; }
     .tabela-header > div:nth-child(2) { text-align: left; padding-left: 10px; }
     .tabela-row { display: grid; grid-template-columns: 50px 1fr 75px 45px 45px 45px; padding: 12px 10px; font-size: 14px; align-items: center; text-align: center; color: #333; background-color: #ffffff; border-bottom: 1px solid #f0f0f0; }
-    .tabela-row:last-child { border-bottom: none; }
     .tabela-row.classificado { background-color: #fffae6; }
     .tabela-row > div:nth-child(2) { text-align: left; display: flex; flex-direction: column; gap: 5px; padding-left: 10px; }
-    .tabela-row .posicao { font-weight: 500; font-size: 13px; }
     .partida-card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
-    .dupla-partida { flex: 1; display: flex; flex-direction: column; font-size: 13px; font-weight: 600; color: var(--brand-black); }
     .placar-container { display: flex; align-items: center; gap: 10px; margin: 0 15px; }
     .placar-input { width: 45px !important; height: 40px; text-align: center; font-size: 18px !important; font-weight: bold; border: 2px solid #e5eaf5 !important; border-radius: 8px !important; background-color: #f9f9f9 !important; color: var(--brand-black); padding: 0 !important; }
-    .placar-input:focus { border-color: var(--brand-yellow) !important; outline: none; background-color: white !important; }
     .placar-input::-webkit-outer-spin-button, .placar-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .link-info { color: #4f46e5; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 5px 10px; background: #eef2ff; border-radius: 20px; transition: 0.2s; }
+    .link-info:hover { background: #e0e7ff; }
+
+    /* ======== TELA DE CHAVEAMENTO (BRACKET) ======== */
+    #telaChaveamento { display: none; flex-direction: column; flex: 1; padding-bottom: 50px; }
+    .chaveamento-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .chaveamento-title { font-size: 24px; font-weight: bold; color: #1e3a8a; }
+    .btn-primary-blue { background-color: #1e40af; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
     
-    /* ======== ESTILOS DA ABA CHAVES ======== */
-    .chaves-grid { display: flex; gap: 20px; align-items: flex-start; }
-    .chaves-col-esquerda { flex: 1; display: flex; flex-direction: column; gap: 15px; }
-    .chaves-col-direita { flex: 1.2; display: flex; flex-direction: column; gap: 10px; }
+    .bracket-container { display: flex; gap: 40px; align-items: flex-start; justify-content: flex-start; overflow-x: auto; padding: 10px 0; }
+    .bracket-column { display: flex; flex-direction: column; width: 250px; position: relative; gap: 20px; }
+    .bracket-column.sf { justify-content: space-around; margin-top: 50px; height: calc(100% - 100px); }
+    .bracket-column.final { justify-content: center; margin-top: 130px; }
     
-    .titulo-secao-chave { font-size: 14px; font-weight: bold; color: var(--text-dark); margin-bottom: 5px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+    .fase-badge { background: #1e40af; color: white; padding: 4px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; margin: 0 auto 15px auto; width: fit-content; }
     
-    /* Cards de Jogos (Estrutura) */
-    .jogo-chave-box { background: white; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-    .jogo-chave-header { background: #f9fafb; padding: 8px 15px; font-size: 12px; font-weight: bold; color: var(--text-gray); border-bottom: 1px solid var(--border-color); }
-    .jogo-chave-linhas { display: flex; flex-direction: column; }
-    .linha-chave { display: flex; padding: 12px 15px; align-items: center; border-bottom: 1px solid #f0f0f0; gap: 10px; }
-    .linha-chave:last-child { border-bottom: none; }
-    .chave-pos { width: 15px; font-size: 12px; color: var(--text-gray); text-align: right; }
-    .chave-seta { color: #d1d5db; font-size: 10px; }
-    .seed-badge { background: #e0e7ff; color: #3730a3; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-    .seed-nome { font-size: 13px; font-weight: 600; color: var(--text-dark); flex: 1; }
-    
-    /* Cards de Seeds */
-    .seed-info-card { background: white; border-radius: 8px; border: 1px solid var(--border-color); padding: 12px 15px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-    .seed-info-top { display: flex; align-items: center; gap: 10px; }
-    .seed-info-nome { font-size: 14px; font-weight: bold; color: var(--brand-black); }
-    .seed-info-detalhes { font-size: 11px; color: var(--text-gray); display: flex; gap: 10px; align-items: center; }
-    
-    .info-rodape-chaves { background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 11px; color: var(--text-gray); margin-top: 10px; line-height: 1.4; }
+    .match-box { background: white; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
+    .match-header { background: #f9fafb; padding: 6px 12px; font-size: 10px; color: var(--text-gray); border-bottom: 1px solid #d1d5db; }
+    .match-team { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 600; }
+    .match-team:last-child { border-bottom: none; }
+    .team-name { color: #111827; flex: 1; }
+    .team-score { width: 30px; height: 24px; border: 1px solid #d1d5db; border-radius: 4px; text-align: center; font-size: 13px; font-weight: bold; padding: 0; outline: none; }
+    .team-score:focus { border-color: #1e40af; }
+    .score-red { color: #ef4444; }
+    .score-green { color: #10b981; }
+
+    /* Conectores Visuais (Linhas) */
+    .connector-right { position: absolute; right: -20px; top: 50%; width: 20px; height: 2px; background: #93c5fd; }
+    .connector-bracket { position: absolute; left: -20px; width: 20px; border: 2px solid #93c5fd; border-left: none; }
 
     .bottom-nav-container { padding: 10px 20px 20px; position: fixed; bottom: 0; width: 100%; box-sizing: border-box; background: var(--bg-color); }
     .bottom-nav { display: flex; justify-content: space-around; background-color: white; padding: 10px 0; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
     .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 12px; color: var(--text-gray); text-decoration: none; flex: 1; }
     .bottom-nav-item.active .icon-bg { background-color: var(--brand-yellow); color: var(--brand-black); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; }
-    .icon-bg { width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; }
+
+    /* Modal Chaves Interno (Reaproveitado) */
+    .chaves-grid { display: flex; gap: 20px; align-items: flex-start; }
+    .chaves-col-esquerda { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .chaves-col-direita { flex: 1.2; display: flex; flex-direction: column; gap: 10px; }
+    .titulo-secao-chave { font-size: 14px; font-weight: bold; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+    .jogo-chave-box { background: white; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; }
+    .jogo-chave-header { background: #f9fafb; padding: 8px; font-size: 11px; font-weight: bold; color: var(--text-gray); border-bottom: 1px solid var(--border-color); }
+    .linha-chave { display: flex; padding: 8px 10px; align-items: center; border-bottom: 1px solid #f0f0f0; gap: 8px; }
+    .chave-pos { width: 15px; font-size: 11px; color: var(--text-gray); text-align: right; }
+    .seed-badge { background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+    .seed-nome { font-size: 12px; font-weight: 600; color: var(--text-dark); flex: 1; }
+    .seed-info-card { background: white; border-radius: 8px; border: 1px solid var(--border-color); padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .seed-info-top { display: flex; align-items: center; gap: 8px; }
+    .seed-info-nome { font-size: 13px; font-weight: bold; color: var(--brand-black); }
+    .seed-info-detalhes { font-size: 10px; color: var(--text-gray); display: flex; gap: 10px; align-items: center; }
 
     @media (max-width: 768px) { 
         .chaves-grid { flex-direction: column; } 
         .form-row { flex-direction: column; gap: 0; } 
         .tabela-header, .tabela-row { font-size: 11px; grid-template-columns: 35px 1fr 60px 35px 35px 35px; padding: 10px 5px; }
-        .tabela-row { font-size: 13px; }
-        .partida-card { padding: 12px 10px; }
         .placar-input { width: 35px !important; height: 35px; font-size: 16px !important; }
-        .placar-container { gap: 6px; margin: 0 8px; }
     }
   </style>
 </head>
@@ -256,12 +148,15 @@
   </div>
 
   <div class="content" id="conteudoPrincipal">
+    
+    <!-- TELA LISTA DE TORNEIOS -->
     <div id="telaLista">
       <button class="btn-criar" onclick="abrirModal()"><i class="fa-solid fa-plus"></i> Criar Torneio</button>
       <div class="toggle-group"><div class="toggle-btn active">Ativos</div><div class="toggle-btn">Arquivados</div></div>
       <div id="containerTorneios"></div>
     </div>
 
+    <!-- TELA GESTÃO DO TORNEIO (Abas) -->
     <div id="telaGestao">
       <div class="gestao-top"><button class="btn-voltar" onclick="voltarParaLista()"><i class="fa-solid fa-chevron-left"></i> Voltar</button></div>
       <div class="torneio-titulo-header" id="tituloTorneioHeader">Nome do Torneio</div>
@@ -270,9 +165,9 @@
         <button class="aba-btn active" onclick="mudarAba('participantes')"><i class="fa-solid fa-users"></i> Participantes</button>
         <button class="aba-btn" onclick="mudarAba('grupos')"><i class="fa-solid fa-layer-group"></i> Grupos</button>
         <button class="aba-btn" onclick="mudarAba('partidas')"><i class="fa-solid fa-fire"></i> Partidas</button>
-        <button class="aba-btn" onclick="mudarAba('chaves')"><i class="fa-solid fa-sitemap"></i> Chaves</button>
       </div>
 
+      <!-- Participantes -->
       <div id="abaParticipantes" class="conteudo-aba active">
         <div class="cadastro-jogadores-box">
             <div class="cadastro-header">Cadastre os jogadores</div>
@@ -281,7 +176,6 @@
             <div style="text-align: center; margin-bottom: 25px;"><button type="button" class="btn-secundario" onclick="adicionarDuplaIndividual()"><i class="fa-solid fa-user-plus"></i> Adicionar Dupla</button></div>
             <div class="form-group">
                 <textarea id="textareaLista" rows="4" placeholder="Lista de duplas (uma por linha)&#10;Ex:&#10;Vanio e Giselly&#10;Joao x Maria"></textarea>
-                <span style="display:block; text-align:center; font-size:11px; color:var(--text-gray); margin-top:6px;">(Adicione uma dupla por linha, separe o nome dos jogadores por "e", "-" ou "x")</span>
             </div>
             <div style="text-align: center;"><button type="button" class="btn-secundario" onclick="adicionarDuplasEmMassa()"><i class="fa-solid fa-list-check"></i> Adicionar Lista</button></div>
         </div>
@@ -289,24 +183,44 @@
         <div id="listaParticipantesContainer"></div>
       </div>
 
+      <!-- Grupos -->
       <div id="abaGrupos" class="conteudo-aba">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-          <div style="font-weight: bold;">Divisão de Grupos</div>
-          <button class="btn-sortear-topo" onclick="sortearGrupos()"><i class="fa-solid fa-shuffle"></i> Sortear Grupos</button>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+          <div>
+              <button class="btn-sortear-topo" onclick="sortearGrupos()"><i class="fa-solid fa-shuffle"></i> Sortear Grupos</button>
+          </div>
+          <!-- NOVOS BOTÕES DE INFORMAÇÃO IGUAIS A IMAGEM -->
+          <div style="display: flex; gap: 10px;">
+            <div class="link-info" onclick="abrirModalComoMonta()"><i class="fa-solid fa-circle-info"></i> Como a chave será montada</div>
+            <div class="link-info" onclick="abrirModalCriterios()"><i class="fa-solid fa-circle-info"></i> Critérios de Desempate</div>
+          </div>
         </div>
         <div id="listaGruposContainer"></div>
       </div>
 
+      <!-- Partidas -->
       <div id="abaPartidas" class="conteudo-aba">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+           <div style="font-weight: bold; font-size: 16px;">Partidas da Fase de Grupos</div>
+           <!-- NOVO BOTÃO VER CHAVEAMENTO -->
+           <button class="btn-secundario" style="width: auto;" onclick="abrirChaveamento()"><i class="fa-solid fa-sitemap"></i> Ver chaveamento</button>
+        </div>
         <div id="listaPartidasContainer"></div>
       </div>
-      
-      <!-- NOVA ABA CHAVES -->
-      <div id="abaChaves" class="conteudo-aba">
-        <div id="conteudoChavesContainer"></div>
-      </div>
-
     </div>
+
+    <!-- NOVA TELA: CHAVEAMENTO (BRACKET) -->
+    <div id="telaChaveamento">
+        <div class="chaveamento-header">
+            <div class="chaveamento-title">Chaves do Torneio</div>
+            <button class="btn-primary-blue" onclick="fecharChaveamento()"><i class="fa-solid fa-users-viewfinder"></i> Ver Fase de Grupos</button>
+        </div>
+        
+        <div id="containerBracketDraw" style="background: white; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 20px;">
+            <!-- O JS vai desenhar o mata-mata aqui -->
+        </div>
+    </div>
+
   </div>
 
   <div class="bottom-nav-container">
@@ -318,36 +232,46 @@
     </div>
   </div>
 
-  <!-- Modal -->
+  <!-- Modal Criar -->
   <div class="modal-overlay" id="modalEvento">
     <div class="modal-content">
       <button class="modal-close" type="button" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
       <div class="modal-header">Criar Torneio</div>
       <form id="formCriarTorneio">
+        <div class="form-group"><label>Nome do Torneio</label><input type="text" id="inputNomeTorneio" required></div>
         <div class="form-row">
-          <div class="form-group"><label>Arena</label><select><option>Arena Vitale</option></select></div>
-          <div class="form-group"><label>Tipo de Torneio</label><select><option value="super">Super</option></select></div>
-        </div>
-        <div class="form-group">
-          <label>Nome do Torneio</label>
-          <input type="text" id="inputNomeTorneio" placeholder="Ex: Feminina Iniciante" required>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Número de duplas</label>
-            <input type="number" id="inputNumDuplas" placeholder="Ex: 10" min="1" required>
-          </div>
-          <div class="form-group">
-            <label>Quantidade de grupos</label>
-            <input type="number" id="inputNumGrupos" placeholder="Ex: 4" value="4" min="1" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Critérios de classificação</label>
-          <select><option>Vitórias &rarr; Saldo de Games &rarr; Games Feitos &rarr; Sorteio</option></select>
+          <div class="form-group"><label>Qtd. de grupos</label><input type="number" id="inputNumGrupos" value="4" min="1" required></div>
         </div>
         <button type="submit" class="btn-confirmar">Confirmar</button>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal: Como a chave será montada -->
+  <div class="modal-overlay" id="modalComoMonta">
+    <div class="modal-content" style="max-width: 800px;">
+      <button class="modal-close" type="button" onclick="fecharModalInfo('modalComoMonta')"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header" style="margin-bottom: 10px;">Como a chave será montada</div>
+      <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px; text-align: center;">Simulação baseada na classificação atual dos grupos.</p>
+      <div id="conteudoComoMonta"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Critérios de Desempate -->
+  <div class="modal-overlay" id="modalCriterios">
+    <div class="modal-content">
+      <button class="modal-close" type="button" onclick="fecharModalInfo('modalCriterios')"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">Critérios de Desempate</div>
+      <div style="font-size: 14px; color: #333; line-height: 1.6;">
+          <p>A classificação dentro dos grupos segue estritamente a seguinte ordem de desempate:</p>
+          <ol style="margin-left: 15px; padding-left: 15px;">
+              <li><b>Maior número de Vitórias</b></li>
+              <li><b>Maior Saldo de Games (SG)</b>: diferença entre games feitos e sofridos.</li>
+              <li><b>Confronto Direto</b>: caso duas duplas empatem nos itens acima, passa quem venceu o jogo entre elas.</li>
+              <li><b>Maior número de Games Feitos (GF)</b></li>
+              <li><b>Sorteio</b> (ordem de inscrição/sistema)</li>
+          </ol>
+      </div>
     </div>
   </div>
 
@@ -359,28 +283,42 @@
     window.onload = function() { renderizarListaTorneios(); };
 
     function quebrarNomeDupla(dupla) {
-        if (!dupla) return ['', ''];
+        if (!dupla || dupla === 'A definir') return ['A definir', ''];
         let nomesArray = dupla.split(/ e | x | - | & /i);
         let jogador1 = nomesArray[0] ? nomesArray[0].trim() : dupla;
         let jogador2 = nomesArray[1] ? nomesArray[1].trim() : '';
         return [jogador1, jogador2];
     }
     function formatarDuplaLinha(dupla) {
-        if (!dupla) return 'A definir';
+        if (!dupla || dupla === 'A definir') return 'A definir';
         let [j1, j2] = quebrarNomeDupla(dupla);
         return j2 ? `${j1} / ${j2}` : j1;
     }
 
+    // Controle Básico de UI
     function abrirModal() { document.getElementById('modalEvento').classList.add('active'); }
     function fecharModal() { document.getElementById('modalEvento').classList.remove('active'); }
+    function abrirModalComoMonta() { renderizarInfoChaveModal(); document.getElementById('modalComoMonta').classList.add('active'); }
+    function abrirModalCriterios() { document.getElementById('modalCriterios').classList.add('active'); }
+    function fecharModalInfo(id) { document.getElementById(id).classList.remove('active'); }
+    
+    function abrirChaveamento() {
+        document.getElementById('telaGestao').style.display = 'none';
+        document.getElementById('telaChaveamento').style.display = 'flex';
+        renderizarBracketVisual();
+    }
+    function fecharChaveamento() {
+        document.getElementById('telaChaveamento').style.display = 'none';
+        document.getElementById('telaGestao').style.display = 'flex';
+        atualizarTelaGrupos(); // Força update para puxar os dados atualizados
+    }
 
     document.getElementById('formCriarTorneio').addEventListener('submit', function(e) {
       e.preventDefault();
       const novoTorneio = {
-        id: Date.now(),
-        nome: document.getElementById('inputNomeTorneio').value,
+        id: Date.now(), nome: document.getElementById('inputNomeTorneio').value,
         numGrupos: parseInt(document.getElementById('inputNumGrupos').value) || 1,
-        participantes: [], gruposSorteados: [], partidas: []
+        participantes: [], gruposSorteados: [], partidas: [], bracket: {}
       };
       torneios.push(novoTorneio); salvarDados(); fecharModal(); this.reset();
       renderizarListaTorneios(); abrirGestaoTorneio(novoTorneio.id);
@@ -395,37 +333,24 @@
 
     function renderizarListaTorneios() {
       const container = document.getElementById('containerTorneios');
-      if (torneios.length === 0) {
-        container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-trophy"></i><h3>Nenhum torneio cadastrado</h3></div>`;
-        return;
-      }
-      container.innerHTML = torneios.map(t => `
-        <div class="torneio-card" onclick="abrirGestaoTorneio(${t.id})">
-          <div><div style="font-weight: bold; font-size: 16px;">${t.nome}</div><div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">${t.participantes.length} duplas • ${t.numGrupos} grupos</div></div>
-          <div style="display: flex; align-items: center; gap: 15px;"><button class="btn-apagar-torneio" onclick="apagarTorneio(event, ${t.id})"><i class="fa-solid fa-trash"></i></button><i class="fa-solid fa-chevron-right" style="color: var(--text-gray);"></i></div>
-        </div>`).join('');
+      if (torneios.length === 0) { container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-trophy"></i><h3>Nenhum torneio</h3></div>`; return; }
+      container.innerHTML = torneios.map(t => `<div class="torneio-card" onclick="abrirGestaoTorneio(${t.id})"><div><div style="font-weight: bold; font-size: 16px;">${t.nome}</div><div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">${t.participantes.length} duplas • ${t.numGrupos} grupos</div></div><div style="display: flex; align-items: center; gap: 15px;"><button class="btn-apagar-torneio" onclick="apagarTorneio(event, ${t.id})"><i class="fa-solid fa-trash"></i></button><i class="fa-solid fa-chevron-right" style="color: var(--text-gray);"></i></div></div>`).join('');
     }
 
     function abrirGestaoTorneio(id) {
       torneioAtual = torneios.find(t => t.id === id);
-      document.getElementById('telaLista').style.display = 'none'; document.getElementById('telaGestao').style.display = 'flex';
+      if(!torneioAtual.bracket) torneioAtual.bracket = {}; // Retrocompatibilidade
+      document.getElementById('telaLista').style.display = 'none'; document.getElementById('telaGestao').style.display = 'flex'; document.getElementById('telaChaveamento').style.display = 'none';
       document.getElementById('tituloTorneioHeader').innerText = torneioAtual.nome;
-      atualizarTelaParticipantes(); atualizarTelaGrupos(); atualizarTelaPartidas(); atualizarTelaChaves();
+      atualizarTelaParticipantes(); atualizarTelaGrupos(); atualizarTelaPartidas();
       mudarAba('participantes');
     }
 
-    function voltarParaLista() {
-      document.getElementById('telaGestao').style.display = 'none'; document.getElementById('telaLista').style.display = 'block';
-      renderizarListaTorneios();
-    }
-
+    function voltarParaLista() { document.getElementById('telaGestao').style.display = 'none'; document.getElementById('telaLista').style.display = 'block'; renderizarListaTorneios(); }
     function mudarAba(aba) {
-      document.querySelectorAll('.aba-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.conteudo-aba').forEach(cont => cont.classList.remove('active'));
-      const abasMap = { 'participantes': 0, 'grupos': 1, 'partidas': 2, 'chaves': 3 };
-      document.querySelectorAll('.aba-btn')[abasMap[aba]].classList.add('active');
-      const contMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas', 'chaves': 'abaChaves' };
-      document.getElementById(contMap[aba]).classList.add('active');
+      document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.conteudo-aba').forEach(c => c.classList.remove('active'));
+      const aMap = { 'participantes': 0, 'grupos': 1, 'partidas': 2 }; document.querySelectorAll('.aba-btn')[aMap[aba]].classList.add('active');
+      const cMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas' }; document.getElementById(cMap[aba]).classList.add('active');
     }
 
     function adicionarDuplaIndividual() {
@@ -434,7 +359,6 @@
       torneioAtual.participantes.push(`${j1} & ${j2}`); salvarDados(); 
       document.getElementById('jogador1').value = ''; document.getElementById('jogador2').value = ''; atualizarTelaParticipantes();
     }
-
     function adicionarDuplasEmMassa() {
       const texto = document.getElementById('textareaLista').value.trim();
       if (!texto) return alert('Insira a lista.');
@@ -443,31 +367,27 @@
     }
 
     function atualizarTelaParticipantes() {
-      const container = document.getElementById('listaParticipantesContainer');
-      document.getElementById('contadorParticipantes').innerText = torneioAtual.participantes.length;
+      const container = document.getElementById('listaParticipantesContainer'); document.getElementById('contadorParticipantes').innerText = torneioAtual.participantes.length;
       if (torneioAtual.participantes.length === 0) { container.innerHTML = `<div style="text-align:center; color:gray; padding:20px;">Nenhuma dupla cadastrada.</div>`; return; }
       container.innerHTML = torneioAtual.participantes.map((p, i) => `<div class="lista-participantes-card"><span><b>#${i + 1}</b> ${p}</span><button onclick="removerParticipante(${i})" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></div>`).join('');
     }
-
     function removerParticipante(index) { torneioAtual.participantes.splice(index, 1); salvarDados(); atualizarTelaParticipantes(); }
 
     function sortearGrupos() {
-      if (torneioAtual.participantes.length === 0) return alert('Cadastre duplas antes de sortear.');
+      if (torneioAtual.participantes.length === 0) return alert('Cadastre duplas.');
       const num = torneioAtual.numGrupos;
       let embaralhados = [...torneioAtual.participantes].sort(() => Math.random() - 0.5);
       let grupos = Array.from({ length: num }, () => []);
       embaralhados.forEach((p, i) => grupos[i % num].push(p));
-      torneioAtual.gruposSorteados = grupos; salvarDados(); gerarPartidas(); atualizarTelaGrupos(); atualizarTelaChaves();
+      torneioAtual.gruposSorteados = grupos; salvarDados(); gerarPartidas(); atualizarTelaGrupos();
     }
 
-    // Função central que calcula a tabela de todos os grupos
     function obterClassificacaoGrupos() {
         let gruposCalculados = [];
         if(!torneioAtual.gruposSorteados) return gruposCalculados;
 
         torneioAtual.gruposSorteados.forEach((grupo, gIdx) => {
             let stats = grupo.map(dupla => ({ nome: dupla, vitorias: 0, gf: 0, gc: 0, sg: 0, grupoIdx: gIdx }));
-
             if (torneioAtual.partidas && torneioAtual.partidas[gIdx]) {
                 torneioAtual.partidas[gIdx].confrontos.forEach(partida => {
                     if (partida.placar1 !== '' && partida.placar2 !== '') {
@@ -480,7 +400,6 @@
                     }
                 });
             }
-
             stats.forEach(s => s.sg = s.gf - s.gc);
             stats.sort((a, b) => {
                 if (b.vitorias !== a.vitorias) return b.vitorias - a.vitorias; 
@@ -501,9 +420,7 @@
 
     function atualizarTelaGrupos() {
       const container = document.getElementById('listaGruposContainer');
-      if (!torneioAtual.gruposSorteados || torneioAtual.gruposSorteados.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:30px;">Clique em "Sortear Grupos" acima.</div>`; return;
-      }
+      if (!torneioAtual.gruposSorteados || torneioAtual.gruposSorteados.length === 0) { container.innerHTML = `<div style="text-align:center; padding:30px;">Clique em "Sortear Grupos" acima.</div>`; return; }
       
       let gruposData = obterClassificacaoGrupos();
       container.innerHTML = gruposData.map((stats, gIdx) => `
@@ -535,14 +452,13 @@
     function salvarPlacar(gIdx, pIdx, equipe, valor) {
         if(equipe === 1) torneioAtual.partidas[gIdx].confrontos[pIdx].placar1 = valor;
         if(equipe === 2) torneioAtual.partidas[gIdx].confrontos[pIdx].placar2 = valor;
-        salvarDados(); atualizarTelaGrupos(); atualizarTelaChaves();
+        salvarDados(); atualizarTelaGrupos(); 
     }
 
     function atualizarTelaPartidas() {
       const container = document.getElementById('listaPartidasContainer');
-      if (!torneioAtual.partidas || torneioAtual.partidas.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;"><i class="fa-solid fa-fire" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i><div>As partidas serão geradas após a definição dos grupos.</div></div>`; return;
-      }
+      if (!torneioAtual.partidas || torneioAtual.partidas.length === 0) { container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;"><i class="fa-solid fa-fire" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i><div>Sorteie os grupos primeiro.</div></div>`; return; }
+      
       let html = '';
       torneioAtual.partidas.forEach((grupoPartida, gIdx) => {
         html += `<div class="grupo-titulo-imagem">Jogos - Grupo ${grupoPartida.grupoIndex + 1}</div>`;
@@ -557,34 +473,20 @@
       container.innerHTML = html;
     }
 
-    // NOVA FUNÇÃO: Lógica do Modelo Cearense
-    function atualizarTelaChaves() {
-        const container = document.getElementById('conteudoChavesContainer');
-        if (!torneioAtual.gruposSorteados || torneioAtual.gruposSorteados.length === 0) {
-            container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;"><i class="fa-solid fa-sitemap" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i><div>Sorteie os grupos para gerar a chave.</div></div>`; return;
-        }
-        
+    // LÓGICA DE SEEDS E CHAVEAMENTO
+    function calcularSeeds() {
         let gruposData = obterClassificacaoGrupos();
+        if(gruposData.length !== 4) return null; // Regra baseada em 4 grupos
         
-        // Verifica se tem 4 grupos (requisito do modelo cearense para 8 vagas)
-        if(gruposData.length !== 4) {
-             container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;"><i class="fa-solid fa-circle-exclamation" style="font-size: 32px; margin-bottom: 10px; color: #ef4444;"></i><div>O modelo oficial Cearense funciona especificamente com <b>4 grupos</b>. Você criou o torneio com ${gruposData.length} grupo(s). Altere as configurações ou a quantidade de participantes.</div></div>`; return;
-        }
-
-        let campeoes = [];
-        let vices = [];
-
-        // Extrai 1º e 2º de cada grupo
+        let campeoes = []; let vices = [];
         gruposData.forEach((stats, idx) => {
             if(stats.length >= 1) campeoes.push({...stats[0], tipo: 'Campeão', origem: idx + 1});
             if(stats.length >= 2) vices.push({...stats[1], tipo: 'Vice', origem: idx + 1});
         });
 
-        // Ordena Campeões (Vitórias > SG > GF)
         campeoes.sort((a, b) => b.vitorias - a.vitorias || b.sg - a.sg || b.gf - a.gf);
         campeoes.forEach((c, i) => c.seed = i + 1);
 
-        // A Regra dos Vices: a ordem dos vices segue a posição do campeão do seu grupo.
         vices.forEach(v => {
             let meuCampeao = campeoes.find(c => c.origem === v.origem);
             v.forcaDoCampeao = meuCampeao ? meuCampeao.seed : 99;
@@ -592,95 +494,145 @@
         vices.sort((a, b) => a.forcaDoCampeao - b.forcaDoCampeao);
         vices.forEach((v, i) => v.seed = i + 5);
 
-        let todosSeeds = [...campeoes, ...vices];
+        return [...campeoes, ...vices];
+    }
+
+    function renderizarInfoChaveModal() {
+        const container = document.getElementById('conteudoComoMonta');
+        let todosSeeds = calcularSeeds();
+        if (!todosSeeds) { container.innerHTML = `<div style="text-align:center; padding: 20px;">O modelo oficial funciona especificamente com 4 grupos.</div>`; return; }
         
-        // Helper para pegar nome pelo seed
-        const getSeed = (num) => {
-            let s = todosSeeds.find(x => x.seed === num);
-            return s ? formatarDuplaLinha(s.nome) : 'A definir';
+        const getS = (n) => { let s = todosSeeds.find(x => x.seed === n); return s ? formatarDuplaLinha(s.nome) : 'A definir'; };
+        const renderSCard = (s) => {
+            if(!s) return '';
+            let desc = s.seed <= 4 ? `${s.seed}º Melhor Campeão de Grupo` : `Vice do grupo do ${s.forcaDoCampeao}º melhor campeão`;
+            return `<div class="seed-info-card"><div class="seed-info-top"><span class="seed-badge">Seed ${s.seed}</span><span class="seed-info-nome">${formatarDuplaLinha(s.nome)}</span></div><div class="seed-info-detalhes"><span>${desc} &bull; Grupo ${s.origem}</span><span style="margin-left: auto;"><b>V:</b> ${s.vitorias} | <b>SG:</b> ${s.sg}</span></div></div>`;
         };
 
-        const renderSeedCard = (seedObj) => {
-            if(!seedObj) return '';
-            let descricao = seedObj.seed <= 4 
-                ? `${seedObj.seed}º Melhor Campeão de Grupo` 
-                : `Vice do grupo do ${seedObj.forcaDoCampeao}º melhor campeão`;
-            
+        container.innerHTML = `
+        <div class="chaves-grid">
+            <div class="chaves-col-esquerda">
+                <div class="titulo-secao-chave">Estrutura oficial — Campeonato Cearense</div>
+                <div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1 da próxima fase</div>
+                    <div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">Seed 1</span><span class="seed-nome">${getS(1)}</span></div>
+                    <div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">Seed 7</span><span class="seed-nome">${getS(7)}</span></div>
+                </div>
+                <div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 2 da próxima fase</div>
+                    <div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">Seed 6</span><span class="seed-nome">${getS(6)}</span></div>
+                    <div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">Seed 4</span><span class="seed-nome">${getS(4)}</span></div>
+                </div>
+                <div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 3 da próxima fase</div>
+                    <div class="linha-chave"><div class="chave-pos">5</div><span class="seed-badge">Seed 3</span><span class="seed-nome">${getS(3)}</span></div>
+                    <div class="linha-chave"><div class="chave-pos">6</div><span class="seed-badge">Seed 5</span><span class="seed-nome">${getS(5)}</span></div>
+                </div>
+                <div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 4 da próxima fase</div>
+                    <div class="linha-chave"><div class="chave-pos">7</div><span class="seed-badge">Seed 8</span><span class="seed-nome">${getS(8)}</span></div>
+                    <div class="linha-chave"><div class="chave-pos">8</div><span class="seed-badge">Seed 2</span><span class="seed-nome">${getS(2)}</span></div>
+                </div>
+            </div>
+            <div class="chaves-col-direita">
+                <div class="titulo-secao-chave">Seeds atuais</div>
+                ${todosSeeds.sort((a,b)=> a.seed - b.seed).map(s => renderSCard(s)).join('')}
+            </div>
+        </div>`;
+    }
+
+    // Função de Salvar Placar do MataMata
+    function salvarPlacarMataMata(fase, matchIdx, equipa, valor) {
+        if(!torneioAtual.bracket) torneioAtual.bracket = {};
+        if(!torneioAtual.bracket[fase]) torneioAtual.bracket[fase] = {};
+        if(!torneioAtual.bracket[fase][matchIdx]) torneioAtual.bracket[fase][matchIdx] = {p1: '', p2: ''};
+        
+        if(equipa === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
+        if(equipa === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
+        salvarDados();
+        renderizarBracketVisual(); // Re-renderiza para avançar o vencedor
+    }
+
+    // Desenha o Bracket estilo Imagem
+    function renderizarBracketVisual() {
+        const container = document.getElementById('containerBracketDraw');
+        let seeds = calcularSeeds();
+        if (!seeds) { container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;">Você precisa de 4 grupos cadastrados e sorteados.</div>`; return; }
+
+        const getS = (n) => { let s = seeds.find(x => x.seed === n); return s ? s.nome : 'A definir'; };
+        
+        // Estrutura Base
+        let qfMatches = [ {t1: getS(1), t2: getS(7)}, {t1: getS(6), t2: getS(4)}, {t1: getS(3), t2: getS(5)}, {t1: getS(8), t2: getS(2)} ];
+        
+        // Resgata Placares ou inicializa
+        let b = torneioAtual.bracket || {};
+        let qf_scores = b.qf || {}; let sf_scores = b.sf || {}; let final_scores = b.final || {};
+
+        // Helper para determinar vencedor
+        const getVencedor = (t1, t2, score1, score2) => {
+            if(score1 === '' || score2 === '') return 'A definir';
+            let s1 = parseInt(score1); let s2 = parseInt(score2);
+            if(s1 > s2) return t1;
+            if(s2 > s1) return t2;
+            return 'A definir';
+        };
+
+        // Calcula Semis
+        let sfMatches = [
+            {t1: getVencedor(qfMatches[0].t1, qfMatches[0].t2, qf_scores[0]?.p1, qf_scores[0]?.p2), t2: getVencedor(qfMatches[1].t1, qfMatches[1].t2, qf_scores[1]?.p1, qf_scores[1]?.p2)},
+            {t1: getVencedor(qfMatches[2].t1, qfMatches[2].t2, qf_scores[2]?.p1, qf_scores[2]?.p2), t2: getVencedor(qfMatches[3].t1, qfMatches[3].t2, qf_scores[3]?.p1, qf_scores[3]?.p2)}
+        ];
+
+        // Calcula Final
+        let finalMatch = {
+            t1: getVencedor(sfMatches[0].t1, sfMatches[0].t2, sf_scores[0]?.p1, sf_scores[0]?.p2),
+            t2: getVencedor(sfMatches[1].t1, sfMatches[1].t2, sf_scores[1]?.p1, sf_scores[1]?.p2)
+        };
+
+        // Função geradora de box
+        const buildMatchBox = (faseStr, title, team1, team2, s1, s2, faseId, matchIdx) => {
+            let color1 = '', color2 = '';
+            if(s1 !== '' && s2 !== '') {
+                if(parseInt(s1) > parseInt(s2)) { color1 = 'score-green'; color2 = 'score-red'; }
+                else if(parseInt(s2) > parseInt(s1)) { color2 = 'score-green'; color1 = 'score-red'; }
+            }
             return `
-            <div class="seed-info-card">
-                <div class="seed-info-top">
-                    <span class="seed-badge">Seed ${seedObj.seed}</span>
-                    <span class="seed-info-nome">${formatarDuplaLinha(seedObj.nome)}</span>
+            <div class="match-box">
+                <div class="match-header">${title}</div>
+                <div class="match-team">
+                    <span class="team-name ${color1}">${formatarDuplaLinha(team1)}</span>
+                    <input type="number" class="team-score ${color1}" value="${s1||''}" oninput="salvarPlacarMataMata('${faseId}', ${matchIdx}, 1, this.value)">
                 </div>
-                <div class="seed-info-detalhes">
-                    <span>${descricao} &bull; Grupo ${seedObj.origem}</span>
-                    <span style="margin-left: auto;"><b>V:</b> ${seedObj.vitorias} | <b>SG:</b> ${seedObj.sg}</span>
+                <div class="match-team">
+                    <span class="team-name ${color2}">${formatarDuplaLinha(team2)}</span>
+                    <input type="number" class="team-score ${color2}" value="${s2||''}" oninput="salvarPlacarMataMata('${faseId}', ${matchIdx}, 2, this.value)">
                 </div>
+                <!-- Simulação de conectores -->
+                ${faseId !== 'final' ? `<div class="connector-right"></div>` : ''}
             </div>`;
         };
 
-        let html = `
-        <div style="background: white; border-radius: 8px; border: 1px solid var(--border-color); padding: 15px; margin-bottom: 20px; margin-top: 15px; display: flex; gap: 15px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-            <div style="flex: 1; text-align: center; border-right: 1px solid var(--border-color);"><b>4</b> Grupos</div>
-            <div style="flex: 1; text-align: center; border-right: 1px solid var(--border-color);"><b>2</b> Classificam/grupo</div>
-            <div style="flex: 1; text-align: center;"><b>8</b> Classificadas</div>
-        </div>
-
-        <div class="chaves-grid">
-            <!-- Esquerda: Confrontos -->
-            <div class="chaves-col-esquerda">
-                <div class="titulo-secao-chave">Estrutura oficial — Campeonato Cearense</div>
-                
-                <!-- Jogo 1 -->
-                <div class="jogo-chave-box">
-                    <div class="jogo-chave-header">Jogo 1 da próxima fase</div>
-                    <div class="jogo-chave-linhas">
-                        <div class="linha-chave"><div class="chave-pos">1</div><i class="fa-solid fa-arrow-right chave-seta"></i><span class="seed-badge">Seed 1</span><span class="seed-nome">${getSeed(1)}</span></div>
-                        <div class="linha-chave"><div class="chave-pos">2</div><i class="fa-solid fa-arrow-right chave-seta"></i><span class="seed-badge">Seed 7</span><span class="seed-nome">${getSeed(7)}</span></div>
-                    </div>
+        container.innerHTML = `
+            <div class="bracket-container">
+                <!-- COLUNA 1: QUARTAS -->
+                <div class="bracket-column">
+                    <div class="fase-badge">Quartas</div>
+                    ${buildMatchBox('Quartas', 'Quartas • P1', qfMatches[0].t1, qfMatches[0].t2, qf_scores[0]?.p1, qf_scores[0]?.p2, 'qf', 0)}
+                    ${buildMatchBox('Quartas', 'Quartas • P2', qfMatches[1].t1, qfMatches[1].t2, qf_scores[1]?.p1, qf_scores[1]?.p2, 'qf', 1)}
+                    ${buildMatchBox('Quartas', 'Quartas • P3', qfMatches[2].t1, qfMatches[2].t2, qf_scores[2]?.p1, qf_scores[2]?.p2, 'qf', 2)}
+                    ${buildMatchBox('Quartas', 'Quartas • P4', qfMatches[3].t1, qfMatches[3].t2, qf_scores[3]?.p1, qf_scores[3]?.p2, 'qf', 3)}
                 </div>
 
-                <!-- Jogo 2 -->
-                <div class="jogo-chave-box">
-                    <div class="jogo-chave-header">Jogo 2 da próxima fase</div>
-                    <div class="jogo-chave-linhas">
-                        <div class="linha-chave"><div class="chave-pos">3</div><i class="fa-solid fa-arrow-right chave-seta"></i><span class="seed-badge">Seed 6</span><span class="seed-nome">${getSeed(6)}</span></div>
-                        <div class="linha-chave"><div class="chave-pos">4</div><i class="fa-solid fa-arrow-right chave-seta"></i><span class="seed-badge">Seed 4</span><span class="seed-nome">${getSeed(4)}</span></div>
-                    </div>
+                <!-- COLUNA 2: SEMIFINAL -->
+                <div class="bracket-column sf">
+                    <div class="fase-badge" style="position: absolute; top: -35px; left: 50%; transform: translateX(-50%);">Semifinal</div>
+                    ${buildMatchBox('Semifinal', 'Semifinal • P1', sfMatches[0].t1, sfMatches[0].t2, sf_scores[0]?.p1, sf_scores[0]?.p2, 'sf', 0)}
+                    ${buildMatchBox('Semifinal', 'Semifinal • P2', sfMatches[1].t1, sfMatches[1].t2, sf_scores[1]?.p1, sf_scores[1]?.p2, 'sf', 1)}
                 </div>
 
-                <!-- Jogo 3 -->
-                <div class="jogo-chave-box">
-                    <div class="jogo-chave-header">Jogo 3 da próxima fase</div>
-                    <div class="jogo-chave-linhas">
-                        <div class="linha-chave"><div class="chave-pos">5</div><i class="fa-solid fa-arrow-right chave-seta"></i><span class="seed-badge">Seed 3</span><span class="seed-nome">${getSeed(3)}</span></div>
-                        <div class="linha-chave"><div class="chave-pos">6</div><i class="fa-solid fa-arrow-right chave-seta"></i><span class="seed-badge">Seed 5</span><span class="seed-nome">${getSeed(5)}</span></div>
-                    </div>
-                </div>
-
-                <!-- Jogo 4 -->
-                <div class="jogo-chave-box">
-                    <div class="jogo-chave-header">Jogo 4 da próxima fase</div>
-                    <div class="jogo-chave-linhas">
-                        <div class="linha-chave"><div class="chave-pos">7</div><i class="fa-solid fa-arrow-right chave-seta"></i><span class="seed-badge">Seed 8</span><span class="seed-nome">${getSeed(8)}</span></div>
-                        <div class="linha-chave"><div class="chave-pos">8</div><i class="fa-solid fa-arrow-right chave-seta"></i><span class="seed-badge">Seed 2</span><span class="seed-nome">${getSeed(2)}</span></div>
-                    </div>
+                <!-- COLUNA 3: FINAL -->
+                <div class="bracket-column final">
+                    <div class="fase-badge" style="position: absolute; top: -35px; left: 50%; transform: translateX(-50%);">Final</div>
+                    ${buildMatchBox('Final', 'Final • P1', finalMatch.t1, finalMatch.t2, final_scores[0]?.p1, final_scores[0]?.p2, 'final', 0)}
                 </div>
             </div>
-
-            <!-- Direita: Seeds -->
-            <div class="chaves-col-direita">
-                <div class="titulo-secao-chave">Seeds atuais</div>
-                ${todosSeeds.sort((a,b)=> a.seed - b.seed).map(s => renderSeedCard(s)).join('')}
-                
-                <div class="info-rodape-chaves">
-                    <b>Regra de vice-campeões:</b> a ordem dos 2ºs lugares segue a posição do 1º lugar de cada grupo. O melhor vice é o do grupo cujo campeão foi o melhor ranqueado.
-                </div>
-            </div>
-        </div>
         `;
-
-        container.innerHTML = html;
     }
   </script>
 </body>
