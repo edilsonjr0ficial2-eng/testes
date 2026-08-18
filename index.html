@@ -193,7 +193,7 @@
       border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500;
     }
     
-    /* ESTILOS NOVOS PARA A ABA DE GRUPOS (INSPIRADOS NA IMAGEM) */
+    /* ESTILOS GRUPOS (Design inspirado no Playzinho, Cores da Arena) */
     .btn-sortear-topo {
       background-color: var(--brand-black); color: var(--brand-yellow); border: none; padding: 8px 15px;
       border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
@@ -214,13 +214,14 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
       overflow: hidden;
       margin-bottom: 20px;
+      border: 1px solid var(--border-color);
     }
 
     .tabela-header {
-      background-color: #213ebd; /* Azul igual ao da imagem */
-      color: white;
+      background-color: var(--brand-black); /* Cor da Arena */
+      color: var(--brand-yellow); /* Cor da Arena */
       display: grid;
-      grid-template-columns: 35px 1fr 75px 40px 95px;
+      grid-template-columns: 35px 1fr 75px 40px 40px 40px; /* Ajuste para GF, GC, SG */
       padding: 12px 10px;
       font-weight: 700;
       font-size: 12px;
@@ -235,18 +236,23 @@
 
     .tabela-row {
       display: grid;
-      grid-template-columns: 35px 1fr 75px 40px 95px;
+      grid-template-columns: 35px 1fr 75px 40px 40px 40px; /* Ajuste para GF, GC, SG */
       padding: 12px 10px;
       font-size: 14px;
       align-items: center;
       text-align: center;
       color: #333;
-      background-color: #ffffff; /* Fundo branco padrão */
+      background-color: #ffffff;
+      border-bottom: 1px solid #f0f0f0;
     }
 
-    /* Fundo verde claro para os classificados (2 primeiros) */
+    .tabela-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Fundo amarelo claro para os classificados para combinar com a marca */
     .tabela-row.classificado {
-      background-color: #e6f3ea; 
+      background-color: #fffae6; 
     }
 
     .tabela-row > div:nth-child(2) {
@@ -276,7 +282,15 @@
     }
     .icon-bg { width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; }
 
-    @media (max-width: 480px) { .form-row { flex-direction: column; gap: 0; } }
+    @media (max-width: 480px) { 
+        .form-row { flex-direction: column; gap: 0; } 
+        .tabela-header, .tabela-row {
+            font-size: 11px;
+            grid-template-columns: 30px 1fr 60px 35px 35px 35px;
+            padding: 10px 5px;
+        }
+        .tabela-row { font-size: 13px; }
+    }
   </style>
 </head>
 <body>
@@ -572,20 +586,21 @@
         <div class="tabela-grupo-container">
           <div class="tabela-header">
             <div>PT</div>
-            <div>ATLETA</div>
+            <div>DUPLA</div>
             <div>VITORIAS</div>
+            <div>GF</div>
+            <div>GC</div>
             <div>SG</div>
-            <div>COEFICIENTE</div>
           </div>
           
           ${g.length === 0 ? '<div style="padding: 15px; text-align:center; font-size:13px; color: var(--text-gray);">Grupo Vazio</div>' : 
             g.map((dupla, index) => {
-              // Quebra o nome da dupla usando os separadores mais comuns
+              // Quebra o nome da dupla para empilhar
               let nomesArray = dupla.split(/ e | x | - | & /i);
               let jogador1 = nomesArray[0] ? nomesArray[0].trim() : dupla;
               let jogador2 = nomesArray[1] ? nomesArray[1].trim() : '';
 
-              // Adiciona a classe 'classificado' (fundo verde) para os dois primeiros de cada grupo
+              // Adiciona a classe 'classificado' (fundo amarelo claro) para os dois primeiros
               let classeLinha = index < 2 ? 'tabela-row classificado' : 'tabela-row';
 
               return `
@@ -597,7 +612,8 @@
                   </div>
                   <div>0</div>
                   <div>0</div>
-                  <div>0.000</div>
+                  <div>0</div>
+                  <div>0</div>
                 </div>
               `;
             }).join('')
