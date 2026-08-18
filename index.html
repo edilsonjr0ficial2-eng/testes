@@ -148,6 +148,7 @@
       align-items: center;
       cursor: pointer;
       border-left: 5px solid var(--brand-yellow);
+      margin-bottom: 10px;
     }
     .torneio-card:hover {
       background: #fafafa;
@@ -229,7 +230,7 @@
       color: var(--brand-black);
     }
 
-    /* Tela de Gestão do Torneio (Aba Principal) */
+    /* Tela de Gestão do Torneio */
     #telaGestao {
       display: none;
       flex-direction: column;
@@ -297,7 +298,7 @@
       display: block;
     }
 
-    /* Formulário do Modal */
+    /* Formulários e Inputs */
     .form-group {
       margin-bottom: 15px;
       display: flex;
@@ -346,7 +347,7 @@
       resize: vertical;
     }
 
-    /* Cadastro de Jogadores */
+    /* Cadastro de Jogadores (Agora na Aba de Participantes) */
     .cadastro-jogadores-box {
       border: 1px solid var(--border-color);
       border-radius: 8px;
@@ -570,6 +571,7 @@
   </div>
 
   <div class="content" id="conteudoPrincipal">
+    <!-- Tela 1: Lista de Torneios -->
     <div id="telaLista">
       <button class="btn-criar" onclick="abrirModal()">
         <i class="fa-solid fa-plus"></i> Criar Torneio
@@ -581,7 +583,6 @@
       </div>
 
       <div id="containerTorneios">
-        <!-- Inserido dinamicamente após criar o torneio -->
         <div class="empty-state" id="emptyState">
           <div class="empty-state-icon">
             <i class="fa-solid fa-trophy"></i>
@@ -591,7 +592,7 @@
       </div>
     </div>
 
-    <!-- Tela de Gestão do Torneio (As 3 abas após clicar no torneio) -->
+    <!-- Tela 2: Gestão do Torneio (As 3 abas após clicar no torneio) -->
     <div id="telaGestao">
       <div class="gestao-top">
         <button class="btn-voltar" onclick="voltarParaLista()"><i class="fa-solid fa-chevron-left"></i> Voltar</button>
@@ -607,6 +608,34 @@
 
       <!-- Conteúdo da Aba Participantes -->
       <div id="abaParticipantes" class="conteudo-aba active">
+        
+        <!-- Cadastro de jogadores MOVIDO PARA CÁ -->
+        <div class="cadastro-jogadores-box">
+            <div class="cadastro-header">Cadastre os jogadores</div>
+            
+            <div class="form-group">
+                <input type="text" id="jogador1" placeholder="Nome do jogador">
+            </div>
+            <div class="form-group">
+                <input type="text" id="jogador2" placeholder="Nome do jogador">
+            </div>
+            <div style="text-align: center; margin-bottom: 25px;">
+                <button type="button" class="btn-secundario" onclick="adicionarDuplaIndividual()">
+                    <i class="fa-solid fa-user-plus"></i> Adicionar
+                </button>
+            </div>
+
+            <div class="form-group">
+                <textarea id="textareaLista" rows="4" placeholder="Lista de duplas (uma por linha)&#10;Ex:&#10;Vanio e Giselly&#10;Joao x Maria"></textarea>
+                <span class="hint-text">(Adicione uma dupla por linha, separe o nome dos jogadores por "e", "-" ou "x")</span>
+            </div>
+            <div style="text-align: center; margin-bottom: 5px;">
+                <button type="button" class="btn-secundario" onclick="adicionarDuplasEmMassa()">
+                    <i class="fa-solid fa-list-check"></i> Adicionar Lista
+                </button>
+            </div>
+        </div>
+
         <div style="margin-bottom: 15px; font-weight: bold; color: var(--text-dark);">Lista de Duplas Inscritas (<span id="contadorParticipantes">0</span>)</div>
         <div id="listaParticipantesContainer">
           <!-- Participantes adicionados aparecem aqui -->
@@ -637,6 +666,7 @@
     </div>
   </div>
 
+  <!-- Navegação Inferior Fixa -->
   <div class="bottom-nav-container">
     <div class="bottom-nav">
       <a href="#" class="bottom-nav-item"><div class="icon-bg"><i class="fa-solid fa-house"></i></div> Início</a>
@@ -646,13 +676,13 @@
     </div>
   </div>
 
-  <!-- Modal Criar Torneio -->
+  <!-- Modal Criar Torneio (Somente Configurações Iniciais) -->
   <div class="modal-overlay" id="modalEvento">
     <div class="modal-content">
-      <button class="modal-close" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
+      <button class="modal-close" type="button" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
       <div class="modal-header">Criar Torneio</div>
       
-      <form id="formCriarTorneio" onsubmit="salvarTorneio(event)">
+      <form id="formCriarTorneio">
         <div class="form-row">
           <div class="form-group">
             <label>Arena</label>
@@ -675,61 +705,55 @@
           <input type="text" id="inputNomeTorneio" placeholder="Ex: Feminina Iniciante" required>
         </div>
 
-        <div id="camposDinamicos">
-            
-            <div class="form-row">
-              <div class="form-group">
-                <label>Número de duplas</label>
-                <input type="number" id="inputNumDuplas" placeholder="Ex: 10" min="1" required>
-              </div>
-              <div class="form-group">
-                <label>Quantidade de grupos</label>
-                <input type="number" id="inputNumGrupos" placeholder="Ex: 3" min="1" required>
-              </div>
-            </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Número de duplas</label>
+            <input type="number" id="inputNumDuplas" placeholder="Ex: 10" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Quantidade de grupos</label>
+            <input type="number" id="inputNumGrupos" placeholder="Ex: 3" min="1" required>
+          </div>
+        </div>
 
-            <!-- Cadastro de jogadores -->
-            <div class="cadastro-jogadores-box">
-                <div class="cadastro-header">Cadastre os jogadores</div>
-                
-                <div class="form-group">
-                    <input type="text" id="jogador1" placeholder="Nome do jogador">
-                </div>
-                <div class="form-group">
-                    <input type="text" id="jogador2" placeholder="Nome do jogador">
-                </div>
-                <div style="text-align: center; margin-bottom: 25px;">
-                    <button type="button" class="btn-secundario" onclick="adicionarDuplaIndividual()">
-                        <i class="fa-solid fa-user-plus"></i> Adicionar
-                    </button>
-                </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Chave pix</label>
+            <input type="text" placeholder="Pix do organizador">
+          </div>
+        </div>
 
-                <div class="form-group">
-                    <textarea id="textareaLista" rows="4" placeholder="Lista de duplas (uma por linha)&#10;Ex:&#10;Vanio e Giselly&#10;Joao x Maria"></textarea>
-                    <span class="hint-text">(Adicione uma dupla por linha, separe o nome dos jogadores por "e", "-" ou "x")</span>
-                </div>
-                <div style="text-align: center; margin-bottom: 5px;">
-                    <button type="button" class="btn-secundario" onclick="adicionarDuplasEmMassa()">
-                        <i class="fa-solid fa-list-check"></i> Adicionar Lista
-                    </button>
-                </div>
-            </div>
+        <div class="form-group">
+          <label>Melhores terceiros</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="selectMelhoresTerceiros" onchange="toggleQtdTerceiros()" style="flex: 1;">
+              <option value="nao">Não</option>
+              <option value="sim">Sim</option>
+            </select>
+            <input type="number" id="qtdTerceirosInput" placeholder="Qtd" min="1" style="width: 70px; display: none;" title="Quantidade de melhores terceiros que passam">
+          </div>
+        </div>
 
-            <div class="form-group">
-              <label>Melhores terceiros</label>
-              <div style="display: flex; gap: 10px; align-items: center;">
-                <select id="selectMelhoresTerceiros" onchange="toggleQtdTerceiros()" style="flex: 1;">
-                  <option value="nao">Não</option>
-                  <option value="sim">Sim</option>
-                </select>
-                <input type="number" id="qtdTerceirosInput" placeholder="Qtd" min="1" style="width: 70px; display: none;" title="Quantidade de melhores terceiros que passam">
-              </div>
-            </div>
+        <div class="switch-container">
+          <label style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; margin-bottom: 6px;">
+            Camisetas <i class="fa-solid fa-circle-info" style="color: #999;"></i>
+          </label>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
 
-            <div class="switch-container" style="display: none;">
-              <!-- Removido visualmente mas mantido para integridade -->
-              <label class="switch"><input type="checkbox"><span class="slider"></span></label>
-            </div>
+        <div class="form-group">
+          <label>Critérios de classificação</label>
+          <select>
+            <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Saldo de Games &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Confronto Direto &rarr; Saldo de Games &rarr; Sorteio</option>
+          </select>
         </div>
 
         <button type="submit" class="btn-confirmar">Confirmar</button>
@@ -741,19 +765,23 @@
     let torneios = [];
     let torneioAtual = null;
 
+    // Funções do Modal de Criação
     function abrirModal() {
       document.getElementById('modalEvento').classList.add('active');
     }
+    
     function fecharModal() {
       document.getElementById('modalEvento').classList.remove('active');
     }
     
+    // Fechar clicando fora da caixa
     document.getElementById('modalEvento').addEventListener('click', function(e) {
       if (e.target === this) {
         fecharModal();
       }
     });
 
+    // Função de Exibir/Ocultar Qtd Melhores Terceiros
     function toggleQtdTerceiros() {
         const val = document.getElementById('selectMelhoresTerceiros').value;
         const inputQtd = document.getElementById('qtdTerceirosInput');
@@ -765,8 +793,10 @@
         }
     }
 
-    function salvarTorneio(e) {
+    // Criar o Torneio
+    document.getElementById('formCriarTorneio').addEventListener('submit', function(e) {
       e.preventDefault();
+      
       const nome = document.getElementById('inputNomeTorneio').value;
       const numGrupos = parseInt(document.getElementById('inputNumGrupos').value) || 1;
       
@@ -779,12 +809,16 @@
       };
 
       torneios.push(novoTorneio);
+      
       fecharModal();
+      this.reset();
+      document.getElementById('qtdTerceirosInput').style.display = 'none'; // reset visual
+      
       renderizarListaTorneios();
       abrirGestaoTorneio(novoTorneio.id);
-      document.getElementById('formCriarTorneio').reset();
-    }
+    });
 
+    // Renderizar Tela Inicial
     function renderizarListaTorneios() {
       const container = document.getElementById('containerTorneios');
       if (torneios.length === 0) {
@@ -804,7 +838,7 @@
           <div class="torneio-card" onclick="abrirGestaoTorneio(${t.id})">
             <div>
               <div style="font-weight: bold; font-size: 16px; color: var(--brand-black);">${t.nome}</div>
-              <div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">${t.participantes.length} participantes cadastrados</div>
+              <div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">${t.participantes.length} participantes • ${t.numGrupos} grupos</div>
             </div>
             <i class="fa-solid fa-chevron-right" style="color: var(--text-gray);"></i>
           </div>`;
@@ -812,6 +846,7 @@
       container.innerHTML = html;
     }
 
+    // Mudar da Tela Lista para a Gestão de 1 Torneio Específico
     function abrirGestaoTorneio(id) {
       torneioAtual = torneios.find(t => t.id === id);
       if (!torneioAtual) return;
@@ -826,11 +861,13 @@
     }
 
     function voltarParaLista() {
+      torneioAtual = null;
       document.getElementById('telaGestao').style.display = 'none';
       document.getElementById('telaLista').style.display = 'block';
       renderizarListaTorneios();
     }
 
+    // Controle das 3 abas
     function mudarAba(aba) {
       document.querySelectorAll('.aba-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.conteudo-aba').forEach(cont => cont.classList.remove('active'));
@@ -847,6 +884,7 @@
       }
     }
 
+    // Funcionalidades de Cadastro de Jogadores (Agora funcionam porque o torneio já existe)
     function adicionarDuplaIndividual() {
       const j1 = document.getElementById('jogador1').value.trim();
       const j2 = document.getElementById('jogador2').value.trim();
@@ -866,11 +904,10 @@
     function adicionarDuplasEmMassa() {
       const texto = document.getElementById('textareaLista').value.trim();
       if (!texto) {
-        alert('Insira a lista de duplas.');
+        alert('Insira a lista de duplas no campo em branco.');
         return;
       }
-      const linhas = texto.split('
-');
+      const linhas = texto.split('\n');
       linhas.forEach(linha => {
         const limpa = linha.trim();
         if (limpa) {
@@ -895,28 +932,34 @@
         html += `
           <div class="lista-participantes-card">
             <span><b>#${index + 1}</b> ${p}</span>
-            <button onclick="removerParticipante(${index})" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="removerParticipante(${index})" style="background:none; border:none; color:#ef4444; cursor:pointer;" title="Remover"><i class="fa-solid fa-trash"></i></button>
           </div>`;
       });
       container.innerHTML = html;
     }
 
     function removerParticipante(index) {
-      torneioAtual.participantes.splice(index, 1);
-      atualizarTelaParticipantes();
+      if (torneioAtual) {
+        torneioAtual.participantes.splice(index, 1);
+        atualizarTelaParticipantes();
+      }
     }
 
+    // Funcionalidade de Sorteio de Grupos Inteligente
     function sortearGrupos() {
-      if (torneioAtual.participantes.length === 0) {
-        alert('Cadastre participantes antes de sortear os grupos.');
+      if (!torneioAtual || torneioAtual.participantes.length === 0) {
+        alert('Cadastre participantes na aba anterior antes de sortear os grupos.');
         return;
       }
       
       const numGrupos = torneioAtual.numGrupos || 1;
+      
+      // Cria uma cópia do array e embaralha aleatoriamente (Sorteio)
       let participantesEmbaralhados = [...torneioAtual.participantes].sort(() => Math.random() - 0.5);
       
       let grupos = Array.from({ length: numGrupos }, () => []);
       
+      // Distribui de forma equilibrada entre os grupos (ex: 10 em 3 grupos fica 4, 3, 3)
       participantesEmbaralhados.forEach((participante, i) => {
         let indiceGrupo = i % numGrupos;
         grupos[indiceGrupo].push(participante);
@@ -927,7 +970,8 @@
     }
 
     function atualizarTelaGrupos() {
-      const container = document.getElementById('listaGrupersContainer') || document.getElementById('listaGruposContainer');
+      const container = document.getElementById('listaGruposContainer');
+      
       if (!torneioAtual.gruposSorteados || torneioAtual.gruposSorteados.length === 0) {
         container.innerHTML = `
           <div style="text-align: center; color: var(--text-gray); padding: 30px; font-size: 14px;">
@@ -936,8 +980,9 @@
         return;
       }
 
-      let letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      let letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
       let html = '';
+      
       torneioAtual.gruposSorteados.forEach((grupo, idx) => {
         let nomeGrupo = `Grupo ${letras[idx] || (idx + 1)}`;
         html += `
@@ -946,6 +991,7 @@
               <span>${nomeGrupo}</span>
               <span style="font-size: 12px; color: var(--text-gray); font-weight: normal;">${grupo.length} duplas</span>
             </div>`;
+            
         if (grupo.length === 0) {
           html += `<div style="font-size: 13px; color: var(--text-gray); padding: 5px 0;">Nenhuma dupla neste grupo.</div>`;
         } else {
@@ -955,6 +1001,7 @@
         }
         html += `</div>`;
       });
+      
       container.innerHTML = html;
     }
   </script>
