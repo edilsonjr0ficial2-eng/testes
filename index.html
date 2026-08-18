@@ -199,38 +199,35 @@
       border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500;
     }
     
-    /* ESTILOS GRUPOS */
+    /* ESTILOS GRUPOS (Design idêntico a imagem playzinho) */
     .btn-sortear-topo {
       background-color: var(--brand-black); color: var(--brand-yellow); border: none; padding: 8px 15px;
       border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
     }
     
     .grupo-titulo-imagem {
-      font-size: 16px;
-      font-weight: bold;
-      color: var(--brand-black);
+      font-size: 15px;
+      font-weight: 500;
+      color: #333;
       margin-bottom: 10px;
-      margin-top: 20px;
+      margin-top: 25px;
       font-family: inherit;
-      border-bottom: 2px solid var(--brand-yellow);
-      padding-bottom: 5px;
     }
 
     .tabela-grupo-container {
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Sombra elegante, sem borda sólida */
       overflow: hidden;
-      margin-bottom: 20px;
-      border: 1px solid var(--border-color);
+      margin-bottom: 25px;
     }
 
     .tabela-header {
       background-color: var(--brand-black);
       color: var(--brand-yellow);
       display: grid;
-      grid-template-columns: 35px 1fr 75px 40px 40px 40px;
-      padding: 12px 10px;
+      grid-template-columns: 50px 1fr 75px 45px 45px 45px;
+      padding: 14px 10px;
       font-weight: 700;
       font-size: 12px;
       text-align: center;
@@ -239,12 +236,12 @@
 
     .tabela-header > div:nth-child(2) {
       text-align: left;
-      padding-left: 5px;
+      padding-left: 10px;
     }
 
     .tabela-row {
       display: grid;
-      grid-template-columns: 35px 1fr 75px 40px 40px 40px;
+      grid-template-columns: 50px 1fr 75px 45px 45px 45px;
       padding: 12px 10px;
       font-size: 14px;
       align-items: center;
@@ -259,15 +256,15 @@
     }
 
     .tabela-row.classificado {
-      background-color: #fffae6; 
+      background-color: #fffae6; /* Amarelinho claro da Arena para classificados */
     }
 
     .tabela-row > div:nth-child(2) {
       text-align: left;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      padding-left: 5px;
+      gap: 5px;
+      padding-left: 10px;
     }
 
     .tabela-row .posicao {
@@ -351,7 +348,7 @@
         .form-row { flex-direction: column; gap: 0; } 
         .tabela-header, .tabela-row {
             font-size: 11px;
-            grid-template-columns: 30px 1fr 60px 35px 35px 35px;
+            grid-template-columns: 35px 1fr 60px 35px 35px 35px;
             padding: 10px 5px;
         }
         .tabela-row { font-size: 13px; }
@@ -694,10 +691,8 @@
       
       let html = '';
 
-      // Iterando por cada grupo para calcular os placares dinamicamente
       torneioAtual.gruposSorteados.forEach((grupo, gIdx) => {
         
-        // 1. Array zerado para armazenar a pontuação de cada dupla deste grupo
         let stats = grupo.map(dupla => ({
             nome: dupla,
             vitorias: 0,
@@ -706,10 +701,8 @@
             sg: 0
         }));
 
-        // 2. Busca os placares na aba de partidas e soma os resultados
         if (torneioAtual.partidas && torneioAtual.partidas[gIdx]) {
             torneioAtual.partidas[gIdx].confrontos.forEach(partida => {
-                // Considera apenas as partidas que já foram preenchidas
                 if (partida.placar1 !== '' && partida.placar2 !== '') {
                     let p1 = parseInt(partida.placar1) || 0;
                     let p2 = parseInt(partida.placar2) || 0;
@@ -723,25 +716,20 @@
                         stat2.gf += p2;
                         stat2.gc += p1;
                         
-                        if (p1 > p2) stat1.vitorias += 1; // Dupla 1 ganhou
-                        if (p2 > p1) stat2.vitorias += 1; // Dupla 2 ganhou
+                        if (p1 > p2) stat1.vitorias += 1; 
+                        if (p2 > p1) stat2.vitorias += 1; 
                     }
                 }
             });
         }
 
-        // 3. Calcula o Saldo de Games (SG = GF - GC)
         stats.forEach(s => s.sg = s.gf - s.gc);
 
-        // 4. Lógica de Ordenação de Classificação
         stats.sort((a, b) => {
-            // Regra 1: Mais Vitórias
             if (b.vitorias !== a.vitorias) return b.vitorias - a.vitorias; 
             
-            // Regra 2: Maior Saldo de Games
             if (b.sg !== a.sg) return b.sg - a.sg; 
             
-            // Regra 3: Confronto Direto (Procura quem ganhou a partida entre os dois que empataram)
             if (torneioAtual.partidas && torneioAtual.partidas[gIdx]) {
                 let match = torneioAtual.partidas[gIdx].confrontos.find(p => 
                     (p.dupla1 === a.nome && p.dupla2 === b.nome) || 
@@ -755,16 +743,14 @@
                 }
             }
             
-            // Regra 4: Mais Games Feitos (GF)
             return b.gf - a.gf; 
         });
 
-        // 5. Gera o visual HTML da tabela usando os dados calculados e ordenados
         html += `
           <div class="grupo-titulo-imagem">Grupo ${gIdx + 1}</div>
           <div class="tabela-grupo-container">
             <div class="tabela-header">
-              <div>POS</div>
+              <div>PT</div>
               <div>DUPLA</div>
               <div>VITÓRIAS</div>
               <div>GF</div>
@@ -803,7 +789,6 @@
       torneioAtual.partidas = [];
       torneioAtual.gruposSorteados.forEach((grupo, indexGrupo) => {
         let partidasGrupo = [];
-        // Todos contra todos dentro do grupo
         for (let i = 0; i < grupo.length; i++) {
           for (let j = i + 1; j < grupo.length; j++) {
             partidasGrupo.push({ dupla1: grupo[i], dupla2: grupo[j], placar1: '', placar2: '' });
@@ -820,7 +805,6 @@
         if(equipe === 2) torneioAtual.partidas[gIdx].confrontos[pIdx].placar2 = valor;
         salvarDados();
         
-        // Atualiza a tabela de grupos imediatamente para refletir o novo resultado!
         atualizarTelaGrupos(); 
     }
 
