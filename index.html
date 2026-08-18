@@ -7,12 +7,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --brand-yellow: #FFCC00; /* Amarelo vibrante */
-      --brand-black: #111111;  /* Preto profundo */
+      --brand-yellow: #FFCC00;
+      --brand-black: #111111;
       --bg-color: #f4f7fc;
       --text-dark: #222;
       --text-gray: #777;
       --border-color: #e0e0e0;
+      --input-bg: #fff;
     }
 
     body {
@@ -41,7 +42,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      color: var(--brand-yellow); /* Logo em destaque */
+      color: var(--brand-yellow);
     }
     .user-info {
       display: flex;
@@ -64,7 +65,7 @@
       font-weight: bold;
     }
 
-    /* Menu de Navegação Superior (Tabs) */
+    /* Menu de Navegação Superior */
     .top-nav {
       display: flex;
       background: white;
@@ -88,7 +89,7 @@
       border-bottom: 3px solid var(--brand-yellow);
     }
 
-    /* Área de Conteúdo Central */
+    /* Área de Conteúdo */
     .content {
       padding: 20px;
       flex: 1;
@@ -111,8 +112,10 @@
       cursor: pointer;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
+    .btn-criar:hover {
+      opacity: 0.9;
+    }
     
-    /* Botões de Alternância (Ativos / Arquivados) */
     .toggle-group {
       display: flex;
       background-color: #e5eaf5;
@@ -132,11 +135,7 @@
       background-color: var(--brand-black);
       color: var(--brand-yellow);
     }
-    .toggle-btn:not(.active) {
-      color: var(--text-gray);
-    }
 
-    /* Estado Vazio (Troféu Cortado) */
     .empty-state {
       display: flex;
       flex-direction: column;
@@ -166,13 +165,170 @@
       transform: rotate(-45deg);
       border-radius: 2px;
     }
-    .empty-state h3 {
+
+    /* Modais */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background-color: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 25px;
+      position: relative;
+      box-sizing: border-box;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-gray);
+    }
+    .modal-header {
+      text-align: center;
       font-size: 18px;
-      font-weight: 600;
-      margin: 0;
+      font-weight: bold;
+      margin-bottom: 25px;
+      color: var(--brand-black);
     }
 
-    /* Menu de Navegação Inferior Flutuante */
+    /* Formulário do Modal */
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    input[type="text"], input[type="date"], input[type="tel"], select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+      background-color: var(--input-bg);
+      color: var(--text-dark);
+    }
+    input::placeholder {
+      color: #aaa;
+    }
+    
+    /* Input de arquivo customizado */
+    .file-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-file {
+      background-color: var(--brand-black);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .file-name {
+      font-size: 13px;
+      color: var(--text-gray);
+    }
+
+    /* Switches (Toggles) */
+    .switch-container {
+      margin-bottom: 20px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: var(--brand-black);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: var(--brand-yellow);
+    }
+
+    .btn-confirmar {
+      background-color: var(--brand-black);
+      color: var(--brand-yellow);
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* Navegação Inferior */
     .bottom-nav-container {
       padding: 10px 20px 20px;
       position: fixed;
@@ -216,14 +372,17 @@
       justify-content: center;
       align-items: center;
     }
-    .bottom-nav-item i {
-      font-size: 20px;
+
+    @media (max-width: 480px) {
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Cabeçalho -->
   <header>
     <div class="logo">
       <i class="fa-solid fa-table-tennis-paddle-ball"></i> Arena Vitale
@@ -234,25 +393,14 @@
     </div>
   </header>
 
-  <!-- Navegação de Tabs -->
   <div class="top-nav">
-    <a href="#" class="top-nav-item">
-      <i class="fa-regular fa-calendar"></i>
-      Eventos
-    </a>
-    <a href="#" class="top-nav-item active">
-      <i class="fa-regular fa-user"></i>
-      Meus eventos
-    </a>
-    <a href="#" class="top-nav-item">
-      <i class="fa-solid fa-trophy"></i>
-      Circuitos
-    </a>
+    <a href="#" class="top-nav-item"><i class="fa-regular fa-calendar"></i> Eventos</a>
+    <a href="#" class="top-nav-item active"><i class="fa-regular fa-user"></i> Meus eventos</a>
+    <a href="#" class="top-nav-item"><i class="fa-solid fa-trophy"></i> Circuitos</a>
   </div>
 
-  <!-- Conteúdo Central -->
   <div class="content">
-    <button class="btn-criar">
+    <button class="btn-criar" onclick="abrirModal()">
       <i class="fa-solid fa-plus"></i> Criar Evento
     </button>
 
@@ -261,7 +409,6 @@
       <div class="toggle-btn">Arquivados</div>
     </div>
 
-    <!-- Feedback Visual Sem Eventos -->
     <div class="empty-state">
       <div class="empty-state-icon">
         <i class="fa-solid fa-trophy"></i>
@@ -270,27 +417,129 @@
     </div>
   </div>
 
-  <!-- Navegação Inferior -->
   <div class="bottom-nav-container">
     <div class="bottom-nav">
-      <a href="#" class="bottom-nav-item">
-        <div class="icon-bg"><i class="fa-solid fa-house"></i></div>
-        Início
-      </a>
-      <a href="#" class="bottom-nav-item">
-        <div class="icon-bg"><i class="fa-regular fa-calendar-check"></i></div>
-        Reservas
-      </a>
-      <a href="#" class="bottom-nav-item active">
-        <div class="icon-bg"><i class="fa-solid fa-trophy"></i></div>
-        Eventos
-      </a>
-      <a href="#" class="bottom-nav-item">
-        <div class="icon-bg"><i class="fa-solid fa-gear"></i></div>
-        Ajustes
-      </a>
+      <a href="#" class="bottom-nav-item"><div class="icon-bg"><i class="fa-solid fa-house"></i></div> Início</a>
+      <a href="#" class="bottom-nav-item"><div class="icon-bg"><i class="fa-regular fa-calendar-check"></i></div> Reservas</a>
+      <a href="#" class="bottom-nav-item active"><div class="icon-bg"><i class="fa-solid fa-trophy"></i></div> Eventos</a>
+      <a href="#" class="bottom-nav-item"><div class="icon-bg"><i class="fa-solid fa-gear"></i></div> Ajustes</a>
     </div>
   </div>
 
+  <!-- Modal Criar Evento -->
+  <div class="modal-overlay" id="modalEvento">
+    <div class="modal-content">
+      <button class="modal-close" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">Criar Evento</div>
+      
+      <form onsubmit="event.preventDefault();">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Arena</label>
+            <select>
+              <option>Arena Vitale</option>
+              <option>Quadra padaria do Helder</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Arte do Evento (opcional)</label>
+            <div class="file-input-wrapper">
+              <button type="button" class="btn-file">Escolher arquivo</button>
+              <span class="file-name">Nenhum arquivo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Nome do Evento</label>
+          <input type="text" placeholder="Ex: Bolão dos campeões">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Início do Evento</label>
+            <input type="date">
+          </div>
+          <div class="form-group">
+            <label>Fim do Evento</label>
+            <input type="date">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="tel" value="88988229008">
+          </div>
+          <div class="form-group">
+            <label>Chave pix</label>
+            <input type="text" placeholder="Pix do organizador">
+          </div>
+        </div>
+
+        <div class="switch-container">
+          <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px;">Receber pagamentos pelo sistema</label>
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cidade</label>
+            <input type="text" placeholder="Cidade da arena">
+          </div>
+          <div class="form-group">
+            <label>Endereço</label>
+            <input type="text" placeholder="Endereço da arena">
+          </div>
+        </div>
+
+        <div class="switch-container">
+          <label style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; margin-bottom: 6px;">
+            Camisetas <i class="fa-solid fa-circle-info" style="color: #999;"></i>
+          </label>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>Critérios de classificação</label>
+          <select>
+            <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Saldo de Games &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Confronto Direto &rarr; Saldo de Games &rarr; Sorteio</option>
+            <option>Vitórias &rarr; 2x0 &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Saldo de Games &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
+            <option>Vitórias &rarr; 2x0 &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Coeficiente &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-confirmar">Confirmar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function abrirModal() {
+      document.getElementById('modalEvento').classList.add('active');
+    }
+    function fecharModal() {
+      document.getElementById('modalEvento').classList.remove('active');
+    }
+    // Fechar modal ao clicar fora da caixa branca
+    document.getElementById('modalEvento').addEventListener('click', function(e) {
+      if (e.target === this) {
+        fecharModal();
+      }
+    });
+  </script>
 </body>
 </html>
