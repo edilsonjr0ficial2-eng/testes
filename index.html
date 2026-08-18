@@ -1,111 +1,294 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorteio de Raquete - Arena Vitale</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-        h2 { color: #ff6b6b; }
-        p { color: #555; font-size: 14px; }
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            width: 100%;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        button:hover { background-color: #ff4757; }
-        #resultado {
-            margin-top: 20px;
-            display: none;
-            padding: 15px;
-            background: #e3f2fd;
-            border: 2px dashed #2196f3;
-            border-radius: 5px;
-        }
-        .cupom-destaque {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2196f3;
-            letter-spacing: 2px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arena Vitale - Meus Eventos</title>
+  <!-- Biblioteca de ícones (FontAwesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Variáveis de cores baseadas na interface */
+    :root {
+      --primary-blue: #0b45d0;
+      --bg-color: #f4f7fc;
+      --text-dark: #222;
+      --text-gray: #777;
+      --border-color: #e0e0e0;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      /* Fundo com efeito de grade sutil */
+      background-image: linear-gradient(#e5eaf5 1px, transparent 1px), linear-gradient(90deg, #e5eaf5 1px, transparent 1px);
+      background-size: 20px 20px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Cabeçalho Superior */
+    header {
+      background-color: var(--primary-blue);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      background-color: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid white;
+      font-weight: bold;
+    }
+
+    /* Menu de Navegação Superior (Tabs) */
+    .top-nav {
+      display: flex;
+      background: white;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .top-nav-item {
+      flex: 1;
+      text-align: center;
+      padding: 15px 0;
+      color: var(--text-gray);
+      font-size: 14px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .top-nav-item.active {
+      color: var(--primary-blue);
+      font-weight: bold;
+      border-bottom: 3px solid var(--primary-blue);
+    }
+
+    /* Área de Conteúdo Central */
+    .content {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-criar {
+      background-color: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    
+    /* Botões de Alternância (Ativos / Arquivados) */
+    .toggle-group {
+      display: flex;
+      background-color: #e5eaf5;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+    .toggle-btn {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .toggle-btn.active {
+      background-color: var(--primary-blue);
+      color: white;
+    }
+    .toggle-btn:not(.active) {
+      color: var(--text-gray);
+    }
+
+    /* Estado Vazio (Troféu Cortado) */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      text-align: center;
+      color: #333;
+      margin-top: 20px;
+    }
+    .empty-state-icon {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .empty-state-icon i {
+      font-size: 80px;
+      color: #a0aabf;
+    }
+    .empty-state-icon::after {
+      content: "";
+      position: absolute;
+      width: 110px;
+      height: 4px;
+      background-color: #a0aabf;
+      top: 50%;
+      left: -15px;
+      transform: rotate(-45deg);
+      border-radius: 2px;
+    }
+    .empty-state h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    /* Menu de Navegação Inferior Flutuante */
+    .bottom-nav-container {
+      padding: 10px 20px 20px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: white;
+      padding: 10px 0;
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text-gray);
+      text-decoration: none;
+      flex: 1;
+    }
+    .bottom-nav-item.active .icon-bg {
+      background-color: #e0e7ff;
+      color: var(--primary-blue);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .icon-bg {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .bottom-nav-item i {
+      font-size: 20px;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Sorteio Arena Vitale</h2>
-    <p>Cadastre-se para gerar seu cupom e concorrer a uma raquete exclusiva! Válido apenas para clientes com horários reservados.</p>
-    
-    <form id="formSorteio">
-        <input type="text" id="nome" placeholder="Nome Completo" required>
-        <input type="date" id="nascimento" required>
-        <input type="tel" id="telefone" placeholder="Telefone / WhatsApp" required>
-        <button type="submit">Gerar Meu Cupom</button>
-    </form>
-
-    <div id="resultado">
-        <p>Parabéns! Seu cupom da sorte é:</p>
-        <div class="cupom-destaque" id="codigoCupom"></div>
-        <p style="font-size: 12px; margin-top: 10px;">Tire um print desta tela. O prêmio só será entregue mediante validação da reserva no sistema.</p>
+  <!-- Cabeçalho -->
+  <header>
+    <div class="logo">
+      <i class="fa-solid fa-table-tennis-paddle-ball"></i> Arena Vitale
     </div>
-</div>
+    <div class="user-info">
+      E aí, EDILSON?!
+      <div class="avatar">E</div>
+    </div>
+  </header>
 
-<script>
-    document.getElementById('formSorteio').addEventListener('submit', function(e) {
-        e.preventDefault(); // Evita que a página recarregue
+  <!-- Navegação de Tabs -->
+  <div class="top-nav">
+    <a href="#" class="top-nav-item">
+      <i class="fa-regular fa-calendar"></i>
+      Eventos
+    </a>
+    <a href="#" class="top-nav-item active">
+      <i class="fa-regular fa-user"></i>
+      Meus eventos
+    </a>
+    <a href="#" class="top-nav-item">
+      <i class="fa-solid fa-trophy"></i>
+      Circuitos
+    </a>
+  </div>
 
-        // Pega os dados digitados
-        const nome = document.getElementById('nome').value;
-        const nascimento = document.getElementById('nascimento').value;
-        const telefone = document.getElementById('telefone').value;
+  <!-- Conteúdo Central -->
+  <div class="content">
+    <button class="btn-criar">
+      <i class="fa-solid fa-plus"></i> Criar Evento
+    </button>
 
-        // Gera um cupom aleatório (Ex: VITALE-A8F2)
-        const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let codigo = 'VITALE-';
-        for (let i = 0; i < 4; i++) {
-            codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-        }
+    <div class="toggle-group">
+      <div class="toggle-btn active">Ativos</div>
+      <div class="toggle-btn">Arquivados</div>
+    </div>
 
-        // Exibe o cupom na tela
-        document.getElementById('formSorteio').style.display = 'none';
-        document.getElementById('resultado').style.display = 'block';
-        document.getElementById('codigoCupom').innerText = codigo;
+    <!-- Feedback Visual Sem Eventos -->
+    <div class="empty-state">
+      <div class="empty-state-icon">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+      <h3>Você não possui nenhum evento cadastrado</h3>
+    </div>
+  </div>
 
-        // AQUI ENTRA A INTEGRAÇÃO COM O GOOGLE SHEETS
-        // Você enviará as variáveis: nome, nascimento, telefone e codigo para sua planilha.
-        console.log("Dados para salvar:", {nome, nascimento, telefone, codigo});
-    });
-</script>
+  <!-- Navegação Inferior -->
+  <div class="bottom-nav-container">
+    <div class="bottom-nav">
+      <a href="#" class="bottom-nav-item">
+        <div class="icon-bg"><i class="fa-solid fa-house"></i></div>
+        Início
+      </a>
+      <a href="#" class="bottom-nav-item">
+        <div class="icon-bg"><i class="fa-regular fa-calendar-check"></i></div>
+        Reservas
+      </a>
+      <a href="#" class="bottom-nav-item active">
+        <div class="icon-bg"><i class="fa-solid fa-trophy"></i></div>
+        Eventos
+      </a>
+      <a href="#" class="bottom-nav-item">
+        <div class="icon-bg"><i class="fa-solid fa-gear"></i></div>
+        Ajustes
+      </a>
+    </div>
+  </div>
 
 </body>
 </html>
