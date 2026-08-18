@@ -22,7 +22,7 @@
       background-color: var(--bg-color);
       background-image: linear-gradient(#e5eaf5 1px, transparent 1px), linear-gradient(90deg, #e5eaf5 1px, transparent 1px);
       background-size: 20px 20px;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
@@ -95,6 +95,7 @@
       flex: 1;
       display: flex;
       flex-direction: column;
+      padding-bottom: 90px;
     }
     .btn-criar {
       background-color: var(--brand-yellow);
@@ -121,7 +122,7 @@
       background-color: #e5eaf5;
       border-radius: 8px;
       overflow: hidden;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
     .toggle-btn {
       flex: 1;
@@ -134,6 +135,22 @@
     .toggle-btn.active {
       background-color: var(--brand-black);
       color: var(--brand-yellow);
+    }
+
+    /* Lista de Torneios Criados */
+    .torneio-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-left: 5px solid var(--brand-yellow);
+    }
+    .torneio-card:hover {
+      background: #fafafa;
     }
 
     .empty-state {
@@ -210,6 +227,74 @@
       font-weight: bold;
       margin-bottom: 25px;
       color: var(--brand-black);
+    }
+
+    /* Tela de Gestão do Torneio (Aba Principal) */
+    #telaGestao {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+    }
+    .gestao-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    .btn-voltar {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--brand-black);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .torneio-titulo-header {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--brand-black);
+      margin-bottom: 15px;
+    }
+
+    /* Abas Internas (Participantes / Grupos / Partidas) */
+    .abas-internas {
+      display: flex;
+      background: #e5eaf5;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 20px;
+      gap: 4px;
+    }
+    .aba-btn {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .aba-btn.active {
+      background: white;
+      color: var(--brand-black);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    }
+
+    .conteudo-aba {
+      display: none;
+    }
+    .conteudo-aba.active {
+      display: block;
     }
 
     /* Formulário do Modal */
@@ -363,6 +448,55 @@
       margin-top: 10px;
     }
 
+    /* Listas internas de participantes e grupos */
+    .lista-participantes-card {
+      background: white;
+      border-radius: 8px;
+      padding: 12px 15px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .grupo-container {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .grupo-titulo {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--brand-black);
+      margin-bottom: 10px;
+      border-bottom: 2px solid var(--brand-yellow);
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn-sortear-topo {
+      background-color: var(--brand-black);
+      color: var(--brand-yellow);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .btn-sortear-topo:hover {
+      opacity: 0.9;
+    }
+
     /* Navegação Inferior */
     .bottom-nav-container {
       padding: 10px 20px 20px;
@@ -370,6 +504,7 @@
       bottom: 0;
       width: 100%;
       box-sizing: border-box;
+      background: var(--bg-color);
     }
     .bottom-nav {
       display: flex;
@@ -434,21 +569,71 @@
     <a href="#" class="top-nav-item"><i class="fa-solid fa-trophy"></i> Circuitos</a>
   </div>
 
-  <div class="content">
-    <button class="btn-criar" onclick="abrirModal()">
-      <i class="fa-solid fa-plus"></i> Criar Torneio
-    </button>
+  <div class="content" id="conteudoPrincipal">
+    <div id="telaLista">
+      <button class="btn-criar" onclick="abrirModal()">
+        <i class="fa-solid fa-plus"></i> Criar Torneio
+      </button>
 
-    <div class="toggle-group">
-      <div class="toggle-btn active">Ativos</div>
-      <div class="toggle-btn">Arquivados</div>
+      <div class="toggle-group">
+        <div class="toggle-btn active">Ativos</div>
+        <div class="toggle-btn">Arquivados</div>
+      </div>
+
+      <div id="containerTorneios">
+        <!-- Inserido dinamicamente após criar o torneio -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-state-icon">
+            <i class="fa-solid fa-trophy"></i>
+          </div>
+          <h3>Você não possui nenhum torneio cadastrado</h3>
+        </div>
+      </div>
     </div>
 
-    <div class="empty-state">
-      <div class="empty-state-icon">
-        <i class="fa-solid fa-trophy"></i>
+    <!-- Tela de Gestão do Torneio (As 3 abas após clicar no torneio) -->
+    <div id="telaGestao">
+      <div class="gestao-top">
+        <button class="btn-voltar" onclick="voltarParaLista()"><i class="fa-solid fa-chevron-left"></i> Voltar</button>
       </div>
-      <h3>Você não possui nenhum torneio cadastrado</h3>
+      <div class="torneio-titulo-header" id="tituloTorneioHeader">Nome do Torneio</div>
+
+      <!-- Abas Internas -->
+      <div class="abas-internas">
+        <button class="aba-btn active" onclick="mudarAba('participantes')"><i class="fa-solid fa-users"></i> Participantes</button>
+        <button class="aba-btn" onclick="mudarAba('grupos')"><i class="fa-solid fa-layer-group"></i> Grupos</button>
+        <button class="aba-btn" onclick="mudarAba('partidas')"><i class="fa-solid fa-fire"></i> Partidas</button>
+      </div>
+
+      <!-- Conteúdo da Aba Participantes -->
+      <div id="abaParticipantes" class="conteudo-aba active">
+        <div style="margin-bottom: 15px; font-weight: bold; color: var(--text-dark);">Lista de Duplas Inscritas (<span id="contadorParticipantes">0</span>)</div>
+        <div id="listaParticipantesContainer">
+          <!-- Participantes adicionados aparecem aqui -->
+        </div>
+      </div>
+
+      <!-- Conteúdo da Aba Grupos -->
+      <div id="abaGrupos" class="conteudo-aba">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <div style="font-weight: bold; color: var(--text-dark);">Divisão de Grupos</div>
+          <button class="btn-sortear-topo" onclick="sortearGrupos()"><i class="fa-solid fa-shuffle"></i> Sortear Grupos</button>
+        </div>
+        <div id="listaGruposContainer">
+          <div style="text-align: center; color: var(--text-gray); padding: 30px; font-size: 14px;">
+            Clique em "Sortear Grupos" para distribuir os participantes automaticamente.
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo da Aba Partidas -->
+      <div id="abaPartidas" class="conteudo-aba">
+        <div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;">
+          <i class="fa-solid fa-fire" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i>
+          <div>As partidas serão geradas após a definição dos grupos.</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -467,7 +652,7 @@
       <button class="modal-close" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
       <div class="modal-header">Criar Torneio</div>
       
-      <form onsubmit="event.preventDefault();">
+      <form id="formCriarTorneio" onsubmit="salvarTorneio(event)">
         <div class="form-row">
           <div class="form-group">
             <label>Arena</label>
@@ -478,7 +663,7 @@
           </div>
           <div class="form-group">
             <label>Tipo de Torneio</label>
-            <select id="tipoTorneio" onchange="alternarCampos()">
+            <select id="tipoTorneio">
               <option value="bolao">Bolão</option>
               <option value="super">Super</option>
             </select>
@@ -487,20 +672,19 @@
 
         <div class="form-group">
           <label>Nome do Torneio</label>
-          <input type="text" placeholder="Ex: Bolão dos campeões">
+          <input type="text" id="inputNomeTorneio" placeholder="Ex: Feminina Iniciante" required>
         </div>
 
-        <!-- Div para agrupar os campos do formulário -->
         <div id="camposDinamicos">
             
             <div class="form-row">
               <div class="form-group">
                 <label>Número de duplas</label>
-                <input type="number" placeholder="Ex: 16" min="1">
+                <input type="number" id="inputNumDuplas" placeholder="Ex: 10" min="1" required>
               </div>
               <div class="form-group">
                 <label>Quantidade de grupos</label>
-                <input type="number" placeholder="Ex: 4" min="1">
+                <input type="number" id="inputNumGrupos" placeholder="Ex: 3" min="1" required>
               </div>
             </div>
 
@@ -509,80 +693,42 @@
                 <div class="cadastro-header">Cadastre os jogadores</div>
                 
                 <div class="form-group">
-                    <input type="text" placeholder="Nome do jogador">
+                    <input type="text" id="jogador1" placeholder="Nome do jogador">
                 </div>
                 <div class="form-group">
-                    <input type="text" placeholder="Nome do jogador">
+                    <input type="text" id="jogador2" placeholder="Nome do jogador">
                 </div>
                 <div style="text-align: center; margin-bottom: 25px;">
-                    <button type="button" class="btn-secundario">
+                    <button type="button" class="btn-secundario" onclick="adicionarDuplaIndividual()">
                         <i class="fa-solid fa-user-plus"></i> Adicionar
                     </button>
                 </div>
 
                 <div class="form-group">
-                    <textarea rows="4" placeholder="Lista de duplas (uma por linha)&#10;Ex:&#10;Vanio e Giselly&#10;Joao x Maria"></textarea>
+                    <textarea id="textareaLista" rows="4" placeholder="Lista de duplas (uma por linha)&#10;Ex:&#10;Vanio e Giselly&#10;Joao x Maria"></textarea>
                     <span class="hint-text">(Adicione uma dupla por linha, separe o nome dos jogadores por "e", "-" ou "x")</span>
                 </div>
                 <div style="text-align: center; margin-bottom: 5px;">
-                    <button type="button" class="btn-secundario">
+                    <button type="button" class="btn-secundario" onclick="adicionarDuplasEmMassa()">
                         <i class="fa-solid fa-list-check"></i> Adicionar Lista
                     </button>
                 </div>
             </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label>Chave pix</label>
-                <input type="text" placeholder="Pix do organizador">
-              </div>
-              <div class="form-group">
-                <label>Melhores terceiros</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                  <select id="selectMelhoresTerceiros" onchange="toggleQtdTerceiros()" style="flex: 1;">
-                    <option value="nao">Não</option>
-                    <option value="sim">Sim</option>
-                  </select>
-                  <input type="number" id="qtdTerceirosInput" placeholder="Qtd" min="1" style="width: 70px; display: none;" title="Quantidade de melhores terceiros que passam">
-                </div>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label>Cidade</label>
-                <input type="text" placeholder="Cidade da arena">
-              </div>
-              <div class="form-group">
-                <label>Endereço</label>
-                <input type="text" placeholder="Endereço da arena">
-              </div>
-            </div>
-
-            <div class="switch-container">
-              <label style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; margin-bottom: 6px;">
-                Camisetas <i class="fa-solid fa-circle-info" style="color: #999;"></i>
-              </label>
-              <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-              </label>
-            </div>
-
             <div class="form-group">
-              <label>Critérios de classificação</label>
-              <select>
-                <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Saldo de Games &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Confronto Direto &rarr; Saldo de Games &rarr; Sorteio</option>
-                <option>Vitórias &rarr; 2x0 &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Saldo de Games &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; 2x0 &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Coeficiente &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
-              </select>
+              <label>Melhores terceiros</label>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <select id="selectMelhoresTerceiros" onchange="toggleQtdTerceiros()" style="flex: 1;">
+                  <option value="nao">Não</option>
+                  <option value="sim">Sim</option>
+                </select>
+                <input type="number" id="qtdTerceirosInput" placeholder="Qtd" min="1" style="width: 70px; display: none;" title="Quantidade de melhores terceiros que passam">
+              </div>
+            </div>
+
+            <div class="switch-container" style="display: none;">
+              <!-- Removido visualmente mas mantido para integridade -->
+              <label class="switch"><input type="checkbox"><span class="slider"></span></label>
             </div>
         </div>
 
@@ -592,6 +738,9 @@
   </div>
 
   <script>
+    let torneios = [];
+    let torneioAtual = null;
+
     function abrirModal() {
       document.getElementById('modalEvento').classList.add('active');
     }
@@ -605,11 +754,6 @@
       }
     });
 
-    function alternarCampos() {
-        const tipo = document.getElementById('tipoTorneio').value;
-        console.log("Tipo selecionado: " + tipo);
-    }
-
     function toggleQtdTerceiros() {
         const val = document.getElementById('selectMelhoresTerceiros').value;
         const inputQtd = document.getElementById('qtdTerceirosInput');
@@ -619,6 +763,199 @@
             inputQtd.style.display = 'none';
             inputQtd.value = '';
         }
+    }
+
+    function salvarTorneio(e) {
+      e.preventDefault();
+      const nome = document.getElementById('inputNomeTorneio').value;
+      const numGrupos = parseInt(document.getElementById('inputNumGrupos').value) || 1;
+      
+      const novoTorneio = {
+        id: Date.now(),
+        nome: nome,
+        numGrupos: numGrupos,
+        participantes: [],
+        gruposSorteados: []
+      };
+
+      torneios.push(novoTorneio);
+      fecharModal();
+      renderizarListaTorneios();
+      abrirGestaoTorneio(novoTorneio.id);
+      document.getElementById('formCriarTorneio').reset();
+    }
+
+    function renderizarListaTorneios() {
+      const container = document.getElementById('containerTorneios');
+      if (torneios.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" id="emptyState">
+            <div class="empty-state-icon">
+              <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h3>Você não possui nenhum torneio cadastrado</h3>
+          </div>`;
+        return;
+      }
+
+      let html = '';
+      torneios.forEach(t => {
+        html += `
+          <div class="torneio-card" onclick="abrirGestaoTorneio(${t.id})">
+            <div>
+              <div style="font-weight: bold; font-size: 16px; color: var(--brand-black);">${t.nome}</div>
+              <div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">${t.participantes.length} participantes cadastrados</div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color: var(--text-gray);"></i>
+          </div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function abrirGestaoTorneio(id) {
+      torneioAtual = torneios.find(t => t.id === id);
+      if (!torneioAtual) return;
+
+      document.getElementById('telaLista').style.display = 'none';
+      document.getElementById('telaGestao').style.display = 'flex';
+      document.getElementById('tituloTorneioHeader').innerText = torneioAtual.nome;
+      
+      atualizarTelaParticipantes();
+      atualizarTelaGrupos();
+      mudarAba('participantes');
+    }
+
+    function voltarParaLista() {
+      document.getElementById('telaGestao').style.display = 'none';
+      document.getElementById('telaLista').style.display = 'block';
+      renderizarListaTorneios();
+    }
+
+    function mudarAba(aba) {
+      document.querySelectorAll('.aba-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.conteudo-aba').forEach(cont => cont.classList.remove('active'));
+
+      if (aba === 'participantes') {
+        document.querySelectorAll('.aba-btn')[0].classList.add('active');
+        document.getElementById('abaParticipantes').classList.add('active');
+      } else if (aba === 'grupos') {
+        document.querySelectorAll('.aba-btn')[1].classList.add('active');
+        document.getElementById('abaGrupos').classList.add('active');
+      } else if (aba === 'partidas') {
+        document.querySelectorAll('.aba-btn')[2].classList.add('active');
+        document.getElementById('abaPartidas').classList.add('active');
+      }
+    }
+
+    function adicionarDuplaIndividual() {
+      const j1 = document.getElementById('jogador1').value.trim();
+      const j2 = document.getElementById('jogador2').value.trim();
+      if (!j1 || !j2) {
+        alert('Por favor, informe o nome dos dois jogadores.');
+        return;
+      }
+      const dupla = `${j1} & ${j2}`;
+      if (torneioAtual) {
+        torneioAtual.participantes.push(dupla);
+        document.getElementById('jogador1').value = '';
+        document.getElementById('jogador2').value = '';
+        atualizarTelaParticipantes();
+      }
+    }
+
+    function adicionarDuplasEmMassa() {
+      const texto = document.getElementById('textareaLista').value.trim();
+      if (!texto) {
+        alert('Insira a lista de duplas.');
+        return;
+      }
+      const linhas = texto.split('
+');
+      linhas.forEach(linha => {
+        const limpa = linha.trim();
+        if (limpa) {
+          torneioAtual.participantes.push(limpa);
+        }
+      });
+      document.getElementById('textareaLista').value = '';
+      atualizarTelaParticipantes();
+    }
+
+    function atualizarTelaParticipantes() {
+      const container = document.getElementById('listaParticipantesContainer');
+      document.getElementById('contadorParticipantes').innerText = torneioAtual.participantes.length;
+      
+      if (torneioAtual.participantes.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 20px; font-size: 13px;">Nenhum participante cadastrado ainda. Preencha acima para adicionar.</div>`;
+        return;
+      }
+
+      let html = '';
+      torneioAtual.participantes.forEach((p, index) => {
+        html += `
+          <div class="lista-participantes-card">
+            <span><b>#${index + 1}</b> ${p}</span>
+            <button onclick="removerParticipante(${index})" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+          </div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function removerParticipante(index) {
+      torneioAtual.participantes.splice(index, 1);
+      atualizarTelaParticipantes();
+    }
+
+    function sortearGrupos() {
+      if (torneioAtual.participantes.length === 0) {
+        alert('Cadastre participantes antes de sortear os grupos.');
+        return;
+      }
+      
+      const numGrupos = torneioAtual.numGrupos || 1;
+      let participantesEmbaralhados = [...torneioAtual.participantes].sort(() => Math.random() - 0.5);
+      
+      let grupos = Array.from({ length: numGrupos }, () => []);
+      
+      participantesEmbaralhados.forEach((participante, i) => {
+        let indiceGrupo = i % numGrupos;
+        grupos[indiceGrupo].push(participante);
+      });
+
+      torneioAtual.gruposSorteados = grupos;
+      atualizarTelaGrupos();
+    }
+
+    function atualizarTelaGrupos() {
+      const container = document.getElementById('listaGrupersContainer') || document.getElementById('listaGruposContainer');
+      if (!torneioAtual.gruposSorteados || torneioAtual.gruposSorteados.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-gray); padding: 30px; font-size: 14px;">
+            Clique em "Sortear Grupos" para distribuir os participantes automaticamente.
+          </div>`;
+        return;
+      }
+
+      let letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      let html = '';
+      torneioAtual.gruposSorteados.forEach((grupo, idx) => {
+        let nomeGrupo = `Grupo ${letras[idx] || (idx + 1)}`;
+        html += `
+          <div class="grupo-container">
+            <div class="grupo-titulo">
+              <span>${nomeGrupo}</span>
+              <span style="font-size: 12px; color: var(--text-gray); font-weight: normal;">${grupo.length} duplas</span>
+            </div>`;
+        if (grupo.length === 0) {
+          html += `<div style="font-size: 13px; color: var(--text-gray); padding: 5px 0;">Nenhuma dupla neste grupo.</div>`;
+        } else {
+          grupo.forEach((m, mIdx) => {
+            html += `<div style="padding: 6px 0; font-size: 13px; border-bottom: 1px solid #f0f0f0;"><b>${mIdx + 1}.</b> ${m}</div>`;
+          });
+        }
+        html += `</div>`;
+      });
+      container.innerHTML = html;
     }
   </script>
 </body>
