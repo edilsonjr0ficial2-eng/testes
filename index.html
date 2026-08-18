@@ -235,7 +235,7 @@
       flex: 1;
     }
     
-    input[type="text"], input[type="date"], input[type="tel"], select {
+    input[type="text"], input[type="date"], input[type="tel"], input[type="number"], select {
       width: 100%;
       padding: 10px 12px;
       border: 1px solid var(--border-color);
@@ -247,6 +247,62 @@
     }
     input::placeholder {
       color: #aaa;
+    }
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      box-sizing: border-box;
+      background-color: var(--input-bg);
+      color: var(--text-dark);
+      resize: vertical;
+    }
+
+    /* Cadastro de Jogadores */
+    .cadastro-jogadores-box {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      background-color: #fafafa;
+    }
+    .cadastro-header {
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: var(--brand-black);
+      text-align: center;
+    }
+    .btn-secundario {
+      background-color: var(--brand-yellow);
+      color: var(--brand-black);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 250px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .btn-secundario:hover {
+      opacity: 0.9;
+    }
+    .hint-text {
+      display: block;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-gray);
+      margin-top: 6px;
+      line-height: 1.3;
     }
 
     /* Switches (Toggles) */
@@ -436,15 +492,37 @@
 
         <!-- Div para agrupar os campos que vão mudar de acordo com a seleção -->
         <div id="camposDinamicos">
-            <div class="form-row">
-              <div class="form-group">
-                <label>Início</label>
-                <input type="date">
-              </div>
-              <div class="form-group">
-                <label>Fim</label>
-                <input type="date">
-              </div>
+            
+            <div class="form-group">
+              <label>Número de duplas</label>
+              <input type="number" placeholder="Ex: 16" min="1">
+            </div>
+
+            <!-- Cadastro de jogadores (Substituindo o antigo 'Fim') -->
+            <div class="cadastro-jogadores-box">
+                <div class="cadastro-header">Cadastre os jogadores</div>
+                
+                <div class="form-group">
+                    <input type="text" placeholder="Nome do jogador">
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Nome do jogador">
+                </div>
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <button type="button" class="btn-secundario">
+                        <i class="fa-solid fa-user-plus"></i> Adicionar
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <textarea rows="4" placeholder="Lista de duplas (uma por linha)&#10;Ex:&#10;Vanio e Giselly&#10;Joao x Maria"></textarea>
+                    <span class="hint-text">(Adicione uma dupla por linha, separe o nome dos jogadores por "e", "-" ou "x")</span>
+                </div>
+                <div style="text-align: center; margin-bottom: 5px;">
+                    <button type="button" class="btn-secundario">
+                        <i class="fa-solid fa-list-check"></i> Adicionar Lista
+                    </button>
+                </div>
             </div>
 
             <div class="form-row">
@@ -525,7 +603,7 @@
 
     function alternarCampos() {
         const tipo = document.getElementById('tipoTorneio').value;
-        // Aqui entrará a lógica de mostrar/ocultar campos dependendo do tipo selecionado
+        // A lógica de ocultar/mostrar vai aqui
         console.log("Tipo selecionado: " + tipo);
     }
   </script>
