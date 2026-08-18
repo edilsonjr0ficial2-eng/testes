@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arena Vitale - Meus Eventos</title>
+  <title>Arena Vitale - Meus Torneios</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -248,27 +248,6 @@
     input::placeholder {
       color: #aaa;
     }
-    
-    /* Input de arquivo customizado */
-    .file-input-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .btn-file {
-      background-color: var(--brand-black);
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .file-name {
-      font-size: 13px;
-      color: var(--text-gray);
-    }
 
     /* Switches (Toggles) */
     .switch-container {
@@ -394,14 +373,14 @@
   </header>
 
   <div class="top-nav">
-    <a href="#" class="top-nav-item"><i class="fa-regular fa-calendar"></i> Eventos</a>
-    <a href="#" class="top-nav-item active"><i class="fa-regular fa-user"></i> Meus eventos</a>
+    <a href="#" class="top-nav-item"><i class="fa-regular fa-calendar"></i> Torneios</a>
+    <a href="#" class="top-nav-item active"><i class="fa-regular fa-user"></i> Meus torneios</a>
     <a href="#" class="top-nav-item"><i class="fa-solid fa-trophy"></i> Circuitos</a>
   </div>
 
   <div class="content">
     <button class="btn-criar" onclick="abrirModal()">
-      <i class="fa-solid fa-plus"></i> Criar Evento
+      <i class="fa-solid fa-plus"></i> Criar Torneio
     </button>
 
     <div class="toggle-group">
@@ -413,7 +392,7 @@
       <div class="empty-state-icon">
         <i class="fa-solid fa-trophy"></i>
       </div>
-      <h3>Você não possui nenhum evento cadastrado</h3>
+      <h3>Você não possui nenhum torneio cadastrado</h3>
     </div>
   </div>
 
@@ -421,16 +400,16 @@
     <div class="bottom-nav">
       <a href="#" class="bottom-nav-item"><div class="icon-bg"><i class="fa-solid fa-house"></i></div> Início</a>
       <a href="#" class="bottom-nav-item"><div class="icon-bg"><i class="fa-regular fa-calendar-check"></i></div> Reservas</a>
-      <a href="#" class="bottom-nav-item active"><div class="icon-bg"><i class="fa-solid fa-trophy"></i></div> Eventos</a>
+      <a href="#" class="bottom-nav-item active"><div class="icon-bg"><i class="fa-solid fa-trophy"></i></div> Torneios</a>
       <a href="#" class="bottom-nav-item"><div class="icon-bg"><i class="fa-solid fa-gear"></i></div> Ajustes</a>
     </div>
   </div>
 
-  <!-- Modal Criar Evento -->
+  <!-- Modal Criar Torneio -->
   <div class="modal-overlay" id="modalEvento">
     <div class="modal-content">
       <button class="modal-close" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
-      <div class="modal-header">Criar Evento</div>
+      <div class="modal-header">Criar Torneio</div>
       
       <form onsubmit="event.preventDefault();">
         <div class="form-row">
@@ -442,84 +421,87 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Arte do Evento (opcional)</label>
-            <div class="file-input-wrapper">
-              <button type="button" class="btn-file">Escolher arquivo</button>
-              <span class="file-name">Nenhum arquivo</span>
-            </div>
+            <label>Tipo de Torneio</label>
+            <select id="tipoTorneio" onchange="alternarCampos()">
+              <option value="bolao">Bolão</option>
+              <option value="super">Super</option>
+            </select>
           </div>
         </div>
 
         <div class="form-group">
-          <label>Nome do Evento</label>
+          <label>Nome do Torneio</label>
           <input type="text" placeholder="Ex: Bolão dos campeões">
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>Início do Evento</label>
-            <input type="date">
-          </div>
-          <div class="form-group">
-            <label>Fim do Evento</label>
-            <input type="date">
-          </div>
-        </div>
+        <!-- Div para agrupar os campos que vão mudar de acordo com a seleção -->
+        <div id="camposDinamicos">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Início</label>
+                <input type="date">
+              </div>
+              <div class="form-group">
+                <label>Fim</label>
+                <input type="date">
+              </div>
+            </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>Telefone</label>
-            <input type="tel" value="88988229008">
-          </div>
-          <div class="form-group">
-            <label>Chave pix</label>
-            <input type="text" placeholder="Pix do organizador">
-          </div>
-        </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Telefone</label>
+                <input type="tel" value="88988229008">
+              </div>
+              <div class="form-group">
+                <label>Chave pix</label>
+                <input type="text" placeholder="Pix do organizador">
+              </div>
+            </div>
 
-        <div class="switch-container">
-          <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px;">Receber pagamentos pelo sistema</label>
-          <label class="switch">
-            <input type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
+            <div class="switch-container">
+              <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px;">Receber pagamentos pelo sistema</label>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>Cidade</label>
-            <input type="text" placeholder="Cidade da arena">
-          </div>
-          <div class="form-group">
-            <label>Endereço</label>
-            <input type="text" placeholder="Endereço da arena">
-          </div>
-        </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Cidade</label>
+                <input type="text" placeholder="Cidade da arena">
+              </div>
+              <div class="form-group">
+                <label>Endereço</label>
+                <input type="text" placeholder="Endereço da arena">
+              </div>
+            </div>
 
-        <div class="switch-container">
-          <label style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; margin-bottom: 6px;">
-            Camisetas <i class="fa-solid fa-circle-info" style="color: #999;"></i>
-          </label>
-          <label class="switch">
-            <input type="checkbox">
-            <span class="slider"></span>
-          </label>
-        </div>
+            <div class="switch-container">
+              <label style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; margin-bottom: 6px;">
+                Camisetas <i class="fa-solid fa-circle-info" style="color: #999;"></i>
+              </label>
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
 
-        <div class="form-group">
-          <label>Critérios de classificação</label>
-          <select>
-            <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
-            <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
-            <option>Vitórias &rarr; Saldo de Games &rarr; Sorteio</option>
-            <option>Vitórias &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
-            <option>Vitórias &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
-            <option>Vitórias &rarr; Confronto Direto &rarr; Saldo de Games &rarr; Sorteio</option>
-            <option>Vitórias &rarr; 2x0 &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
-            <option>Vitórias &rarr; Saldo de Games &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
-            <option>Vitórias &rarr; 2x0 &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
-            <option>Vitórias &rarr; Coeficiente &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
-          </select>
+            <div class="form-group">
+              <label>Critérios de classificação</label>
+              <select>
+                <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
+                <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
+                <option>Vitórias &rarr; Saldo de Games &rarr; Sorteio</option>
+                <option>Vitórias &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
+                <option>Vitórias &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
+                <option>Vitórias &rarr; Confronto Direto &rarr; Saldo de Games &rarr; Sorteio</option>
+                <option>Vitórias &rarr; 2x0 &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
+                <option>Vitórias &rarr; Saldo de Games &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
+                <option>Vitórias &rarr; 2x0 &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
+                <option>Vitórias &rarr; Coeficiente &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
+              </select>
+            </div>
         </div>
 
         <button type="submit" class="btn-confirmar">Confirmar</button>
@@ -534,12 +516,18 @@
     function fecharModal() {
       document.getElementById('modalEvento').classList.remove('active');
     }
-    // Fechar modal ao clicar fora da caixa branca
+    
     document.getElementById('modalEvento').addEventListener('click', function(e) {
       if (e.target === this) {
         fecharModal();
       }
     });
+
+    function alternarCampos() {
+        const tipo = document.getElementById('tipoTorneio').value;
+        // Aqui entrará a lógica de mostrar/ocultar campos dependendo do tipo selecionado
+        console.log("Tipo selecionado: " + tipo);
+    }
   </script>
 </body>
 </html>
