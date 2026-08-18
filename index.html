@@ -559,7 +559,7 @@
         partidas: []
       };
       torneios.push(novoTorneio);
-      salvarDados(); // Salva o novo torneio
+      salvarDados(); 
       
       fecharModal();
       this.reset();
@@ -569,7 +569,7 @@
     });
 
     function apagarTorneio(event, id) {
-        event.stopPropagation(); // Evita abrir o card ao clicar na lixeira
+        event.stopPropagation(); 
         if(confirm('Tem certeza que deseja apagar este torneio?')) {
             torneios = torneios.filter(t => t.id !== id);
             salvarDados();
@@ -630,7 +630,7 @@
       const j2 = document.getElementById('jogador2').value.trim();
       if (!j1 || !j2) return alert('Informe o nome dos dois jogadores.');
       torneioAtual.participantes.push(`${j1} & ${j2}`);
-      salvarDados(); // Salva a dupla
+      salvarDados(); 
       document.getElementById('jogador1').value = '';
       document.getElementById('jogador2').value = '';
       atualizarTelaParticipantes();
@@ -642,7 +642,7 @@
       texto.split('\n').forEach(linha => {
         if (linha.trim()) torneioAtual.participantes.push(linha.trim());
       });
-      salvarDados(); // Salva a lista inteira
+      salvarDados(); 
       document.getElementById('textareaLista').value = '';
       atualizarTelaParticipantes();
     }
@@ -664,7 +664,7 @@
 
     function removerParticipante(index) {
       torneioAtual.participantes.splice(index, 1);
-      salvarDados(); // Salva a remoção
+      salvarDados(); 
       atualizarTelaParticipantes();
     }
 
@@ -679,10 +679,10 @@
       embaralhados.forEach((p, i) => grupos[i % num].push(p));
 
       torneioAtual.gruposSorteados = grupos;
-      salvarDados(); // Salva o sorteio
+      salvarDados(); 
       
-      atualizarTelaGrupos();
       gerarPartidas();
+      atualizarTelaGrupos();
     }
 
     function atualizarTelaGrupos() {
@@ -692,40 +692,111 @@
         return;
       }
       
-      container.innerHTML = torneioAtual.gruposSorteados.map((g, i) => `
-        <div class="grupo-titulo-imagem">Grupo ${i + 1}</div>
-        <div class="tabela-grupo-container">
-          <div class="tabela-header">
-            <div>PT</div>
-            <div>DUPLA</div>
-            <div>VITÓRIAS</div>
-            <div>GF</div>
-            <div>GC</div>
-            <div>SG</div>
-          </div>
-          
-          ${g.length === 0 ? '<div style="padding: 15px; text-align:center; font-size:13px; color: var(--text-gray);">Grupo Vazio</div>' : 
-            g.map((dupla, index) => {
-              let [jogador1, jogador2] = quebrarNomeDupla(dupla);
-              let classeLinha = index < 2 ? 'tabela-row classificado' : 'tabela-row';
+      let html = '';
 
-              return `
-                <div class="${classeLinha}">
-                  <div class="posicao">${index + 1}º</div>
-                  <div>
-                    <span>${jogador1}</span>
-                    ${jogador2 ? `<span>${jogador2}</span>` : ''}
+      // Iterando por cada grupo para calcular os placares dinamicamente
+      torneioAtual.gruposSorteados.forEach((grupo, gIdx) => {
+        
+        // 1. Array zerado para armazenar a pontuação de cada dupla deste grupo
+        let stats = grupo.map(dupla => ({
+            nome: dupla,
+            vitorias: 0,
+            gf: 0,
+            gc: 0,
+            sg: 0
+        }));
+
+        // 2. Busca os placares na aba de partidas e soma os resultados
+        if (torneioAtual.partidas && torneioAtual.partidas[gIdx]) {
+            torneioAtual.partidas[gIdx].confrontos.forEach(partida => {
+                // Considera apenas as partidas que já foram preenchidas
+                if (partida.placar1 !== '' && partida.placar2 !== '') {
+                    let p1 = parseInt(partida.placar1) || 0;
+                    let p2 = parseInt(partida.placar2) || 0;
+                    
+                    let stat1 = stats.find(s => s.nome === partida.dupla1);
+                    let stat2 = stats.find(s => s.nome === partida.dupla2);
+                    
+                    if(stat1 && stat2) {
+                        stat1.gf += p1;
+                        stat1.gc += p2;
+                        stat2.gf += p2;
+                        stat2.gc += p1;
+                        
+                        if (p1 > p2) stat1.vitorias += 1; // Dupla 1 ganhou
+                        if (p2 > p1) stat2.vitorias += 1; // Dupla 2 ganhou
+                    }
+                }
+            });
+        }
+
+        // 3. Calcula o Saldo de Games (SG = GF - GC)
+        stats.forEach(s => s.sg = s.gf - s.gc);
+
+        // 4. Lógica de Ordenação de Classificação
+        stats.sort((a, b) => {
+            // Regra 1: Mais Vitórias
+            if (b.vitorias !== a.vitorias) return b.vitorias - a.vitorias; 
+            
+            // Regra 2: Maior Saldo de Games
+            if (b.sg !== a.sg) return b.sg - a.sg; 
+            
+            // Regra 3: Confronto Direto (Procura quem ganhou a partida entre os dois que empataram)
+            if (torneioAtual.partidas && torneioAtual.partidas[gIdx]) {
+                let match = torneioAtual.partidas[gIdx].confrontos.find(p => 
+                    (p.dupla1 === a.nome && p.dupla2 === b.nome) || 
+                    (p.dupla2 === a.nome && p.dupla1 === b.nome)
+                );
+                if (match && match.placar1 !== '' && match.placar2 !== '') {
+                    let p1 = parseInt(match.placar1) || 0;
+                    let p2 = parseInt(match.placar2) || 0;
+                    if (match.dupla1 === a.nome) return p2 - p1;
+                    if (match.dupla2 === a.nome) return p1 - p2;
+                }
+            }
+            
+            // Regra 4: Mais Games Feitos (GF)
+            return b.gf - a.gf; 
+        });
+
+        // 5. Gera o visual HTML da tabela usando os dados calculados e ordenados
+        html += `
+          <div class="grupo-titulo-imagem">Grupo ${gIdx + 1}</div>
+          <div class="tabela-grupo-container">
+            <div class="tabela-header">
+              <div>POS</div>
+              <div>DUPLA</div>
+              <div>VITÓRIAS</div>
+              <div>GF</div>
+              <div>GC</div>
+              <div>SG</div>
+            </div>
+            
+            ${stats.length === 0 ? '<div style="padding: 15px; text-align:center; font-size:13px; color: var(--text-gray);">Grupo Vazio</div>' : 
+              stats.map((s, index) => {
+                let [jogador1, jogador2] = quebrarNomeDupla(s.nome);
+                let classeLinha = index < 2 ? 'tabela-row classificado' : 'tabela-row';
+
+                return `
+                  <div class="${classeLinha}">
+                    <div class="posicao">${index + 1}º</div>
+                    <div>
+                      <span>${jogador1}</span>
+                      ${jogador2 ? `<span>${jogador2}</span>` : ''}
+                    </div>
+                    <div>${s.vitorias}</div>
+                    <div>${s.gf}</div>
+                    <div>${s.gc}</div>
+                    <div>${s.sg}</div>
                   </div>
-                  <div>0</div>
-                  <div>0</div>
-                  <div>0</div>
-                  <div>0</div>
-                </div>
-              `;
-            }).join('')
-          }
-        </div>
-      `).join('');
+                `;
+              }).join('')
+            }
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
     }
 
     function gerarPartidas() {
@@ -740,15 +811,17 @@
         }
         torneioAtual.partidas.push({ grupoIndex: indexGrupo, confrontos: partidasGrupo });
       });
-      salvarDados(); // Salva os confrontos gerados
+      salvarDados(); 
       atualizarTelaPartidas();
     }
 
-    // Salva o número que você digitar no placar direto no LocalStorage
     function salvarPlacar(gIdx, pIdx, equipe, valor) {
         if(equipe === 1) torneioAtual.partidas[gIdx].confrontos[pIdx].placar1 = valor;
         if(equipe === 2) torneioAtual.partidas[gIdx].confrontos[pIdx].placar2 = valor;
         salvarDados();
+        
+        // Atualiza a tabela de grupos imediatamente para refletir o novo resultado!
+        atualizarTelaGrupos(); 
     }
 
     function atualizarTelaPartidas() {
