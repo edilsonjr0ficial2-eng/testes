@@ -193,7 +193,7 @@
       border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500;
     }
     
-    /* ESTILOS GRUPOS (Design inspirado no Playzinho, Cores da Arena) */
+    /* ESTILOS GRUPOS */
     .btn-sortear-topo {
       background-color: var(--brand-black); color: var(--brand-yellow); border: none; padding: 8px 15px;
       border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
@@ -201,11 +201,13 @@
     
     .grupo-titulo-imagem {
       font-size: 16px;
-      font-weight: 500;
-      color: #333;
+      font-weight: bold;
+      color: var(--brand-black);
       margin-bottom: 10px;
       margin-top: 20px;
       font-family: inherit;
+      border-bottom: 2px solid var(--brand-yellow);
+      padding-bottom: 5px;
     }
 
     .tabela-grupo-container {
@@ -218,10 +220,10 @@
     }
 
     .tabela-header {
-      background-color: var(--brand-black); /* Cor da Arena */
-      color: var(--brand-yellow); /* Cor da Arena */
+      background-color: var(--brand-black);
+      color: var(--brand-yellow);
       display: grid;
-      grid-template-columns: 35px 1fr 75px 40px 40px 40px; /* Ajuste para GF, GC, SG */
+      grid-template-columns: 35px 1fr 75px 40px 40px 40px;
       padding: 12px 10px;
       font-weight: 700;
       font-size: 12px;
@@ -236,7 +238,7 @@
 
     .tabela-row {
       display: grid;
-      grid-template-columns: 35px 1fr 75px 40px 40px 40px; /* Ajuste para GF, GC, SG */
+      grid-template-columns: 35px 1fr 75px 40px 40px 40px;
       padding: 12px 10px;
       font-size: 14px;
       align-items: center;
@@ -250,7 +252,6 @@
       border-bottom: none;
     }
 
-    /* Fundo amarelo claro para os classificados para combinar com a marca */
     .tabela-row.classificado {
       background-color: #fffae6; 
     }
@@ -266,6 +267,64 @@
     .tabela-row .posicao {
       font-weight: 500;
       font-size: 13px;
+    }
+
+    /* ESTILOS PARTIDAS */
+    .partida-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 12px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border-color);
+    }
+    
+    .dupla-partida {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--brand-black);
+    }
+
+    .placar-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 15px;
+    }
+
+    .placar-input {
+      width: 45px !important;
+      height: 40px;
+      text-align: center;
+      font-size: 18px !important;
+      font-weight: bold;
+      border: 2px solid #e5eaf5 !important;
+      border-radius: 8px !important;
+      background-color: #f9f9f9 !important;
+      color: var(--brand-black);
+      padding: 0 !important;
+    }
+
+    .placar-input:focus {
+      border-color: var(--brand-yellow) !important;
+      outline: none;
+      background-color: white !important;
+    }
+    
+    /* Remove as setinhas numéricas do input type number */
+    .placar-input::-webkit-outer-spin-button,
+    .placar-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .placar-input[type=number] {
+      -moz-appearance: textfield;
     }
 
     .bottom-nav-container {
@@ -290,6 +349,10 @@
             padding: 10px 5px;
         }
         .tabela-row { font-size: 13px; }
+        .partida-card { padding: 12px 10px; }
+        .dupla-partida { font-size: 11px; }
+        .placar-input { width: 35px !important; height: 35px; font-size: 16px !important; }
+        .placar-container { gap: 6px; margin: 0 8px; }
     }
   </style>
 </head>
@@ -364,9 +427,11 @@
 
       <!-- Aba: Partidas -->
       <div id="abaPartidas" class="conteudo-aba">
-        <div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;">
-          <i class="fa-solid fa-fire" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i>
-          <div>As partidas serão geradas após a definição dos grupos.</div>
+        <div id="listaPartidasContainer">
+            <div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;">
+              <i class="fa-solid fa-fire" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i>
+              <div>As partidas serão geradas após a definição dos grupos.</div>
+            </div>
         </div>
       </div>
     </div>
@@ -449,6 +514,14 @@
     let torneios = [];
     let torneioAtual = null;
 
+    // Função auxiliar para quebrar o nome da dupla para exibir um embaixo do outro
+    function quebrarNomeDupla(dupla) {
+        let nomesArray = dupla.split(/ e | x | - | & /i);
+        let jogador1 = nomesArray[0] ? nomesArray[0].trim() : dupla;
+        let jogador2 = nomesArray[1] ? nomesArray[1].trim() : '';
+        return [jogador1, jogador2];
+    }
+
     function abrirModal() { document.getElementById('modalEvento').classList.add('active'); }
     function fecharModal() { document.getElementById('modalEvento').classList.remove('active'); }
     
@@ -466,7 +539,8 @@
         nome: document.getElementById('inputNomeTorneio').value,
         numGrupos: parseInt(document.getElementById('inputNumGrupos').value) || 1,
         participantes: [],
-        gruposSorteados: []
+        gruposSorteados: [],
+        partidas: []
       };
       torneios.push(novoTorneio);
       fecharModal();
@@ -500,6 +574,7 @@
       document.getElementById('tituloTorneioHeader').innerText = torneioAtual.nome;
       atualizarTelaParticipantes();
       atualizarTelaGrupos();
+      atualizarTelaPartidas();
       mudarAba('participantes');
     }
 
@@ -572,6 +647,7 @@
 
       torneioAtual.gruposSorteados = grupos;
       atualizarTelaGrupos();
+      gerarPartidas();
     }
 
     function atualizarTelaGrupos() {
@@ -587,7 +663,7 @@
           <div class="tabela-header">
             <div>PT</div>
             <div>DUPLA</div>
-            <div>VITORIAS</div>
+            <div>VITÓRIAS</div>
             <div>GF</div>
             <div>GC</div>
             <div>SG</div>
@@ -595,12 +671,7 @@
           
           ${g.length === 0 ? '<div style="padding: 15px; text-align:center; font-size:13px; color: var(--text-gray);">Grupo Vazio</div>' : 
             g.map((dupla, index) => {
-              // Quebra o nome da dupla para empilhar
-              let nomesArray = dupla.split(/ e | x | - | & /i);
-              let jogador1 = nomesArray[0] ? nomesArray[0].trim() : dupla;
-              let jogador2 = nomesArray[1] ? nomesArray[1].trim() : '';
-
-              // Adiciona a classe 'classificado' (fundo amarelo claro) para os dois primeiros
+              let [jogador1, jogador2] = quebrarNomeDupla(dupla);
               let classeLinha = index < 2 ? 'tabela-row classificado' : 'tabela-row';
 
               return `
@@ -620,6 +691,69 @@
           }
         </div>
       `).join('');
+    }
+
+    function gerarPartidas() {
+      torneioAtual.partidas = [];
+      torneioAtual.gruposSorteados.forEach((grupo, indexGrupo) => {
+        let partidasGrupo = [];
+        // Todos contra todos dentro do grupo
+        for (let i = 0; i < grupo.length; i++) {
+          for (let j = i + 1; j < grupo.length; j++) {
+            partidasGrupo.push({ dupla1: grupo[i], dupla2: grupo[j] });
+          }
+        }
+        torneioAtual.partidas.push({ grupoIndex: indexGrupo, confrontos: partidasGrupo });
+      });
+      atualizarTelaPartidas();
+    }
+
+    function atualizarTelaPartidas() {
+      const container = document.getElementById('listaPartidasContainer');
+      
+      if (!torneioAtual.partidas || torneioAtual.partidas.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;">
+          <i class="fa-solid fa-fire" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i>
+          <div>As partidas serão geradas após a definição dos grupos.</div>
+        </div>`;
+        return;
+      }
+
+      let html = '';
+      torneioAtual.partidas.forEach((grupoPartida) => {
+        html += `<div class="grupo-titulo-imagem">Jogos - Grupo ${grupoPartida.grupoIndex + 1}</div>`;
+        
+        if (grupoPartida.confrontos.length === 0) {
+            html += `<div style="text-align:center; padding: 15px; background: white; border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-gray); font-size: 13px;">Sem duplas suficientes para gerar jogos.</div>`;
+        } else {
+            grupoPartida.confrontos.forEach((partida, indexPartida) => {
+                let [d1_j1, d1_j2] = quebrarNomeDupla(partida.dupla1);
+                let [d2_j1, d2_j2] = quebrarNomeDupla(partida.dupla2);
+
+                html += `
+                  <div class="partida-card">
+                    <div class="dupla-partida" style="text-align: right;">
+                      <span>${d1_j1}</span>
+                      ${d1_j2 ? `<span>${d1_j2}</span>` : ''}
+                    </div>
+                    
+                    <div class="placar-container">
+                      <input type="number" min="0" class="placar-input" placeholder="0">
+                      <span style="font-weight: bold; color: #ccc;">X</span>
+                      <input type="number" min="0" class="placar-input" placeholder="0">
+                    </div>
+                    
+                    <div class="dupla-partida" style="text-align: left;">
+                      <span>${d2_j1}</span>
+                      ${d2_j2 ? `<span>${d2_j2}</span>` : ''}
+                    </div>
+                  </div>
+                `;
+            });
+        }
+      });
+      
+      container.innerHTML = html;
     }
   </script>
 </body>
