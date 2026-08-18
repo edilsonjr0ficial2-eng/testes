@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arena Vitale - Meus Torneios</title>
+  <title>Arena Vitale - Gestão de Torneios</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -22,12 +22,11 @@
       background-color: var(--bg-color);
       background-image: linear-gradient(#e5eaf5 1px, transparent 1px), linear-gradient(90deg, #e5eaf5 1px, transparent 1px);
       background-size: 20px 20px;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* Cabeçalho Superior */
     header {
       background-color: var(--brand-black);
       color: white;
@@ -53,379 +52,176 @@
       text-transform: uppercase;
     }
     .avatar {
-      width: 32px;
-      height: 32px;
+      width: 32px; height: 32px;
       background-color: var(--brand-black);
       border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: flex; justify-content: center; align-items: center;
       border: 2px solid var(--brand-yellow);
       color: var(--brand-yellow);
       font-weight: bold;
     }
 
-    /* Menu de Navegação Superior */
     .top-nav {
       display: flex;
       background: white;
       border-bottom: 1px solid var(--border-color);
     }
     .top-nav-item {
-      flex: 1;
-      text-align: center;
-      padding: 15px 0;
-      color: var(--text-gray);
-      font-size: 14px;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
+      flex: 1; text-align: center; padding: 15px 0;
+      color: var(--text-gray); font-size: 14px; text-decoration: none;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
     }
     .top-nav-item.active {
-      color: var(--brand-black);
-      font-weight: bold;
+      color: var(--brand-black); font-weight: bold;
       border-bottom: 3px solid var(--brand-yellow);
     }
 
-    /* Área de Conteúdo */
     .content {
-      padding: 20px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .btn-criar {
-      background-color: var(--brand-yellow);
-      color: var(--brand-black);
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      margin-bottom: 20px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    .btn-criar:hover {
-      opacity: 0.9;
+      padding: 20px; flex: 1; display: flex; flex-direction: column; padding-bottom: 90px;
     }
     
+    .btn-criar {
+      background-color: var(--brand-yellow); color: var(--brand-black);
+      border: none; padding: 12px 20px; border-radius: 8px;
+      font-size: 16px; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      width: fit-content; margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .btn-criar:hover { opacity: 0.9; }
+
     .toggle-group {
-      display: flex;
-      background-color: #e5eaf5;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 40px;
+      display: flex; background-color: #e5eaf5; border-radius: 8px;
+      overflow: hidden; margin-bottom: 20px;
     }
     .toggle-btn {
-      flex: 1;
-      padding: 12px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
+      flex: 1; padding: 12px; text-align: center;
+      font-weight: 600; font-size: 14px; cursor: pointer;
     }
-    .toggle-btn.active {
-      background-color: var(--brand-black);
-      color: var(--brand-yellow);
+    .toggle-btn.active { background-color: var(--brand-black); color: var(--brand-yellow); }
+
+    .torneio-card {
+      background: white; border-radius: 10px; padding: 15px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex;
+      justify-content: space-between; align-items: center; cursor: pointer;
+      border-left: 5px solid var(--brand-yellow); margin-bottom: 10px;
     }
+    .torneio-card:hover { background: #fafafa; }
 
     .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      text-align: center;
-      color: #333;
-      margin-top: 20px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 0; text-align: center; color: #333;
     }
-    .empty-state-icon {
-      position: relative;
-      margin-bottom: 15px;
-    }
-    .empty-state-icon i {
-      font-size: 80px;
-      color: #d1d5db;
-    }
-    .empty-state-icon::after {
-      content: "";
-      position: absolute;
-      width: 110px;
-      height: 4px;
-      background-color: #d1d5db;
-      top: 50%;
-      left: -15px;
-      transform: rotate(-45deg);
-      border-radius: 2px;
-    }
+    .empty-state i { font-size: 60px; color: #d1d5db; margin-bottom: 15px; }
 
     /* Modais */
     .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.6);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background-color: rgba(0, 0, 0, 0.6); display: none;
+      justify-content: center; align-items: center; z-index: 1000;
     }
-    .modal-overlay.active {
-      display: flex;
-    }
+    .modal-overlay.active { display: flex; }
     .modal-content {
-      background-color: white;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 25px;
-      position: relative;
-      box-sizing: border-box;
+      background-color: white; border-radius: 12px; width: 90%; max-width: 600px;
+      max-height: 90vh; overflow-y: auto; padding: 25px; position: relative;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
     .modal-close {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: var(--text-gray);
+      position: absolute; top: 15px; right: 15px; background: none; border: none;
+      font-size: 20px; cursor: pointer; color: var(--text-gray);
     }
-    .modal-header {
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 25px;
-      color: var(--brand-black);
-    }
+    .modal-header { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 25px; color: var(--brand-black); }
 
-    /* Formulário do Modal */
-    .form-group {
-      margin-bottom: 15px;
-      display: flex;
-      flex-direction: column;
+    /* Tela Gestão */
+    #telaGestao { display: none; flex-direction: column; flex: 1; }
+    .gestao-top { display: flex; align-items: center; margin-bottom: 15px; }
+    .btn-voltar {
+      background: none; border: none; font-size: 14px; font-weight: 600;
+      color: var(--brand-black); cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
     }
-    .form-group label {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text-dark);
-      display: flex;
-      align-items: center;
-      gap: 5px;
+    .torneio-titulo-header { font-size: 20px; font-weight: bold; color: var(--brand-black); margin-bottom: 15px; }
+
+    /* Abas Internas */
+    .abas-internas {
+      display: flex; background: #e5eaf5; border-radius: 8px; padding: 4px; margin-bottom: 20px; gap: 4px;
     }
-    .form-row {
-      display: flex;
-      gap: 15px;
+    .aba-btn {
+      flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600;
+      border: none; background: transparent; border-radius: 6px; cursor: pointer;
+      color: var(--text-gray); display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    .form-row .form-group {
-      flex: 1;
+    .aba-btn.active { background: white; color: var(--brand-black); box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
+    .conteudo-aba { display: none; }
+    .conteudo-aba.active { display: block; }
+
+    /* Formulários */
+    .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+    .form-group label { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-dark); }
+    .form-row { display: flex; gap: 15px; }
+    .form-row .form-group { flex: 1; }
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border-color);
+      border-radius: 6px; font-size: 14px; box-sizing: border-box; background-color: var(--input-bg);
+      font-family: inherit;
     }
     
-    input[type="text"], input[type="number"], select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 14px;
-      box-sizing: border-box;
-      background-color: var(--input-bg);
-      color: var(--text-dark);
-    }
-    input::placeholder {
-      color: #aaa;
-    }
-    textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 14px;
-      font-family: inherit;
-      box-sizing: border-box;
-      background-color: var(--input-bg);
-      color: var(--text-dark);
-      resize: vertical;
-    }
-
-    /* Cadastro de Jogadores */
-    .cadastro-jogadores-box {
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 20px;
-      background-color: #fafafa;
-    }
-    .cadastro-header {
-      font-size: 15px;
-      font-weight: bold;
-      margin-bottom: 15px;
-      color: var(--brand-black);
-      text-align: center;
-    }
-    .btn-secundario {
-      background-color: var(--brand-yellow);
-      color: var(--brand-black);
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      max-width: 250px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .btn-secundario:hover {
-      opacity: 0.9;
-    }
-    .hint-text {
-      display: block;
-      text-align: center;
-      font-size: 11px;
-      color: var(--text-gray);
-      margin-top: 6px;
-      line-height: 1.3;
-    }
-
-    /* Switches (Toggles) */
-    .switch-container {
-      margin-bottom: 20px;
-    }
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-    }
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .4s;
-      border-radius: 24px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: var(--brand-black);
-    }
-    input:checked + .slider:before {
-      transform: translateX(20px);
-      background-color: var(--brand-yellow);
-    }
+    /* Switches */
+    .switch-container { margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--brand-black); }
+    input:checked + .slider:before { transform: translateX(20px); background-color: var(--brand-yellow); }
 
     .btn-confirmar {
-      background-color: var(--brand-black);
-      color: var(--brand-yellow);
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      width: 100%;
-      cursor: pointer;
-      margin-top: 10px;
+      background-color: var(--brand-black); color: var(--brand-yellow); border: none;
+      padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px;
     }
 
-    /* Navegação Inferior */
+    /* Aba Participantes e Grupos */
+    .cadastro-jogadores-box {
+      border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 20px; background-color: #fafafa;
+    }
+    .cadastro-header { font-size: 15px; font-weight: bold; margin-bottom: 15px; color: var(--brand-black); text-align: center; }
+    .btn-secundario {
+      background-color: var(--brand-yellow); color: var(--brand-black); border: none; padding: 10px 20px;
+      border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 250px;
+    }
+    .lista-participantes-card {
+      background: white; border-radius: 8px; padding: 12px 15px; margin-bottom: 8px;
+      border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500;
+    }
+    
+    .grupo-container { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+    .grupo-titulo { font-size: 16px; font-weight: bold; color: var(--brand-black); margin-bottom: 10px; border-bottom: 2px solid var(--brand-yellow); padding-bottom: 5px; display: flex; justify-content: space-between; }
+    .btn-sortear-topo {
+      background-color: var(--brand-black); color: var(--brand-yellow); border: none; padding: 8px 15px;
+      border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    }
+
     .bottom-nav-container {
-      padding: 10px 20px 20px;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      box-sizing: border-box;
+      padding: 10px 20px 20px; position: fixed; bottom: 0; width: 100%; box-sizing: border-box; background: var(--bg-color);
     }
     .bottom-nav {
-      display: flex;
-      justify-content: space-around;
-      background-color: white;
-      padding: 10px 0;
-      border-radius: 30px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      display: flex; justify-content: space-around; background-color: white; padding: 10px 0; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
     .bottom-nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-      color: var(--text-gray);
-      text-decoration: none;
-      flex: 1;
+      display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 12px; color: var(--text-gray); text-decoration: none; flex: 1;
     }
     .bottom-nav-item.active .icon-bg {
-      background-color: var(--brand-yellow);
-      color: var(--brand-black);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
+      background-color: var(--brand-yellow); color: var(--brand-black); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold;
     }
-    .icon-bg {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+    .icon-bg { width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; }
 
-    @media (max-width: 480px) {
-      .form-row {
-        flex-direction: column;
-        gap: 0;
-      }
-    }
+    @media (max-width: 480px) { .form-row { flex-direction: column; gap: 0; } }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="logo">
-      <i class="fa-solid fa-table-tennis-paddle-ball"></i> Arena Vitale
-    </div>
-    <div class="user-info">
-      E aí, EDILSON?!
-      <div class="avatar">E</div>
-    </div>
+    <div class="logo"><i class="fa-solid fa-table-tennis-paddle-ball"></i> Arena Vitale</div>
+    <div class="user-info">E aí, EDILSON?!<div class="avatar">E</div></div>
   </header>
 
   <div class="top-nav">
@@ -434,21 +230,69 @@
     <a href="#" class="top-nav-item"><i class="fa-solid fa-trophy"></i> Circuitos</a>
   </div>
 
-  <div class="content">
-    <button class="btn-criar" onclick="abrirModal()">
-      <i class="fa-solid fa-plus"></i> Criar Torneio
-    </button>
-
-    <div class="toggle-group">
-      <div class="toggle-btn active">Ativos</div>
-      <div class="toggle-btn">Arquivados</div>
+  <div class="content" id="conteudoPrincipal">
+    <!-- Tela 1: Lista -->
+    <div id="telaLista">
+      <button class="btn-criar" onclick="abrirModal()"><i class="fa-solid fa-plus"></i> Criar Torneio</button>
+      <div class="toggle-group"><div class="toggle-btn active">Ativos</div><div class="toggle-btn">Arquivados</div></div>
+      <div id="containerTorneios">
+        <div class="empty-state">
+          <i class="fa-solid fa-trophy"></i>
+          <h3>Você não possui nenhum torneio cadastrado</h3>
+        </div>
+      </div>
     </div>
 
-    <div class="empty-state">
-      <div class="empty-state-icon">
-        <i class="fa-solid fa-trophy"></i>
+    <!-- Tela 2: Gestão -->
+    <div id="telaGestao">
+      <div class="gestao-top"><button class="btn-voltar" onclick="voltarParaLista()"><i class="fa-solid fa-chevron-left"></i> Voltar</button></div>
+      <div class="torneio-titulo-header" id="tituloTorneioHeader">Nome do Torneio</div>
+
+      <div class="abas-internas">
+        <button class="aba-btn active" onclick="mudarAba('participantes')"><i class="fa-solid fa-users"></i> Participantes</button>
+        <button class="aba-btn" onclick="mudarAba('grupos')"><i class="fa-solid fa-layer-group"></i> Grupos</button>
+        <button class="aba-btn" onclick="mudarAba('partidas')"><i class="fa-solid fa-fire"></i> Partidas</button>
       </div>
-      <h3>Você não possui nenhum torneio cadastrado</h3>
+
+      <!-- Aba: Participantes -->
+      <div id="abaParticipantes" class="conteudo-aba active">
+        <div class="cadastro-jogadores-box">
+            <div class="cadastro-header">Cadastre os jogadores</div>
+            <div class="form-group"><input type="text" id="jogador1" placeholder="Nome do jogador 1"></div>
+            <div class="form-group"><input type="text" id="jogador2" placeholder="Nome do jogador 2"></div>
+            <div style="text-align: center; margin-bottom: 25px;">
+                <button type="button" class="btn-secundario" onclick="adicionarDuplaIndividual()"><i class="fa-solid fa-user-plus"></i> Adicionar Dupla</button>
+            </div>
+            <div class="form-group">
+                <textarea id="textareaLista" rows="4" placeholder="Lista de duplas (uma por linha)&#10;Ex:&#10;Vanio e Giselly&#10;Joao x Maria"></textarea>
+                <span style="display:block; text-align:center; font-size:11px; color:var(--text-gray); margin-top:6px;">(Adicione uma dupla por linha, separe o nome dos jogadores por "e", "-" ou "x")</span>
+            </div>
+            <div style="text-align: center;">
+                <button type="button" class="btn-secundario" onclick="adicionarDuplasEmMassa()"><i class="fa-solid fa-list-check"></i> Adicionar Lista</button>
+            </div>
+        </div>
+        <div style="margin-bottom: 15px; font-weight: bold;">Lista de Duplas Inscritas (<span id="contadorParticipantes">0</span>)</div>
+        <div id="listaParticipantesContainer"></div>
+      </div>
+
+      <!-- Aba: Grupos -->
+      <div id="abaGrupos" class="conteudo-aba">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <div style="font-weight: bold;">Divisão de Grupos</div>
+          <button class="btn-sortear-topo" onclick="sortearGrupos()"><i class="fa-solid fa-shuffle"></i> Sortear Grupos</button>
+        </div>
+        <div id="listaGruposContainer">
+          <div style="text-align: center; color: var(--text-gray); padding: 30px; font-size: 14px;">Clique em "Sortear Grupos" para distribuir os participantes automaticamente.</div>
+        </div>
+      </div>
+
+      <!-- Aba: Partidas -->
+      <div id="abaPartidas" class="conteudo-aba">
+        <div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;">
+          <i class="fa-solid fa-fire" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i>
+          <div>As partidas serão geradas após a definição dos grupos.</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -461,129 +305,63 @@
     </div>
   </div>
 
-  <!-- Modal Criar Torneio -->
+  <!-- Modal Inicialização Torneio -->
   <div class="modal-overlay" id="modalEvento">
     <div class="modal-content">
-      <button class="modal-close" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
+      <button class="modal-close" type="button" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
       <div class="modal-header">Criar Torneio</div>
       
-      <form onsubmit="event.preventDefault();">
+      <form id="formCriarTorneio">
         <div class="form-row">
           <div class="form-group">
             <label>Arena</label>
-            <select>
-              <option>Arena Vitale</option>
-              <option>Quadra padaria do Helder</option>
-            </select>
+            <select><option>Arena Vitale</option><option>Quadra padaria do Helder</option></select>
           </div>
           <div class="form-group">
             <label>Tipo de Torneio</label>
-            <select id="tipoTorneio" onchange="alternarCampos()">
-              <option value="bolao">Bolão</option>
-              <option value="super">Super</option>
-            </select>
+            <select><option value="bolao">Bolão</option><option value="super">Super</option></select>
           </div>
         </div>
 
         <div class="form-group">
           <label>Nome do Torneio</label>
-          <input type="text" placeholder="Ex: Bolão dos campeões">
+          <input type="text" id="inputNomeTorneio" placeholder="Ex: Feminina Iniciante" required>
         </div>
 
-        <!-- Div para agrupar os campos do formulário -->
-        <div id="camposDinamicos">
-            
-            <div class="form-row">
-              <div class="form-group">
-                <label>Número de duplas</label>
-                <input type="number" placeholder="Ex: 16" min="1">
-              </div>
-              <div class="form-group">
-                <label>Quantidade de grupos</label>
-                <input type="number" placeholder="Ex: 4" min="1">
-              </div>
-            </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Número de duplas</label>
+            <input type="number" id="inputNumDuplas" placeholder="Ex: 10" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Quantidade de grupos</label>
+            <input type="number" id="inputNumGrupos" placeholder="Ex: 3" min="1" required>
+          </div>
+        </div>
 
-            <!-- Cadastro de jogadores -->
-            <div class="cadastro-jogadores-box">
-                <div class="cadastro-header">Cadastre os jogadores</div>
-                
-                <div class="form-group">
-                    <input type="text" placeholder="Nome do jogador">
-                </div>
-                <div class="form-group">
-                    <input type="text" placeholder="Nome do jogador">
-                </div>
-                <div style="text-align: center; margin-bottom: 25px;">
-                    <button type="button" class="btn-secundario">
-                        <i class="fa-solid fa-user-plus"></i> Adicionar
-                    </button>
-                </div>
+        <div class="form-group">
+          <label>Melhores terceiros</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="selectMelhoresTerceiros" onchange="toggleQtdTerceiros()" style="flex: 1;">
+              <option value="nao">Não</option><option value="sim">Sim</option>
+            </select>
+            <input type="number" id="qtdTerceirosInput" placeholder="Qtd" min="1" style="width: 70px; display: none;">
+          </div>
+        </div>
 
-                <div class="form-group">
-                    <textarea rows="4" placeholder="Lista de duplas (uma por linha)&#10;Ex:&#10;Vanio e Giselly&#10;Joao x Maria"></textarea>
-                    <span class="hint-text">(Adicione uma dupla por linha, separe o nome dos jogadores por "e", "-" ou "x")</span>
-                </div>
-                <div style="text-align: center; margin-bottom: 5px;">
-                    <button type="button" class="btn-secundario">
-                        <i class="fa-solid fa-list-check"></i> Adicionar Lista
-                    </button>
-                </div>
-            </div>
+        <div class="switch-container">
+          <label>Camisetas <i class="fa-solid fa-circle-info" style="color: #999;"></i></label>
+          <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+        </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label>Chave pix</label>
-                <input type="text" placeholder="Pix do organizador">
-              </div>
-              <div class="form-group">
-                <label>Melhores terceiros</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                  <select id="selectMelhoresTerceiros" onchange="toggleQtdTerceiros()" style="flex: 1;">
-                    <option value="nao">Não</option>
-                    <option value="sim">Sim</option>
-                  </select>
-                  <input type="number" id="qtdTerceirosInput" placeholder="Qtd" min="1" style="width: 70px; display: none;" title="Quantidade de melhores terceiros que passam">
-                </div>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label>Cidade</label>
-                <input type="text" placeholder="Cidade da arena">
-              </div>
-              <div class="form-group">
-                <label>Endereço</label>
-                <input type="text" placeholder="Endereço da arena">
-              </div>
-            </div>
-
-            <div class="switch-container">
-              <label style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; margin-bottom: 6px;">
-                Camisetas <i class="fa-solid fa-circle-info" style="color: #999;"></i>
-              </label>
-              <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="form-group">
-              <label>Critérios de classificação</label>
-              <select>
-                <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Saldo de Games &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Confronto Direto &rarr; Saldo de Games &rarr; Sorteio</option>
-                <option>Vitórias &rarr; 2x0 &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Saldo de Games &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; 2x0 &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
-                <option>Vitórias &rarr; Coeficiente &rarr; 2x0 &rarr; Confronto Direto &rarr; Sorteio</option>
-              </select>
-            </div>
+        <div class="form-group">
+          <label>Critérios de classificação</label>
+          <select>
+            <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Saldo de Games &rarr; Confronto Direto &rarr; Coeficiente &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Saldo de Games &rarr; Sorteio</option>
+            <option>Vitórias &rarr; Coeficiente &rarr; Confronto Direto &rarr; Sorteio</option>
+          </select>
         </div>
 
         <button type="submit" class="btn-confirmar">Confirmar</button>
@@ -592,33 +370,153 @@
   </div>
 
   <script>
-    function abrirModal() {
-      document.getElementById('modalEvento').classList.add('active');
-    }
-    function fecharModal() {
-      document.getElementById('modalEvento').classList.remove('active');
-    }
+    let torneios = [];
+    let torneioAtual = null;
+
+    function abrirModal() { document.getElementById('modalEvento').classList.add('active'); }
+    function fecharModal() { document.getElementById('modalEvento').classList.remove('active'); }
     
-    document.getElementById('modalEvento').addEventListener('click', function(e) {
-      if (e.target === this) {
-        fecharModal();
-      }
-    });
-
-    function alternarCampos() {
-        const tipo = document.getElementById('tipoTorneio').value;
-        console.log("Tipo selecionado: " + tipo);
-    }
-
     function toggleQtdTerceiros() {
         const val = document.getElementById('selectMelhoresTerceiros').value;
         const inputQtd = document.getElementById('qtdTerceirosInput');
-        if (val === 'sim') {
-            inputQtd.style.display = 'block';
-        } else {
-            inputQtd.style.display = 'none';
-            inputQtd.value = '';
-        }
+        inputQtd.style.display = (val === 'sim') ? 'block' : 'none';
+        if(val !== 'sim') inputQtd.value = '';
+    }
+
+    document.getElementById('formCriarTorneio').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const novoTorneio = {
+        id: Date.now(),
+        nome: document.getElementById('inputNomeTorneio').value,
+        numGrupos: parseInt(document.getElementById('inputNumGrupos').value) || 1,
+        participantes: [],
+        gruposSorteados: []
+      };
+      torneios.push(novoTorneio);
+      fecharModal();
+      this.reset();
+      document.getElementById('qtdTerceirosInput').style.display = 'none';
+      renderizarListaTorneios();
+      abrirGestaoTorneio(novoTorneio.id);
+    });
+
+    function renderizarListaTorneios() {
+      const container = document.getElementById('containerTorneios');
+      if (torneios.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-trophy"></i><h3>Você não possui nenhum torneio cadastrado</h3></div>`;
+        return;
+      }
+      container.innerHTML = torneios.map(t => `
+        <div class="torneio-card" onclick="abrirGestaoTorneio(${t.id})">
+          <div>
+            <div style="font-weight: bold; font-size: 16px;">${t.nome}</div>
+            <div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">${t.participantes.length} duplas • ${t.numGrupos} grupos</div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color: var(--text-gray);"></i>
+        </div>
+      `).join('');
+    }
+
+    function abrirGestaoTorneio(id) {
+      torneioAtual = torneios.find(t => t.id === id);
+      document.getElementById('telaLista').style.display = 'none';
+      document.getElementById('telaGestao').style.display = 'flex';
+      document.getElementById('tituloTorneioHeader').innerText = torneioAtual.nome;
+      atualizarTelaParticipantes();
+      atualizarTelaGrupos();
+      mudarAba('participantes');
+    }
+
+    function voltarParaLista() {
+      document.getElementById('telaGestao').style.display = 'none';
+      document.getElementById('telaLista').style.display = 'block';
+      renderizarListaTorneios();
+    }
+
+    function mudarAba(aba) {
+      document.querySelectorAll('.aba-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.conteudo-aba').forEach(cont => cont.classList.remove('active'));
+      
+      const abasMap = { 'participantes': 0, 'grupos': 1, 'partidas': 2 };
+      document.querySelectorAll('.aba-btn')[abasMap[aba]].classList.add('active');
+      
+      const contMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas' };
+      document.getElementById(contMap[aba]).classList.add('active');
+    }
+
+    function adicionarDuplaIndividual() {
+      const j1 = document.getElementById('jogador1').value.trim();
+      const j2 = document.getElementById('jogador2').value.trim();
+      if (!j1 || !j2) return alert('Informe o nome dos dois jogadores.');
+      torneioAtual.participantes.push(`${j1} & ${j2}`);
+      document.getElementById('jogador1').value = '';
+      document.getElementById('jogador2').value = '';
+      atualizarTelaParticipantes();
+    }
+
+    function adicionarDuplasEmMassa() {
+      const texto = document.getElementById('textareaLista').value.trim();
+      if (!texto) return alert('Insira a lista de duplas.');
+      texto.split('\n').forEach(linha => {
+        if (linha.trim()) torneioAtual.participantes.push(linha.trim());
+      });
+      document.getElementById('textareaLista').value = '';
+      atualizarTelaParticipantes();
+    }
+
+    function atualizarTelaParticipantes() {
+      const container = document.getElementById('listaParticipantesContainer');
+      document.getElementById('contadorParticipantes').innerText = torneioAtual.participantes.length;
+      if (torneioAtual.participantes.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:gray; padding:20px;">Nenhuma dupla cadastrada.</div>`;
+        return;
+      }
+      container.innerHTML = torneioAtual.participantes.map((p, i) => `
+        <div class="lista-participantes-card">
+          <span><b>#${i + 1}</b> ${p}</span>
+          <button onclick="removerParticipante(${i})" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function removerParticipante(index) {
+      torneioAtual.participantes.splice(index, 1);
+      atualizarTelaParticipantes();
+    }
+
+    function sortearGrupos() {
+      if (torneioAtual.participantes.length === 0) return alert('Cadastre duplas antes de sortear.');
+      
+      const num = torneioAtual.numGrupos;
+      let embaralhados = [...torneioAtual.participantes].sort(() => Math.random() - 0.5);
+      let grupos = Array.from({ length: num }, () => []);
+      
+      // Distribuição equilibrada
+      embaralhados.forEach((p, i) => grupos[i % num].push(p));
+
+      torneioAtual.gruposSorteados = grupos;
+      atualizarTelaGrupos();
+    }
+
+    function atualizarTelaGrupos() {
+      const container = document.getElementById('listaGruposContainer');
+      if (!torneioAtual.gruposSorteados || torneioAtual.gruposSorteados.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px;">Clique em "Sortear Grupos" acima.</div>`;
+        return;
+      }
+      
+      const letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+      container.innerHTML = torneioAtual.gruposSorteados.map((g, i) => `
+        <div class="grupo-container">
+          <div class="grupo-titulo">
+            <span>Grupo ${letras[i] || (i+1)}</span>
+            <span style="font-size:12px; font-weight:normal;">${g.length} duplas</span>
+          </div>
+          ${g.length === 0 ? '<div style="font-size:13px;">Vazio</div>' : 
+            g.map((m, mIdx) => `<div style="padding:6px 0; font-size:13px; border-bottom:1px solid #f0f0f0;"><b>${mIdx + 1}.</b> ${m}</div>`).join('')
+          }
+        </div>
+      `).join('');
     }
   </script>
 </body>
