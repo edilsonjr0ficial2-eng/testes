@@ -86,7 +86,7 @@
     .link-info { color: #1d4ed8; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 5px 10px; background: #eef2ff; border-radius: 20px; transition: 0.2s; }
     .link-info:hover { background: #e0e7ff; }
 
-    /* ======== CHAVEAMENTO (BRACKET VISUAL) ======== */
+    /* ======== CHAVEAMENTO MATA-MATA (BLINDADO CONTRA ERROS DE CSS) ======== */
     .bracket-wrapper { background: white; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 30px; overflow-x: auto; width: 100%; box-sizing: border-box; }
     .badge-row { display: flex; gap: 40px; padding-left: 20px; margin-bottom: 30px; min-width: max-content; }
     .badge-header { width: 250px; display: flex; justify-content: center; flex-shrink: 0; }
@@ -100,29 +100,36 @@
     .col-final { margin-top: 180px; }
     
     .match-box { background: white; border: 1px solid #bbf7d0; border-radius: 8px; position: relative; height: 100px; box-sizing: border-box; z-index: 2; }
-    .match-header { background: #f8fafc; padding: 6px 12px; font-size: 10px; color: #64748b; border-bottom: 1px solid #e2e8f0; border-radius: 8px 8px 0 0; height: 24px; box-sizing: border-box; }
-    .match-team { display: flex; justify-content: space-between; align-items: center; padding: 0 12px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-weight: 600; height: 37px; box-sizing: border-box; position: relative; }
+    .match-header { background: #f8fafc; padding: 6px 12px; font-size: 10px; color: #64748b; border-bottom: 1px solid #e2e8f0; border-radius: 8px 8px 0 0; height: 24px; box-sizing: border-box; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
+    
+    /* ESTRUTURA BLINDADA PARA NUNCA SUMIR O NOME */
+    .match-team { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; border-bottom: 1px solid #f1f5f9; height: 37px; box-sizing: border-box; position: relative; }
     .match-team:last-child { border-bottom: none; border-radius: 0 0 8px 8px; }
-    .team-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; color: #111827; }
-
-    .match-team.winner { background-color: #f0fdf4; }
-    .match-team.winner .team-name { color: #059669; }
-    .match-team.winner .team-score { color: #059669; }
-    .match-team.loser .team-name { color: #ef4444; }
-    .match-team.loser .team-score { color: #ef4444; }
-
-    .team-score { width: 30px; border: none; background: transparent; text-align: right; font-size: 14px; font-weight: bold; outline: none; padding: 0; color: #111827; }
-    .team-score:focus { border-bottom: 1px solid #3b82f6; }
+    
+    .team-name-box { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; font-weight: 600; color: #1e293b; padding-right: 8px; }
+    .team-score-box { width: 35px; flex-shrink: 0; position: relative; display: flex; align-items: center; justify-content: flex-end; }
+    .team-score { width: 100%; height: 26px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 13px; font-weight: bold; color: #0f172a; background: #f8fafc; box-sizing: border-box; outline: none; padding: 0;}
+    .team-score:focus { border-color: #3b82f6; background: #fff; }
     .team-score::-webkit-outer-spin-button, .team-score::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-    .trophy-icon { position: absolute; right: -15px; top: 50%; transform: translateY(-50%); font-size: 26px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); z-index: 10; }
+    /* Cores Dinâmicas */
+    .match-team.winner { background-color: #f0fdf4; }
+    .match-team.winner .team-name-box { color: #059669; }
+    .match-team.winner .team-score { color: #059669; border-color: #a7f3d0; background-color: #ffffff; }
+    .match-team.loser .team-name-box { color: #ef4444; }
+    .match-team.loser .team-score { color: #ef4444; border-color: #fecaca; background-color: #ffffff; }
 
+    /* Troféu */
+    .trophy-icon { position: absolute; right: -25px; font-size: 20px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); z-index: 10; }
+
+    /* Conectores */
     .connector-right { position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 20px; border-top: 2px solid #60a5fa; }
     .connector-bracket { position: absolute; left: -20px; top: 50%; transform: translateY(-50%); width: 20px; height: 120px; border: 2px solid #60a5fa; border-right: none; border-radius: 4px 0 0 4px; z-index: 1; }
     .connector-bracket.final { height: 240px; }
     .connector-bracket::after { content: ""; position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 20px; border-top: 2px solid #60a5fa; }
     .connector-dot { position: absolute; left: -4px; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; z-index: 2; }
 
+    /* Navegação Base */
     .bottom-nav-container { padding: 10px 20px 20px; position: fixed; bottom: 0; width: 100%; box-sizing: border-box; background: var(--bg-color); z-index: 100; }
     .bottom-nav { display: flex; justify-content: space-around; background-color: white; padding: 10px 0; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
     .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 12px; color: var(--text-gray); text-decoration: none; flex: 1; }
@@ -224,8 +231,8 @@
              <div style="font-weight: bold; font-size: 16px;">Chaveamento do Torneio</div>
           </div>
           <div class="bracket-wrapper">
-              <div class="badge-row" id="badgeRowContainerAba"></div>
-              <div id="containerBracketDrawAba" class="bracket-container"></div>
+              <div class="badge-row" id="badgeRowContainer"></div>
+              <div id="containerBracketDraw" class="bracket-container"></div>
           </div>
       </div>
 
@@ -688,22 +695,22 @@
     }
 
     // =========================================================================
-    // BRACKET CHAVEAMENTO MATA-MATA (Proteção Extrema de Renderização)
+    // BRACKET CHAVEAMENTO MATA-MATA - BLINDADO CONTRA CSS FLEXBOX HIDDEN
     // =========================================================================
     function salvarPlacarMataMata(fase, matchIdx, equipa, valor) {
         if(!torneioAtual.bracket) torneioAtual.bracket = {};
         if(!torneioAtual.bracket[fase]) torneioAtual.bracket[fase] = {};
         if(!torneioAtual.bracket[fase][matchIdx]) torneioAtual.bracket[fase][matchIdx] = {p1: '', p2: ''};
         
-        if(equipe === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
-        if(equipe === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
+        if(equipa === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
+        if(equipa === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
         salvarDados(); 
         renderizarBracketVisual(); 
     }
 
     function renderizarBracketVisual() {
-        var container = document.getElementById('containerBracketDrawAba');
-        var badgeRow = document.getElementById('badgeRowContainerAba');
+        var container = document.getElementById('containerBracketDraw');
+        var badgeRow = document.getElementById('badgeRowContainer');
         
         if (!container || !badgeRow) return;
 
@@ -713,7 +720,7 @@
             
             if (!seeds || seeds.length === 0) { 
                 badgeRow.innerHTML = '';
-                container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio. Crie exatos <b>2 ou 4 grupos</b> para o chaveamento automático.</div>'; 
+                container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio e Resultados. Crie exatos <b>2 ou 4 grupos</b> para a chave funcionar.</div>'; 
                 return; 
             }
 
@@ -773,19 +780,27 @@
                 else if(faseId === 'final') conectores = '<div class="connector-bracket final"><div class="connector-dot"></div></div>';
 
                 var t1Name = formatarDuplaLinha(team1);
+                if (!t1Name || t1Name.trim() === '') t1Name = 'A definir';
+                
                 var t2Name = formatarDuplaLinha(team2);
+                if (!t2Name || t2Name.trim() === '') t2Name = 'A definir';
 
+                // Estrutura isolada para o nome nunca sumir
                 return '<div class="match-box">' +
                             '<div class="match-header">' + title + '</div>' +
                             '<div class="match-team ' + cls1 + '">' +
-                                '<span class="team-name">' + t1Name + '</span>' +
-                                '<input type="number" class="team-score" placeholder="0" value="' + s1 + '" oninput="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 1, this.value)">' +
-                                t1Icon +
+                                '<div class="team-name-box" title="' + t1Name + '">' + t1Name + '</div>' +
+                                '<div class="team-score-box">' +
+                                    '<input type="number" class="team-score" placeholder="0" value="' + s1 + '" oninput="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 1, this.value)">' +
+                                    t1Icon +
+                                '</div>' +
                             '</div>' +
                             '<div class="match-team ' + cls2 + '">' +
-                                '<span class="team-name">' + t2Name + '</span>' +
-                                '<input type="number" class="team-score" placeholder="0" value="' + s2 + '" oninput="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 2, this.value)">' +
-                                t2Icon +
+                                '<div class="team-name-box" title="' + t2Name + '">' + t2Name + '</div>' +
+                                '<div class="team-score-box">' +
+                                    '<input type="number" class="team-score" placeholder="0" value="' + s2 + '" oninput="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 2, this.value)">' +
+                                    t2Icon +
+                                '</div>' +
                             '</div>' +
                             conectores +
                         '</div>';
