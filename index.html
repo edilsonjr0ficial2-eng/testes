@@ -182,10 +182,12 @@
       <div class="gestao-top"><button class="btn-voltar" onclick="voltarParaLista()"><i class="fa-solid fa-chevron-left"></i> Voltar</button></div>
       <div class="torneio-titulo-header" id="tituloTorneioHeader">Nome do Torneio</div>
 
+      <!-- ADICIONADO A NOVA ABA DE TERCEIROS AQUI -->
       <div class="abas-internas">
         <button class="aba-btn active" onclick="mudarAba('participantes')"><i class="fa-solid fa-users"></i> Participantes</button>
         <button class="aba-btn" onclick="mudarAba('grupos')"><i class="fa-solid fa-layer-group"></i> Grupos</button>
         <button class="aba-btn" onclick="mudarAba('partidas')"><i class="fa-solid fa-fire"></i> Partidas</button>
+        <button class="aba-btn" id="btnAbaTerceiros" onclick="mudarAba('terceiros')" style="display: none;"><i class="fa-solid fa-medal"></i> 3º Colocados</button>
         <button class="aba-btn" onclick="mudarAba('chaveamento')"><i class="fa-solid fa-sitemap"></i> Chaves</button>
       </div>
 
@@ -221,6 +223,15 @@
            <div style="font-weight: bold; font-size: 16px;">Partidas da Fase de Grupos</div>
         </div>
         <div id="listaPartidasContainer"></div>
+      </div>
+
+      <!-- ABA NOVA: 3º COLOCADOS -->
+      <div id="abaTerceiros" class="conteudo-aba">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+             <div style="font-weight: bold; font-size: 16px;">Ranking dos 3º Colocados</div>
+             <div style="font-size: 13px; color: var(--text-gray); font-weight: bold;">Vagas: <span id="qtdVagasTerceiros" style="color: var(--brand-black); background: var(--brand-yellow); padding: 2px 8px; border-radius: 4px;">0</span></div>
+          </div>
+          <div id="listaTerceirosContainer"></div>
       </div>
 
       <!-- ABA: CHAVEAMENTO -->
@@ -275,8 +286,9 @@
             <input type="number" id="inputNumDuplas" placeholder="Ex: 10" min="1" required>
           </div>
           <div class="form-group">
-            <label>Quantidade de grupos <span style="font-weight:normal; color:#888;">(Use 2 ou 4)</span></label>
-            <input type="number" id="inputNumGrupos" placeholder="Ex: 4" min="1" value="4" required>
+            <!-- RESTRIÇÃO DE 2 OU 4 REMOVIDA AQUI! -->
+            <label>Quantidade de grupos</label>
+            <input type="number" id="inputNumGrupos" placeholder="Ex: 3" min="1" value="3" required>
           </div>
         </div>
 
@@ -374,6 +386,7 @@
                 atualizarTelaParticipantes(); 
                 atualizarTelaGrupos(); 
                 atualizarTelaPartidas();
+                atualizarTelaTerceiros(); // <--- Adicionado aqui
                 renderizarBracketVisual();
             } else {
                 voltarParaLista(); 
@@ -381,12 +394,10 @@
         }
     });
 
-    // Função de Salvamento (BLINDADA CONTRA ERROS DE NESTED ARRAY DO FIREBASE)
+    // Função de Salvamento
     async function salvarDadosFirebase() {
         if (!torneioAtual) return;
         try {
-            // FIX DEFINITIVO: O Firebase não aceita Arrays dentro de Arrays [[1],[2]]
-            // Aqui convertemos para uma lista de objetos [{duplas: [1]}, {duplas: [2]}]
             if (torneioAtual.gruposSorteados) {
                 torneioAtual.gruposSorteados = torneioAtual.gruposSorteados.map(function(grupo) {
                     return Array.isArray(grupo) ? { duplas: grupo } : grupo;
@@ -429,10 +440,17 @@
     document.getElementById('formCriarTorneio').addEventListener('submit', async function(e) {
       e.preventDefault();
       var novoId = Date.now().toString();
+      
+      // Capturando as novas opções de terceiros
+      var valTerceiros = document.getElementById('selectMelhoresTerceiros').value;
+      var qtdTerceiros = valTerceiros === 'sim' ? (parseInt(document.getElementById('qtdTerceirosInput').value) || 0) : 0;
+
       var novoTorneio = {
         id: novoId, 
         nome: document.getElementById('inputNomeTorneio').value,
-        numGrupos: parseInt(document.getElementById('inputNumGrupos').value) || 4,
+        numGrupos: parseInt(document.getElementById('inputNumGrupos').value) || 3, // Padrão flexível
+        melhoresTerceiros: valTerceiros, // NOVO
+        qtdTerceiros: qtdTerceiros, // NOVO
         participantes: [], 
         gruposSorteados: [], 
         partidas: [], 
@@ -475,12 +493,23 @@
     function abrirGestaoTorneio(id) {
       torneioAtual = torneios.find(function(t) { return t.id === id; });
       if(!torneioAtual.bracket) torneioAtual.bracket = {}; 
+      
       document.getElementById('telaLista').style.display = 'none'; 
       document.getElementById('telaGestao').style.display = 'flex'; 
       document.getElementById('tituloTorneioHeader').innerText = torneioAtual.nome;
+      
+      // Controla a exibição do botão da Aba de Terceiros
+      var btnTerceiros = document.getElementById('btnAbaTerceiros');
+      if(torneioAtual.melhoresTerceiros === 'sim' && torneioAtual.qtdTerceiros > 0) {
+          btnTerceiros.style.display = 'flex';
+      } else {
+          btnTerceiros.style.display = 'none';
+      }
+
       atualizarTelaParticipantes(); 
       atualizarTelaGrupos(); 
       atualizarTelaPartidas();
+      atualizarTelaTerceiros(); // <--- Carrega a nova tela
       mudarAba('participantes');
     }
 
@@ -495,10 +524,18 @@
       document.querySelectorAll('.aba-btn').forEach(function(b) { b.classList.remove('active'); }); 
       document.querySelectorAll('.conteudo-aba').forEach(function(c) { c.classList.remove('active'); });
       
-      var aMap = { 'participantes': 0, 'grupos': 1, 'partidas': 2, 'chaveamento': 3 }; 
-      document.querySelectorAll('.aba-btn')[aMap[aba]].classList.add('active');
+      // Encontra o botão correto e ativa
+      var mapaBotoes = {
+          'participantes': 0,
+          'grupos': 1,
+          'partidas': 2,
+          'terceiros': 3,
+          'chaveamento': 4
+      };
       
-      var cMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas', 'chaveamento': 'abaChaveamento' }; 
+      document.querySelectorAll('.aba-btn')[mapaBotoes[aba]].classList.add('active');
+      
+      var cMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas', 'terceiros': 'abaTerceiros', 'chaveamento': 'abaChaveamento' }; 
       document.getElementById(cMap[aba]).classList.add('active');
 
       if(aba === 'chaveamento') {
@@ -556,15 +593,14 @@
         salvarDadosFirebase(); 
     }
 
-    // A mágica de criação sem o bug de arrays aninhados
     function sortearGrupos() {
       if (!torneioAtual.participantes || torneioAtual.participantes.length === 0) return alert('Cadastre duplas primeiro.');
       
-      var num = parseInt(torneioAtual.numGrupos) || 4;
+      var num = parseInt(torneioAtual.numGrupos) || 3; // Permite qualquer número
       var embaralhados = [].concat(torneioAtual.participantes).sort(function() { return Math.random() - 0.5; });
       var grupos = [];
       
-      // Cria a estrutura que o Firebase ama: [{duplas: []}, {duplas: []}]
+      // DIVISÃO FLEXÍVEL: Distribui uniformemente, quem sobrar cai nos primeiros grupos (4, 3, 3...)
       for (var i=0; i<num; i++) { grupos.push({ duplas: [] }); }
       embaralhados.forEach(function(p, i) { grupos[i % num].duplas.push(p); });
       
@@ -574,6 +610,7 @@
       
       atualizarTelaGrupos();
       atualizarTelaPartidas();
+      atualizarTelaTerceiros(); // <--- Atualiza terceiros
       
       salvarDadosFirebase(); 
     }
@@ -583,7 +620,6 @@
         if(!torneioAtual.gruposSorteados) return gruposCalculados;
 
         torneioAtual.gruposSorteados.forEach(function(grupoItem, gIdx) {
-            // Compatibilidade garantida
             var listaDuplas = Array.isArray(grupoItem) ? grupoItem : grupoItem.duplas;
             if(!listaDuplas) listaDuplas = [];
 
@@ -656,6 +692,55 @@
       container.innerHTML = html;
     }
 
+    // =========================================================
+    // LÓGICA DO RANKING DOS TERCEIROS COLOCADOS
+    // =========================================================
+    function atualizarTelaTerceiros() {
+        var container = document.getElementById('listaTerceirosContainer');
+        if (!torneioAtual || torneioAtual.melhoresTerceiros !== 'sim') return;
+
+        document.getElementById('qtdVagasTerceiros').innerText = torneioAtual.qtdTerceiros;
+
+        var gruposData = obterClassificacaoGrupos();
+        var terceiros = [];
+
+        // Pega somente quem ficou em 3º lugar em cada grupo
+        gruposData.forEach(function(stats, gIdx) {
+            if (stats.length >= 3) {
+                var terceiro = stats[2]; // O 3º colocado (índice 2 na array)
+                terceiro.grupoOrigem = gIdx + 1;
+                terceiros.push(terceiro);
+            }
+        });
+
+        // Ordena os terceiros do melhor pro pior
+        terceiros.sort(function(a, b) {
+            if (b.vitorias !== a.vitorias) return b.vitorias - a.vitorias;
+            if (b.sg !== a.sg) return b.sg - a.sg;
+            return b.gf - a.gf;
+        });
+
+        var html = '<div class="tabela-grupo-container"><div class="tabela-header" style="grid-template-columns: 50px 1fr 50px 45px 45px;"><div>POS</div><div>DUPLA</div><div>GRP</div><div>V</div><div>SG</div></div>';
+        
+        if (terceiros.length === 0) {
+            html += '<div style="padding: 15px; text-align:center; font-size:13px; color: var(--text-gray);">Aguardando sorteio.</div>';
+        } else {
+            terceiros.forEach(function(s, index) {
+                var nomes = (s.nome||'').split(/ e | x | - | & | \/ /i);
+                var j1 = nomes[0] ? nomes[0].trim() : s.nome;
+                var j2 = nomes[1] ? nomes[1].trim() : '';
+                var htmlNome = j2 ? '<span>' + j1 + '</span><span>' + j2 + '</span>' : '<span>' + s.nome + '</span>';
+                
+                // Destaca de amarelo apenas a quantidade de vagas preenchida na criação do torneio
+                var classeLinha = index < torneioAtual.qtdTerceiros ? 'tabela-row classificado' : 'tabela-row';
+                
+                html += '<div class="' + classeLinha + '" style="grid-template-columns: 50px 1fr 50px 45px 45px;"><div class="posicao">' + (index + 1) + 'º</div><div>' + htmlNome + '</div><div style="font-weight: bold; color: #1e3a8a;">' + s.grupoOrigem + '</div><div>' + s.vitorias + '</div><div>' + s.sg + '</div></div>';
+            });
+        }
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
     function gerarPartidas(chamarSalvar = true) {
       torneioAtual.partidas = [];
       if(!torneioAtual.gruposSorteados) return;
@@ -679,6 +764,7 @@
         if(equipe === 1) torneioAtual.partidas[gIdx].confrontos[pIdx].placar1 = valor;
         if(equipe === 2) torneioAtual.partidas[gIdx].confrontos[pIdx].placar2 = valor;
         atualizarTelaGrupos(); 
+        atualizarTelaTerceiros(); // Atualiza o ranking dos terceiros ao digitar os placares
         salvarDadosFirebase(); 
     }
 
@@ -712,7 +798,6 @@
     function calcularSeeds() {
         var gruposData = obterClassificacaoGrupos();
         var numGrupos = gruposData.length;
-        if(numGrupos !== 2 && numGrupos !== 4) return null; 
         
         var campeoes = []; 
         var vices = [];
@@ -750,7 +835,7 @@
         var todosSeeds = calcularSeeds();
         var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
         
-        if (!todosSeeds) { 
+        if (!todosSeeds || todosSeeds.length === 0) { 
             container.innerHTML = '<div style="text-align:center; padding: 20px;">Você precisa de 2 ou 4 grupos para montar a chave automática.</div>'; 
             return; 
         }
@@ -778,6 +863,8 @@
             htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento Automático (Semifinal Direta)</div>' +
                 '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">Seed 1</span><span class="seed-nome">' + getS(1) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">Seed 4</span><span class="seed-nome">' + getS(4) + '</span></div></div>' +
                 '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">Seed 3</span><span class="seed-nome">' + getS(3) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">Seed 2</span><span class="seed-nome">' + getS(2) + '</span></div></div>';
+        } else {
+             htmlEsquerda = '<div style="font-size:13px; color:var(--text-gray);">Crie exatos 2 ou 4 grupos (ou aguarde a próxima atualização para chaves automáticas com 3, 5+ grupos).</div>';
         }
 
         var sortedSeeds = todosSeeds.sort(function(a,b){ return a.seed - b.seed; });
@@ -806,6 +893,12 @@
         var seeds = calcularSeeds();
         var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
         
+        if (numGrupos !== 2 && numGrupos !== 4) {
+            badgeRow.innerHTML = '';
+            container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Crie exatos <b>2 ou 4 grupos</b> (ou aguarde a próxima atualização para chaves com 3, 5+ grupos). Veja os classificados nas tabelas.</div>'; 
+            return;
+        }
+
         if (!seeds || seeds.length === 0) { 
             badgeRow.innerHTML = '';
             container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio. Crie exatos <b>2 ou 4 grupos</b> para o chaveamento automático.</div>'; 
