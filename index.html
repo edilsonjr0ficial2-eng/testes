@@ -86,11 +86,10 @@
     .link-info { color: #1d4ed8; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 5px 10px; background: #eef2ff; border-radius: 20px; transition: 0.2s; }
     .link-info:hover { background: #e0e7ff; }
 
-    /* ======== BRACKET (CHAVEAMENTO) ======== */
+    /* ======== CHAVEAMENTO (BRACKET VISUAL) ======== */
     .bracket-wrapper { background: white; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 30px; overflow-x: auto; width: 100%; box-sizing: border-box; }
-    
     .badge-row { display: flex; gap: 40px; padding-left: 20px; margin-bottom: 30px; min-width: max-content; }
-    .badge-header { width: 250px; display: flex; justify-content: center; }
+    .badge-header { width: 250px; display: flex; justify-content: center; flex-shrink: 0; }
     .fase-badge { background: #1d4ed8; color: white; padding: 6px 20px; border-radius: 20px; font-size: 13px; font-weight: bold; }
     
     .bracket-container { display: flex; gap: 40px; align-items: flex-start; justify-content: flex-start; padding-left: 20px; min-width: max-content; }
@@ -129,7 +128,7 @@
     .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 12px; color: var(--text-gray); text-decoration: none; flex: 1; }
     .bottom-nav-item.active .icon-bg { background-color: var(--brand-yellow); color: var(--brand-black); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; }
 
-    /* Modal Info */
+    /* Modal Info Secundario */
     .chaves-grid { display: flex; gap: 20px; align-items: flex-start; }
     .chaves-col-esquerda { flex: 1; display: flex; flex-direction: column; gap: 10px; }
     .chaves-col-direita { flex: 1.2; display: flex; flex-direction: column; gap: 10px; min-width: 250px; }
@@ -173,7 +172,7 @@
       <div id="containerTorneios"></div>
     </div>
 
-    <!-- TELA GESTÃO DO TORNEIO (Abas) -->
+    <!-- TELA GESTÃO DO TORNEIO -->
     <div id="telaGestao">
       <div class="gestao-top"><button class="btn-voltar" onclick="voltarParaLista()"><i class="fa-solid fa-chevron-left"></i> Voltar</button></div>
       <div class="torneio-titulo-header" id="tituloTorneioHeader">Nome do Torneio</div>
@@ -185,7 +184,7 @@
         <button class="aba-btn" onclick="mudarAba('chaveamento')"><i class="fa-solid fa-sitemap"></i> Chaves</button>
       </div>
 
-      <!-- Participantes -->
+      <!-- ABA: Participantes -->
       <div id="abaParticipantes" class="conteudo-aba active">
         <div class="cadastro-jogadores-box">
             <div class="cadastro-header">Cadastre os jogadores</div>
@@ -199,7 +198,7 @@
         <div id="listaParticipantesContainer"></div>
       </div>
 
-      <!-- Grupos -->
+      <!-- ABA: Grupos -->
       <div id="abaGrupos" class="conteudo-aba">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
           <div><button class="btn-sortear-topo" onclick="sortearGrupos()"><i class="fa-solid fa-shuffle"></i> Sortear Grupos</button></div>
@@ -211,7 +210,7 @@
         <div id="listaGruposContainer"></div>
       </div>
 
-      <!-- Partidas -->
+      <!-- ABA: Partidas -->
       <div id="abaPartidas" class="conteudo-aba">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
            <div style="font-weight: bold; font-size: 16px;">Partidas da Fase de Grupos</div>
@@ -219,14 +218,14 @@
         <div id="listaPartidasContainer"></div>
       </div>
 
-      <!-- ABA CHAVEAMENTO (Mata-Mata) -->
+      <!-- ABA: CHAVEAMENTO MATA-MATA -->
       <div id="abaChaveamento" class="conteudo-aba">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
              <div style="font-weight: bold; font-size: 16px;">Chaveamento do Torneio</div>
           </div>
           <div class="bracket-wrapper">
-              <div class="badge-row" id="badgeRowContainer"></div>
-              <div id="containerBracketDraw" class="bracket-container"></div>
+              <div class="badge-row" id="badgeRowContainerAba"></div>
+              <div id="containerBracketDrawAba" class="bracket-container"></div>
           </div>
       </div>
 
@@ -688,21 +687,26 @@
         container.innerHTML = '<div class="chaves-grid"><div class="chaves-col-esquerda">' + htmlEsquerda + '</div><div class="chaves-col-direita">' + htmlDireita + '</div></div>';
     }
 
+    // =========================================================================
+    // BRACKET CHAVEAMENTO MATA-MATA (Proteção Extrema de Renderização)
+    // =========================================================================
     function salvarPlacarMataMata(fase, matchIdx, equipa, valor) {
         if(!torneioAtual.bracket) torneioAtual.bracket = {};
         if(!torneioAtual.bracket[fase]) torneioAtual.bracket[fase] = {};
         if(!torneioAtual.bracket[fase][matchIdx]) torneioAtual.bracket[fase][matchIdx] = {p1: '', p2: ''};
         
-        if(equipa === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
-        if(equipa === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
+        if(equipe === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
+        if(equipe === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
         salvarDados(); 
         renderizarBracketVisual(); 
     }
 
     function renderizarBracketVisual() {
-        var container = document.getElementById('containerBracketDraw');
-        var badgeRow = document.getElementById('badgeRowContainer');
+        var container = document.getElementById('containerBracketDrawAba');
+        var badgeRow = document.getElementById('badgeRowContainerAba');
         
+        if (!container || !badgeRow) return;
+
         try {
             var seeds = calcularSeeds();
             var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
