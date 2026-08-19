@@ -87,18 +87,12 @@
     .link-info:hover { background: #e0e7ff; }
 
     /* ======== TELA DE CHAVEAMENTO (BRACKET) BLINDADO ======== */
-    #telaChaveamento { display: none; flex-direction: column; flex: 1; padding-bottom: 50px; }
-    .chaveamento-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-    .chaveamento-title { font-size: 24px; font-weight: bold; color: #1e3a8a; }
-    .btn-primary-blue { background-color: #1e40af; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-    
     .bracket-wrapper { background: white; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 30px; overflow-x: auto; width: 100%; box-sizing: border-box; }
     
     .badge-row { display: flex; gap: 40px; padding-left: 20px; margin-bottom: 30px; min-width: max-content; }
     .badge-header { width: 250px; display: flex; justify-content: center; }
     .fase-badge { background: #1d4ed8; color: white; padding: 6px 20px; border-radius: 20px; font-size: 13px; font-weight: bold; }
     
-    /* BLOQUEIO DE LARGURA: Isso impede a tela de ficar branca no celular */
     .bracket-container { display: flex; gap: 40px; align-items: flex-start; justify-content: flex-start; padding-left: 20px; min-width: max-content; }
     .bracket-column { display: flex; flex-direction: column; width: 250px; min-width: 250px; flex-shrink: 0; position: relative; }
     
@@ -192,6 +186,7 @@
         <button class="aba-btn active" onclick="mudarAba('participantes')"><i class="fa-solid fa-users"></i> Participantes</button>
         <button class="aba-btn" onclick="mudarAba('grupos')"><i class="fa-solid fa-layer-group"></i> Grupos</button>
         <button class="aba-btn" onclick="mudarAba('partidas')"><i class="fa-solid fa-fire"></i> Partidas</button>
+        <button class="aba-btn" onclick="mudarAba('chaveamento')"><i class="fa-solid fa-sitemap"></i> Chaves</button>
       </div>
 
       <div id="abaParticipantes" class="conteudo-aba active">
@@ -221,24 +216,22 @@
       <div id="abaPartidas" class="conteudo-aba">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
            <div style="font-weight: bold; font-size: 16px;">Partidas da Fase de Grupos</div>
-           <button class="btn-secundario" style="width: auto;" onclick="abrirChaveamento()"><i class="fa-solid fa-sitemap"></i> Ver chaveamento</button>
         </div>
         <div id="listaPartidasContainer"></div>
       </div>
-    </div>
 
-    <!-- TELA CHAVEAMENTO -->
-    <div id="telaChaveamento">
-        <div class="chaveamento-header">
-            <div class="chaveamento-title">Chaves do Torneio</div>
-            <button class="btn-primary-blue" onclick="fecharChaveamento()"><i class="fa-solid fa-users-viewfinder"></i> Ver Fase de Grupos</button>
-        </div>
-        <div class="bracket-wrapper">
-            <div class="badge-row" id="badgeRowContainer"></div>
-            <div id="containerBracketDraw" class="bracket-container"></div>
-        </div>
-    </div>
+      <!-- ABA CHAVEAMENTO -->
+      <div id="abaChaveamento" class="conteudo-aba">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+             <div style="font-weight: bold; font-size: 16px;">Chaveamento do Torneio</div>
+          </div>
+          <div class="bracket-wrapper">
+              <div class="badge-row" id="badgeRowContainer"></div>
+              <div id="containerBracketDraw" class="bracket-container"></div>
+          </div>
+      </div>
 
+    </div>
   </div>
 
   <div class="bottom-nav-container">
@@ -250,7 +243,7 @@
     </div>
   </div>
 
-  <!-- Modal Criar Torneio Restaurado -->
+  <!-- Modal Criar Torneio -->
   <div class="modal-overlay" id="modalEvento">
     <div class="modal-content">
       <button class="modal-close" type="button" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -333,10 +326,10 @@
           <p>A classificação dentro dos grupos segue estritamente a seguinte ordem de desempate:</p>
           <ol style="margin-left: 15px; padding-left: 15px;">
               <li><b>Maior número de Vitórias</b></li>
-              <li><b>Maior Saldo de Games (SG)</b></li>
-              <li><b>Confronto Direto</b></li>
+              <li><b>Maior Saldo de Games (SG)</b>: diferença entre games feitos e sofridos.</li>
+              <li><b>Confronto Direto</b>: caso duas duplas empatem nos itens acima, passa quem venceu o jogo entre elas.</li>
               <li><b>Maior número de Games Feitos (GF)</b></li>
-              <li><b>Sorteio</b></li>
+              <li><b>Sorteio</b> (ordem de inscrição)</li>
           </ol>
       </div>
     </div>
@@ -368,17 +361,6 @@
         var inputQtd = document.getElementById('qtdTerceirosInput');
         inputQtd.style.display = (val === 'sim') ? 'block' : 'none';
         if(val !== 'sim') inputQtd.value = '';
-    }
-    
-    function abrirChaveamento() {
-        document.getElementById('telaGestao').style.display = 'none';
-        document.getElementById('telaChaveamento').style.display = 'flex';
-        renderizarBracketVisual();
-    }
-    function fecharChaveamento() {
-        document.getElementById('telaChaveamento').style.display = 'none';
-        document.getElementById('telaGestao').style.display = 'flex';
-        atualizarTelaGrupos(); 
     }
 
     document.getElementById('formCriarTorneio').addEventListener('submit', function(e) {
@@ -426,7 +408,6 @@
       if(!torneioAtual.bracket) torneioAtual.bracket = {}; 
       document.getElementById('telaLista').style.display = 'none'; 
       document.getElementById('telaGestao').style.display = 'flex'; 
-      document.getElementById('telaChaveamento').style.display = 'none';
       document.getElementById('tituloTorneioHeader').innerText = torneioAtual.nome;
       atualizarTelaParticipantes(); 
       atualizarTelaGrupos(); 
@@ -443,10 +424,14 @@
     function mudarAba(aba) {
       document.querySelectorAll('.aba-btn').forEach(function(b) { b.classList.remove('active'); }); 
       document.querySelectorAll('.conteudo-aba').forEach(function(c) { c.classList.remove('active'); });
-      var aMap = { 'participantes': 0, 'grupos': 1, 'partidas': 2 }; 
+      var aMap = { 'participantes': 0, 'grupos': 1, 'partidas': 2, 'chaveamento': 3 }; 
       document.querySelectorAll('.aba-btn')[aMap[aba]].classList.add('active');
-      var cMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas' }; 
+      var cMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas', 'chaveamento': 'abaChaveamento' }; 
       document.getElementById(cMap[aba]).classList.add('active');
+
+      if(aba === 'chaveamento') {
+          renderizarBracketVisual();
+      }
     }
 
     function adicionarDuplaIndividual() {
