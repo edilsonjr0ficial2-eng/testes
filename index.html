@@ -86,7 +86,7 @@
     .link-info { color: #1d4ed8; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 5px 10px; background: #eef2ff; border-radius: 20px; transition: 0.2s; }
     .link-info:hover { background: #e0e7ff; }
 
-    /* ======== TELA DE CHAVEAMENTO (BRACKET) BLINDADO ======== */
+    /* ======== BRACKET (CHAVEAMENTO) ======== */
     .bracket-wrapper { background: white; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 30px; overflow-x: auto; width: 100%; box-sizing: border-box; }
     
     .badge-row { display: flex; gap: 40px; padding-left: 20px; margin-bottom: 30px; min-width: max-content; }
@@ -173,6 +173,7 @@
       <div id="containerTorneios"></div>
     </div>
 
+    <!-- TELA GESTÃO DO TORNEIO (Abas) -->
     <div id="telaGestao">
       <div class="gestao-top"><button class="btn-voltar" onclick="voltarParaLista()"><i class="fa-solid fa-chevron-left"></i> Voltar</button></div>
       <div class="torneio-titulo-header" id="tituloTorneioHeader">Nome do Torneio</div>
@@ -184,6 +185,7 @@
         <button class="aba-btn" onclick="mudarAba('chaveamento')"><i class="fa-solid fa-sitemap"></i> Chaves</button>
       </div>
 
+      <!-- Participantes -->
       <div id="abaParticipantes" class="conteudo-aba active">
         <div class="cadastro-jogadores-box">
             <div class="cadastro-header">Cadastre os jogadores</div>
@@ -197,6 +199,7 @@
         <div id="listaParticipantesContainer"></div>
       </div>
 
+      <!-- Grupos -->
       <div id="abaGrupos" class="conteudo-aba">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
           <div><button class="btn-sortear-topo" onclick="sortearGrupos()"><i class="fa-solid fa-shuffle"></i> Sortear Grupos</button></div>
@@ -208,6 +211,7 @@
         <div id="listaGruposContainer"></div>
       </div>
 
+      <!-- Partidas -->
       <div id="abaPartidas" class="conteudo-aba">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
            <div style="font-weight: bold; font-size: 16px;">Partidas da Fase de Grupos</div>
@@ -215,7 +219,7 @@
         <div id="listaPartidasContainer"></div>
       </div>
 
-      <!-- ABA CHAVEAMENTO VISUAL -->
+      <!-- ABA CHAVEAMENTO (Mata-Mata) -->
       <div id="abaChaveamento" class="conteudo-aba">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
              <div style="font-weight: bold; font-size: 16px;">Chaveamento do Torneio</div>
