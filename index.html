@@ -813,38 +813,24 @@
 
     function renderizarInfoChaveModal() {
         var container = document.getElementById('conteudoComoMonta');
-        var todosSeeds = calcularSeeds();
+        var gruposData = obterClassificacaoGrupos();
         var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
         
-        if (!todosSeeds || todosSeeds.length === 0) { 
-            container.innerHTML = '<div style="text-align:center; padding: 20px;">Você precisa de 2 ou 4 grupos para montar a chave automática.</div>'; 
+        if (!gruposData || gruposData.length === 0) { 
+            container.innerHTML = '<div style="text-align:center; padding: 20px;">Realize o sorteio para montar a chave.</div>'; 
             return; 
         }
-        
-        var getS = function(n) { 
-            var s = todosSeeds.find(function(x) { return x.seed === n; }); 
-            return s ? formatarDuplaLinha(s.nome) : 'A definir'; 
-        };
-        
-        var renderSCard = function(s) {
-            if(!s) return '';
-            var isCamp = s.seed <= numGrupos;
-            var desc = isCamp ? (s.seed + 'º Melhor Campeão') : ('Vice do grupo do ' + s.forcaDoCampeao + 'º campeão');
-            return '<div class="seed-info-card"><div class="seed-info-top"><span class="seed-badge">Seed ' + s.seed + '</span><span class="seed-info-nome">' + formatarDuplaLinha(s.nome) + '</span></div><div class="seed-info-detalhes"><span>' + desc + ' &bull; Grp ' + s.origem + '</span><span style="margin-left: auto;"><b>V:</b> ' + s.vitorias + ' | <b>SG:</b> ' + s.sg + '</span></div></div>';
+
+        var getPosFormat = function(gIndex, posIndex) {
+            if(gruposData[gIndex] && gruposData[gIndex][posIndex]) return formatarDuplaLinha(gruposData[gIndex][posIndex].nome);
+            return 'A definir';
         };
 
         var htmlEsquerda = '';
         
-        // NOVA LÓGICA PERSONALIZADA (3 GRUPOS + MELHORES TERCEIROS)
+        // 3 GRUPOS + MELHORES TERCEIROS
         if (numGrupos === 3 && torneioAtual.melhoresTerceiros === 'sim') {
             
-            // Puxando os classificados diretamente das tabelas
-            var gruposData = obterClassificacaoGrupos();
-            var getPos = function(gIndex, posIndex) {
-                if(gruposData[gIndex] && gruposData[gIndex][posIndex]) return formatarDuplaLinha(gruposData[gIndex][posIndex].nome);
-                return 'A definir';
-            };
-
             var terceirosRank = [];
             gruposData.forEach(function(stats, gIdx) {
                 if(stats.length >= 3) {
@@ -860,28 +846,40 @@
             var t2 = terceirosRank[1] ? formatarDuplaLinha(terceirosRank[1].nome) : 'A definir';
 
             htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento (Regra Customizada - 3 Grupos)</div>' +
-                '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">1º G1</span><span class="seed-nome">' + getPos(0,0) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge" style="background:#fef08a; color:#b45309;">2º Melhor 3º</span><span class="seed-nome">' + t2 + '</span></div></div>' +
-                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">1º G3</span><span class="seed-nome">' + getPos(2,0) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">2º G2</span><span class="seed-nome">' + getPos(1,1) + '</span></div></div>' +
-                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 3</div><div class="linha-chave"><div class="chave-pos">5</div><span class="seed-badge">1º G2</span><span class="seed-nome">' + getPos(1,0) + '</span></div><div class="linha-chave"><div class="chave-pos">6</div><span class="seed-badge" style="background:#fef08a; color:#b45309;">1º Melhor 3º</span><span class="seed-nome">' + t1 + '</span></div></div>' +
-                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 4</div><div class="linha-chave"><div class="chave-pos">7</div><span class="seed-badge">2º G1</span><span class="seed-nome">' + getPos(0,1) + '</span></div><div class="linha-chave"><div class="chave-pos">8</div><span class="seed-badge">2º G3</span><span class="seed-nome">' + getPos(2,1) + '</span></div></div>';
+                '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">1º G1</span><span class="seed-nome">' + getPosFormat(0,0) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge" style="background:#fef08a; color:#b45309;">2º Melhor 3º</span><span class="seed-nome">' + t2 + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">1º G3</span><span class="seed-nome">' + getPosFormat(2,0) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">2º G2</span><span class="seed-nome">' + getPosFormat(1,1) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 3</div><div class="linha-chave"><div class="chave-pos">5</div><span class="seed-badge">1º G2</span><span class="seed-nome">' + getPosFormat(1,0) + '</span></div><div class="linha-chave"><div class="chave-pos">6</div><span class="seed-badge" style="background:#fef08a; color:#b45309;">1º Melhor 3º</span><span class="seed-nome">' + t1 + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 4</div><div class="linha-chave"><div class="chave-pos">7</div><span class="seed-badge">2º G1</span><span class="seed-nome">' + getPosFormat(0,1) + '</span></div><div class="linha-chave"><div class="chave-pos">8</div><span class="seed-badge">2º G3</span><span class="seed-nome">' + getPosFormat(2,1) + '</span></div></div>';
                 
+        // 4 GRUPOS (Chaveamento Fixo Cruzado)
         } else if (numGrupos === 4) {
-            htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento Automático (Quartas)</div>' +
-                '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">Seed 1</span><span class="seed-nome">' + getS(1) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">Seed 7</span><span class="seed-nome">' + getS(7) + '</span></div></div>' +
-                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">Seed 6</span><span class="seed-nome">' + getS(6) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">Seed 4</span><span class="seed-nome">' + getS(4) + '</span></div></div>' +
-                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 3</div><div class="linha-chave"><div class="chave-pos">5</div><span class="seed-badge">Seed 3</span><span class="seed-nome">' + getS(3) + '</span></div><div class="linha-chave"><div class="chave-pos">6</div><span class="seed-badge">Seed 5</span><span class="seed-nome">' + getS(5) + '</span></div></div>' +
-                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 4</div><div class="linha-chave"><div class="chave-pos">7</div><span class="seed-badge">Seed 8</span><span class="seed-nome">' + getS(8) + '</span></div><div class="linha-chave"><div class="chave-pos">8</div><span class="seed-badge">Seed 2</span><span class="seed-nome">' + getS(2) + '</span></div></div>';
+            htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento Fixo Cruzado (Quartas)</div>' +
+                '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">1º G1</span><span class="seed-nome">' + getPosFormat(0,0) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">2º G4</span><span class="seed-nome">' + getPosFormat(3,1) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">1º G3</span><span class="seed-nome">' + getPosFormat(2,0) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">2º G2</span><span class="seed-nome">' + getPosFormat(1,1) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 3</div><div class="linha-chave"><div class="chave-pos">5</div><span class="seed-badge">1º G2</span><span class="seed-nome">' + getPosFormat(1,0) + '</span></div><div class="linha-chave"><div class="chave-pos">6</div><span class="seed-badge">2º G3</span><span class="seed-nome">' + getPosFormat(2,1) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 4</div><div class="linha-chave"><div class="chave-pos">7</div><span class="seed-badge">1º G4</span><span class="seed-nome">' + getPosFormat(3,0) + '</span></div><div class="linha-chave"><div class="chave-pos">8</div><span class="seed-badge">2º G1</span><span class="seed-nome">' + getPosFormat(0,1) + '</span></div></div>';
+        
+        // 2 GRUPOS (Chaveamento Fixo Cruzado)
         } else if (numGrupos === 2) {
-            htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento Automático (Semifinal Direta)</div>' +
-                '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">Seed 1</span><span class="seed-nome">' + getS(1) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">Seed 4</span><span class="seed-nome">' + getS(4) + '</span></div></div>' +
-                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">Seed 3</span><span class="seed-nome">' + getS(3) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">Seed 2</span><span class="seed-nome">' + getS(2) + '</span></div></div>';
+            htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento Fixo Cruzado (Semifinal)</div>' +
+                '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">1º G1</span><span class="seed-nome">' + getPosFormat(0,0) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">2º G2</span><span class="seed-nome">' + getPosFormat(1,1) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">1º G2</span><span class="seed-nome">' + getPosFormat(1,0) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">2º G1</span><span class="seed-nome">' + getPosFormat(0,1) + '</span></div></div>';
         } else {
              htmlEsquerda = '<div style="font-size:13px; color:var(--text-gray);">Crie exatos 2 ou 4 grupos (ou aguarde a próxima atualização para chaves automáticas com 3, 5+ grupos).</div>';
         }
 
-        var sortedSeeds = todosSeeds.sort(function(a,b){ return a.seed - b.seed; });
-        var htmlDireita = '<div class="titulo-secao-chave">Seeds da Fase de Grupos</div>' + sortedSeeds.map(function(s){ return renderSCard(s); }).join('');
+        var todosSeeds = calcularSeeds();
+        var sortedSeeds = todosSeeds ? todosSeeds.sort(function(a,b){ return a.seed - b.seed; }) : [];
+        var htmlDireita = '<div class="titulo-secao-chave">Ranking Geral da Fase de Grupos</div>';
+        
+        var renderSCard = function(s) {
+            if(!s) return '';
+            var isCamp = s.seed <= numGrupos;
+            var desc = isCamp ? (s.seed + 'º Melhor Campeão') : ('Vice do grupo do ' + s.forcaDoCampeao + 'º campeão');
+            return '<div class="seed-info-card"><div class="seed-info-top"><span class="seed-badge">Seed ' + s.seed + '</span><span class="seed-info-nome">' + formatarDuplaLinha(s.nome) + '</span></div><div class="seed-info-detalhes"><span>' + desc + ' &bull; Grp ' + s.origem + '</span><span style="margin-left: auto;"><b>V:</b> ' + s.vitorias + ' | <b>SG:</b> ' + s.sg + '</span></div></div>';
+        };
 
+        htmlDireita += sortedSeeds.map(function(s){ return renderSCard(s); }).join('');
         container.innerHTML = '<div class="chaves-grid"><div class="chaves-col-esquerda">' + htmlEsquerda + '</div><div class="chaves-col-direita">' + htmlDireita + '</div></div>';
     }
 
@@ -890,7 +888,7 @@
         if(!torneioAtual.bracket[fase]) torneioAtual.bracket[fase] = {};
         if(!torneioAtual.bracket[fase][matchIdx]) torneioAtual.bracket[fase][matchIdx] = {p1: '', p2: ''};
         
-        if(equipe === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
+        if(equipa === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
         if(equipa === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
         renderizarBracketVisual(); 
         salvarDadosFirebase(); 
@@ -902,26 +900,24 @@
         
         if (!container || !badgeRow) return;
 
-        var seeds = calcularSeeds();
         var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
+        var gruposData = obterClassificacaoGrupos();
         
-        // ADICIONADA PERMISSÃO PARA O CHAVEAMENTO DE 3 GRUPOS
+        // Permissão de chaveamento
         if (numGrupos !== 2 && numGrupos !== 4 && !(numGrupos === 3 && torneioAtual.melhoresTerceiros === 'sim')) {
             badgeRow.innerHTML = '';
             container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Crie exatos <b>2, 3 ou 4 grupos</b> com as configurações corretas para chaveamento automático. Veja os classificados nas tabelas.</div>'; 
             return;
         }
 
-        if (!seeds || seeds.length === 0) { 
+        if (!gruposData || gruposData.length === 0 || gruposData[0].length === 0) { 
             badgeRow.innerHTML = '';
-            container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio. Crie exatos <b>2 ou 4 grupos</b> para o chaveamento automático.</div>'; 
+            container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio. Realize os jogos para visualizar as chaves.</div>'; 
             return; 
         }
 
-        var getS = function(n) { 
-            for(var i=0; i<seeds.length; i++) {
-                if(seeds[i].seed === n) return seeds[i].nome;
-            }
+        var getPos = function(gIndex, posIndex) {
+            if(gruposData[gIndex] && gruposData[gIndex][posIndex]) return gruposData[gIndex][posIndex].nome;
             return 'A definir';
         };
         
@@ -931,16 +927,13 @@
         var fn_s = b.final || {};
 
         var getSc = function(faseObj, idx, p) { 
-            if(faseObj && faseObj[idx] && faseObj[idx][p] !== undefined) {
-                return faseObj[idx][p];
-            }
+            if(faseObj && faseObj[idx] && faseObj[idx][p] !== undefined) { return faseObj[idx][p]; }
             return ''; 
         };
 
         var getVencedor = function(t1, t2, sc1, sc2) {
             if (sc1 === '' || sc2 === '' || sc1 == null || sc2 == null) return 'A definir';
-            var n1 = parseInt(sc1);
-            var n2 = parseInt(sc2);
+            var n1 = parseInt(sc1); var n2 = parseInt(sc2);
             if (isNaN(n1) || isNaN(n2)) return 'A definir';
             if (n1 > n2) return t1;
             if (n2 > n1) return t2;
@@ -948,23 +941,13 @@
         };
 
         var buildMatchCard = function(title, team1, team2, s1, s2, faseId, matchIdx) {
-            var cls1 = '';
-            var cls2 = '';
-            var t1Icon = '';
-            var t2Icon = '';
+            var cls1 = ''; var cls2 = ''; var t1Icon = ''; var t2Icon = '';
 
             if(s1 !== '' && s2 !== '') {
-                var n1 = parseInt(s1);
-                var n2 = parseInt(s2);
+                var n1 = parseInt(s1); var n2 = parseInt(s2);
                 if(!isNaN(n1) && !isNaN(n2)) {
-                    if(n1 > n2) { 
-                        cls1 = 'winner'; cls2 = 'loser'; 
-                        if(faseId === 'final') t1Icon = '<div class="trophy-icon">🏆</div>';
-                    }
-                    else if(n2 > n1) { 
-                        cls2 = 'winner'; cls1 = 'loser'; 
-                        if(faseId === 'final') t2Icon = '<div class="trophy-icon">🏆</div>';
-                    }
+                    if(n1 > n2) { cls1 = 'winner'; cls2 = 'loser'; if(faseId === 'final') t1Icon = '<div class="trophy-icon">🏆</div>'; }
+                    else if(n2 > n1) { cls2 = 'winner'; cls1 = 'loser'; if(faseId === 'final') t2Icon = '<div class="trophy-icon">🏆</div>'; }
                 }
             }
 
@@ -975,45 +958,19 @@
 
             var t1Name = formatarDuplaLinha(team1);
             if (!t1Name || t1Name.trim() === '') t1Name = 'A definir';
-            
             var t2Name = formatarDuplaLinha(team2);
             if (!t2Name || t2Name.trim() === '') t2Name = 'A definir';
 
-            return '<div class="match-box">' +
-                        '<div class="match-header">' + title + '</div>' +
-                        '<div class="match-team ' + cls1 + '">' +
-                            '<div class="team-name-box" title="' + t1Name + '">' + t1Name + '</div>' +
-                            '<div class="team-score-box">' +
-                                '<input type="number" class="team-score" placeholder="0" value="' + s1 + '" onchange="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 1, this.value)">' +
-                                t1Icon +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="match-team ' + cls2 + '">' +
-                            '<div class="team-name-box" title="' + t2Name + '">' + t2Name + '</div>' +
-                            '<div class="team-score-box">' +
-                                '<input type="number" class="team-score" placeholder="0" value="' + s2 + '" onchange="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 2, this.value)">' +
-                                t2Icon +
-                            '</div>' +
-                        '</div>' +
-                        conectores +
-                    '</div>';
+            return '<div class="match-box"><div class="match-header">' + title + '</div><div class="match-team ' + cls1 + '"><div class="team-name-box" title="' + t1Name + '">' + t1Name + '</div><div class="team-score-box"><input type="number" class="team-score" placeholder="0" value="' + s1 + '" onchange="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 1, this.value)">' + t1Icon + '</div></div><div class="match-team ' + cls2 + '"><div class="team-name-box" title="' + t2Name + '">' + t2Name + '</div><div class="team-score-box"><input type="number" class="team-score" placeholder="0" value="' + s2 + '" onchange="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 2, this.value)">' + t2Icon + '</div></div>' + conectores + '</div>';
         };
 
-        // NOVA REGRA DE DESENHO (3 GRUPOS + TERCEIROS)
+        // 3 GRUPOS + TERCEIROS
         if (numGrupos === 3 && torneioAtual.melhoresTerceiros === 'sim') {
             badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Quartas</span></div><div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
             
-            var gruposData = obterClassificacaoGrupos();
-            var getPos = function(gIndex, posIndex) {
-                if(gruposData[gIndex] && gruposData[gIndex][posIndex]) return gruposData[gIndex][posIndex].nome;
-                return 'A definir';
-            };
-
             var terceirosRank = [];
             gruposData.forEach(function(stats, gIdx) {
-                if(stats.length >= 3) {
-                    terceirosRank.push(stats[2]);
-                }
+                if(stats.length >= 3) { terceirosRank.push(stats[2]); }
             });
             terceirosRank.sort(function(a, b) {
                 if (b.vitorias !== a.vitorias) return b.vitorias - a.vitorias;
@@ -1055,13 +1012,14 @@
                     buildMatchCard('Final • P1', fn_t1, fn_t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0) +
                 '</div>';
                 
+        // 4 GRUPOS FIXOS
         } else if (numGrupos === 4) {
             badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Quartas</span></div><div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
             
-            var qf0_t1 = getS(1); var qf0_t2 = getS(7);
-            var qf1_t1 = getS(6); var qf1_t2 = getS(4);
-            var qf2_t1 = getS(3); var qf2_t2 = getS(5);
-            var qf3_t1 = getS(8); var qf3_t2 = getS(2);
+            var qf0_t1 = getPos(0, 0); var qf0_t2 = getPos(3, 1); // 1º G1 x 2º G4
+            var qf1_t1 = getPos(2, 0); var qf1_t2 = getPos(1, 1); // 1º G3 x 2º G2
+            var qf2_t1 = getPos(1, 0); var qf2_t2 = getPos(2, 1); // 1º G2 x 2º G3
+            var qf3_t1 = getPos(3, 0); var qf3_t2 = getPos(0, 1); // 1º G4 x 2º G1
 
             var sf0_t1 = getVencedor(qf0_t1, qf0_t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'));
             var sf0_t2 = getVencedor(qf1_t1, qf1_t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'));
@@ -1086,11 +1044,12 @@
                     buildMatchCard('Final • P1', fn_t1, fn_t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0) +
                 '</div>';
                 
+        // 2 GRUPOS FIXOS
         } else if (numGrupos === 2) {
             badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
             
-            var sf0_t1 = getS(1); var sf0_t2 = getS(4);
-            var sf1_t1 = getS(2); var sf1_t2 = getS(3);
+            var sf0_t1 = getPos(0, 0); var sf0_t2 = getPos(1, 1); // 1º G1 x 2º G2
+            var sf1_t1 = getPos(1, 0); var sf1_t2 = getPos(0, 1); // 1º G2 x 2º G1
             
             var fn_t1 = getVencedor(sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'));
             var fn_t2 = getVencedor(sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'));
