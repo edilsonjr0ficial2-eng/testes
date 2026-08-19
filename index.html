@@ -86,7 +86,7 @@
     .link-info { color: #1d4ed8; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 5px 10px; background: #eef2ff; border-radius: 20px; transition: 0.2s; }
     .link-info:hover { background: #e0e7ff; }
 
-    /* ======== TELA DE CHAVEAMENTO (BRACKET) BLINDADO ======== */
+    /* ======== TELA DE CHAVEAMENTO (BRACKET) SINCRONIZADO ======== */
     .bracket-wrapper { background: white; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 30px; overflow-x: auto; width: 100%; box-sizing: border-box; }
     
     .badge-row { display: flex; gap: 40px; padding-left: 20px; margin-bottom: 30px; min-width: max-content; }
@@ -96,7 +96,6 @@
     .bracket-container { display: flex; gap: 40px; align-items: flex-start; justify-content: flex-start; padding-left: 20px; min-width: max-content; }
     .bracket-column { display: flex; flex-direction: column; width: 250px; min-width: 250px; flex-shrink: 0; position: relative; }
     
-    /* Espaçamentos precisos do Bracket */
     .col-qf { gap: 20px; margin-top: 0; }
     .col-sf { gap: 140px; margin-top: 60px; }
     .col-final { margin-top: 180px; }
@@ -107,22 +106,18 @@
     .match-team:last-child { border-bottom: none; border-radius: 0 0 8px 8px; }
     .team-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; color: #111827; }
 
-    /* Cores Dinâmicas */
     .match-team.winner { background-color: #f0fdf4; }
     .match-team.winner .team-name { color: #059669; }
     .match-team.winner .team-score { color: #059669; }
     .match-team.loser .team-name { color: #ef4444; }
     .match-team.loser .team-score { color: #ef4444; }
 
-    /* Input Invisível */
     .team-score { width: 30px; border: none; background: transparent; text-align: right; font-size: 14px; font-weight: bold; outline: none; padding: 0; color: #111827; }
     .team-score:focus { border-bottom: 1px solid #3b82f6; }
     .team-score::-webkit-outer-spin-button, .team-score::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-    /* Troféu */
     .trophy-icon { position: absolute; right: -15px; top: 50%; transform: translateY(-50%); font-size: 26px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); z-index: 10; }
 
-    /* Linhas do Chaveamento */
     .connector-right { position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 20px; border-top: 2px solid #60a5fa; }
     .connector-bracket { position: absolute; left: -20px; top: 50%; transform: translateY(-50%); width: 20px; height: 120px; border: 2px solid #60a5fa; border-right: none; border-radius: 4px 0 0 4px; z-index: 1; }
     .connector-bracket.final { height: 240px; }
@@ -326,10 +321,10 @@
           <p>A classificação dentro dos grupos segue estritamente a seguinte ordem de desempate:</p>
           <ol style="margin-left: 15px; padding-left: 15px;">
               <li><b>Maior número de Vitórias</b></li>
-              <li><b>Maior Saldo de Games (SG)</b>: diferença entre games feitos e sofridos.</li>
-              <li><b>Confronto Direto</b>: caso duas duplas empatem nos itens acima, passa quem venceu o jogo entre elas.</li>
+              <li><b>Maior Saldo de Games (SG)</b></li>
+              <li><b>Confronto Direto</b></li>
               <li><b>Maior número de Games Feitos (GF)</b></li>
-              <li><b>Sorteio</b> (ordem de inscrição)</li>
+              <li><b>Sorteio</b></li>
           </ol>
       </div>
     </div>
@@ -688,7 +683,7 @@
     }
 
     // =========================================================================
-    // BRACKET CHAVEAMENTO MATA-MATA (Proteção Extrema de Renderização)
+    // SINCRONIZAÇÃO DIRETA DA ABA CHAVES COM O MOTOR DO MODAL
     // =========================================================================
     function salvarPlacarMataMata(fase, matchIdx, equipa, valor) {
         if(!torneioAtual.bracket) torneioAtual.bracket = {};
@@ -792,6 +787,7 @@
             if (numGrupos === 4) {
                 badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Quartas</span></div><div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
                 
+                // Puxa exatamente a mesma ordem oficial e automatizada da função "Como a chave será montada"
                 var qf0_t1 = getS(1); var qf0_t2 = getS(7);
                 var qf1_t1 = getS(6); var qf1_t2 = getS(4);
                 var qf2_t1 = getS(3); var qf2_t2 = getS(5);
