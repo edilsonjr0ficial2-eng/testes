@@ -62,7 +62,7 @@
     .btn-confirmar { background-color: var(--brand-black); color: var(--brand-yellow); border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
     .btn-secundario { background-color: var(--brand-yellow); color: var(--brand-black); border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 
-    /* Switches */
+    /* Switches Originais */
     .switch-container { margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }
     .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
     .switch input { opacity: 0; width: 0; height: 0; }
@@ -89,7 +89,7 @@
     .link-info { color: #1d4ed8; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 5px 10px; background: #eef2ff; border-radius: 20px; transition: 0.2s; }
     .link-info:hover { background: #e0e7ff; }
 
-    /* ======== CHAVEAMENTO (BRACKET) ======== */
+    /* ======== CHAVEAMENTO MATA-MATA ======== */
     .bracket-wrapper { background: white; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 30px; overflow-x: auto; width: 100%; box-sizing: border-box; }
     .badge-row { display: flex; gap: 40px; padding-left: 20px; margin-bottom: 30px; min-width: max-content; }
     .badge-header { width: 250px; display: flex; justify-content: center; flex-shrink: 0; }
@@ -128,7 +128,6 @@
     .connector-bracket::after { content: ""; position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 20px; border-top: 2px solid #60a5fa; }
     .connector-dot { position: absolute; left: -4px; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; z-index: 2; }
 
-    /* Navegação Base */
     .bottom-nav-container { padding: 10px 20px 20px; position: fixed; bottom: 0; width: 100%; box-sizing: border-box; background: var(--bg-color); z-index: 100; }
     .bottom-nav { display: flex; justify-content: space-around; background-color: white; padding: 10px 0; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
     .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 12px; color: var(--text-gray); text-decoration: none; flex: 1; }
@@ -224,7 +223,7 @@
         <div id="listaPartidasContainer"></div>
       </div>
 
-      <!-- ABA: CHAVEAMENTO MATA-MATA -->
+      <!-- ABA: CHAVEAMENTO -->
       <div id="abaChaveamento" class="conteudo-aba">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
              <div style="font-weight: bold; font-size: 16px;">Chaveamento do Torneio</div>
@@ -339,13 +338,12 @@
     </div>
   </div>
 
-  <!-- INTEGRATION SCRIPTS FIREBASE -->
+  <!-- SCRIPT INTEGRADO COM FIREBASE EM TEMPO REAL -->
   <script type="module">
-    // Importa as funções originais do Firebase (Modular Version)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // A sua chave de configuração exata do Firebase
+    // Suas credenciais oficiais do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDnXETegh6BXSU79UAe8L0Td8PmtRbTSHU",
       authDomain: "arenavitale-d8915.firebaseapp.com",
@@ -355,16 +353,13 @@
       appId: "1:426027623896:web:e128bbaae706e86e87bead"
     };
 
-    // Inicializa o Firebase e o Banco de Dados
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Variáveis globais do sistema
     let torneios = [];
     let torneioAtual = null;
 
-    // ESCUTA EM TEMPO REAL DO FIREBASE
-    // Quando qualquer coisa mudar no banco de dados, a tela de todo mundo atualiza na hora!
+    // Sincronização em Tempo Real (Escuta o banco de dados)
     onSnapshot(collection(db, "torneios"), (snapshot) => {
         torneios = [];
         snapshot.forEach((doc) => {
@@ -373,35 +368,33 @@
         
         renderizarListaTorneios();
 
-        // Se você estiver dentro de um torneio no momento que ele foi atualizado
         if (torneioAtual) {
             const atualizado = torneios.find(t => t.id === torneioAtual.id);
             if (atualizado) {
-                torneioAtual = atualizado; // Recebe os dados fresquinhos da nuvem
+                torneioAtual = atualizado; 
                 atualizarTelaParticipantes(); 
                 atualizarTelaGrupos(); 
                 atualizarTelaPartidas();
                 renderizarBracketVisual();
             } else {
-                voltarParaLista(); // Se alguém apagou o torneio, você volta pra lista
+                voltarParaLista(); 
             }
         }
     });
 
-    // Função que salva no Firebase (Substituiu o antigo localStorage)
+    // Função central para salvar dados no Firebase
     async function salvarDadosFirebase() {
         if (!torneioAtual) return;
         try {
-            // Salva as informações do torneio atual diretamente na coleção "torneios"
             await setDoc(doc(db, "torneios", torneioAtual.id.toString()), torneioAtual);
         } catch (e) {
-            console.error("Erro ao salvar na nuvem:", e);
+            console.error("Erro ao salvar:", e);
         }
     }
 
-    // ==========================================
-    // TODAS AS FUNÇÕES GERAIS DO SISTEMA
-    // ==========================================
+    // =====================================
+    // LÓGICA DO SISTEMA
+    // =====================================
 
     function formatarDuplaLinha(dupla) {
         if (!dupla || typeof dupla !== 'string' || dupla === 'A definir') return 'A definir';
@@ -424,10 +417,10 @@
         if(val !== 'sim') inputQtd.value = '';
     }
 
-    // A criação do torneio agora vai pro Firebase
+    // Evento de Criar Torneio
     document.getElementById('formCriarTorneio').addEventListener('submit', async function(e) {
       e.preventDefault();
-      var novoId = Date.now().toString(); // IDs no Firebase preferem texto
+      var novoId = Date.now().toString();
       var novoTorneio = {
         id: novoId, 
         nome: document.getElementById('inputNomeTorneio').value,
@@ -442,19 +435,18 @@
       this.reset();
       document.getElementById('qtdTerceirosInput').style.display = 'none';
       
-      // Salva criando no banco
       try {
           await setDoc(doc(db, "torneios", novoId), novoTorneio);
           torneioAtual = novoTorneio;
           abrirGestaoTorneio(novoId);
       } catch (err) {
-          alert("Erro ao criar o torneio na nuvem: " + err.message);
+          alert("Erro ao criar o torneio: " + err.message);
       }
     });
 
     async function apagarTorneio(event, id) {
         event.stopPropagation(); 
-        if(confirm('Tem certeza que deseja apagar este torneio da Nuvem?')) {
+        if(confirm('Tem certeza que deseja apagar este torneio?')) {
             await deleteDoc(doc(db, "torneios", id.toString()));
         }
     }
@@ -466,7 +458,8 @@
         return; 
       }
       container.innerHTML = torneios.map(function(t) { 
-        return '<div class="torneio-card" onclick="abrirGestaoTorneio(\'' + t.id + '\')"><div><div style="font-weight: bold; font-size: 16px;">' + t.nome + '</div><div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">' + (t.participantes ? t.participantes.length : 0) + ' duplas • ' + t.numGrupos + ' grupos</div></div><div style="display: flex; align-items: center; gap: 15px;"><button class="btn-apagar-torneio" onclick="apagarTorneio(event, \'' + t.id + '\')"><i class="fa-solid fa-trash"></i></button><i class="fa-solid fa-chevron-right" style="color: var(--text-gray);"></i></div></div>'; 
+        var numParts = t.participantes ? t.participantes.length : 0;
+        return '<div class="torneio-card" onclick="abrirGestaoTorneio(\'' + t.id + '\')"><div><div style="font-weight: bold; font-size: 16px;">' + t.nome + '</div><div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">' + numParts + ' duplas • ' + t.numGrupos + ' grupos</div></div><div style="display: flex; align-items: center; gap: 15px;"><button class="btn-apagar-torneio" onclick="apagarTorneio(event, \'' + t.id + '\')"><i class="fa-solid fa-trash"></i></button><i class="fa-solid fa-chevron-right" style="color: var(--text-gray);"></i></div></div>'; 
       }).join('');
     }
 
@@ -508,6 +501,7 @@
       var j1 = document.getElementById('jogador1').value.trim(); 
       var j2 = document.getElementById('jogador2').value.trim();
       if (!j1 || !j2) return alert('Informe os dois jogadores.');
+      if(!torneioAtual.participantes) torneioAtual.participantes = [];
       torneioAtual.participantes.push(j1 + ' & ' + j2); 
       salvarDadosFirebase(); 
       document.getElementById('jogador1').value = ''; 
@@ -517,6 +511,7 @@
     function adicionarDuplasEmMassa() {
       var texto = document.getElementById('textareaLista').value.trim();
       if (!texto) return alert('Insira a lista.');
+      if(!torneioAtual.participantes) torneioAtual.participantes = [];
       texto.split('\n').forEach(function(linha) { 
           if (linha.trim()) torneioAtual.participantes.push(linha.trim()); 
       });
@@ -526,7 +521,11 @@
 
     function atualizarTelaParticipantes() {
       var container = document.getElementById('listaParticipantesContainer'); 
-      if (!torneioAtual || !torneioAtual.participantes) return;
+      if (!torneioAtual || !torneioAtual.participantes) {
+          document.getElementById('contadorParticipantes').innerText = 0;
+          container.innerHTML = '<div style="text-align:center; color:gray; padding:20px;">Nenhuma dupla cadastrada.</div>'; 
+          return;
+      }
       document.getElementById('contadorParticipantes').innerText = torneioAtual.participantes.length;
       if (torneioAtual.participantes.length === 0) { 
           container.innerHTML = '<div style="text-align:center; color:gray; padding:20px;">Nenhuma dupla cadastrada.</div>'; 
@@ -543,14 +542,27 @@
     }
 
     function sortearGrupos() {
-      if (torneioAtual.participantes.length === 0) return alert('Cadastre duplas.');
+      if (!torneioAtual.participantes || torneioAtual.participantes.length === 0) return alert('Cadastre duplas.');
       var num = torneioAtual.numGrupos;
       var embaralhados = [].concat(torneioAtual.participantes).sort(function() { return Math.random() - 0.5; });
       var grupos = [];
       for (var i=0; i<num; i++) { grupos.push([]); }
       embaralhados.forEach(function(p, i) { grupos[i % num].push(p); });
       torneioAtual.gruposSorteados = grupos; 
-      gerarPartidas(false); // Só processa a lógica de partidas, salva no final
+      
+      // Gera as partidas em memória primeiro
+      torneioAtual.partidas = [];
+      torneioAtual.gruposSorteados.forEach(function(grupo, indexGrupo) {
+        var partidasGrupo = [];
+        for (var i = 0; i < grupo.length; i++) {
+          for (var j = i + 1; j < grupo.length; j++) { 
+              partidasGrupo.push({ dupla1: grupo[i], dupla2: grupo[j], placar1: '', placar2: '' }); 
+          }
+        }
+        torneioAtual.partidas.push({ grupoIndex: indexGrupo, confrontos: partidasGrupo });
+      });
+      
+      // Agora salva tudo na nuvem de uma vez só!
       salvarDadosFirebase(); 
     }
 
@@ -628,25 +640,11 @@
       container.innerHTML = html;
     }
 
-    function gerarPartidas(chamarSalvar = true) {
-      torneioAtual.partidas = [];
-      torneioAtual.gruposSorteados.forEach(function(grupo, indexGrupo) {
-        var partidasGrupo = [];
-        for (var i = 0; i < grupo.length; i++) {
-          for (var j = i + 1; j < grupo.length; j++) { 
-              partidasGrupo.push({ dupla1: grupo[i], dupla2: grupo[j], placar1: '', placar2: '' }); 
-          }
-        }
-        torneioAtual.partidas.push({ grupoIndex: indexGrupo, confrontos: partidasGrupo });
-      });
-      if(chamarSalvar) salvarDadosFirebase(); 
-    }
-
-    // Disparada ao digitar o placar do grupo
+    // Salva o placar do grupo APÓS o usuário digitar e clicar fora (onchange) para não bugar no Firebase
     function salvarPlacarGrupo(gIdx, pIdx, equipe, valor) {
         if(equipe === 1) torneioAtual.partidas[gIdx].confrontos[pIdx].placar1 = valor;
         if(equipe === 2) torneioAtual.partidas[gIdx].confrontos[pIdx].placar2 = valor;
-        salvarDadosFirebase(); // Manda pra nuvem
+        salvarDadosFirebase(); 
     }
 
     function atualizarTelaPartidas() {
@@ -669,7 +667,8 @@
                 var n1 = d1[1] ? '<span>' + d1[0].trim() + '</span><span>' + d1[1].trim() + '</span>' : '<span>' + partida.dupla1 + '</span>';
                 var n2 = d2[1] ? '<span>' + d2[0].trim() + '</span><span>' + d2[1].trim() + '</span>' : '<span>' + partida.dupla2 + '</span>';
 
-                html += '<div class="partida-card-lista"><div class="dupla-partida" style="text-align: right;">' + n1 + '</div><div class="placar-container"><input type="number" min="0" class="placar-input-lista" placeholder="0" value="' + partida.placar1 + '" oninput="salvarPlacarGrupo(' + gIdx + ', ' + pIdx + ', 1, this.value)"><span style="font-weight: bold; color: #ccc;">X</span><input type="number" min="0" class="placar-input-lista" placeholder="0" value="' + partida.placar2 + '" oninput="salvarPlacarGrupo(' + gIdx + ', ' + pIdx + ', 2, this.value)"></div><div class="dupla-partida" style="text-align: left;">' + n2 + '</div></div>';
+                // Repare no ONCHANGE em vez de ONINPUT
+                html += '<div class="partida-card-lista"><div class="dupla-partida" style="text-align: right;">' + n1 + '</div><div class="placar-container"><input type="number" min="0" class="placar-input-lista" placeholder="0" value="' + partida.placar1 + '" onchange="salvarPlacarGrupo(' + gIdx + ', ' + pIdx + ', 1, this.value)"><span style="font-weight: bold; color: #ccc;">X</span><input type="number" min="0" class="placar-input-lista" placeholder="0" value="' + partida.placar2 + '" onchange="salvarPlacarGrupo(' + gIdx + ', ' + pIdx + ', 2, this.value)"></div><div class="dupla-partida" style="text-align: left;">' + n2 + '</div></div>';
             });
         }
       });
@@ -753,7 +752,6 @@
         container.innerHTML = '<div class="chaves-grid"><div class="chaves-col-esquerda">' + htmlEsquerda + '</div><div class="chaves-col-direita">' + htmlDireita + '</div></div>';
     }
 
-    // Disparada ao preencher o placar da chave
     function salvarPlacarMataMata(fase, matchIdx, equipa, valor) {
         if(!torneioAtual.bracket) torneioAtual.bracket = {};
         if(!torneioAtual.bracket[fase]) torneioAtual.bracket[fase] = {};
@@ -770,155 +768,151 @@
         
         if (!container || !badgeRow) return;
 
-        try {
-            var seeds = calcularSeeds();
-            var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
-            
-            if (!seeds || seeds.length === 0) { 
-                badgeRow.innerHTML = '';
-                container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio. Crie exatos <b>2 ou 4 grupos</b> para o chaveamento automático.</div>'; 
-                return; 
+        var seeds = calcularSeeds();
+        var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
+        
+        if (!seeds || seeds.length === 0) { 
+            badgeRow.innerHTML = '';
+            container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio. Crie exatos <b>2 ou 4 grupos</b> para o chaveamento automático.</div>'; 
+            return; 
+        }
+
+        var getS = function(n) { 
+            for(var i=0; i<seeds.length; i++) {
+                if(seeds[i].seed === n) return seeds[i].nome;
             }
+            return 'A definir';
+        };
+        
+        var b = torneioAtual.bracket || {};
+        var qf_s = b.qf || {}; 
+        var sf_s = b.sf || {}; 
+        var fn_s = b.final || {};
 
-            var getS = function(n) { 
-                for(var i=0; i<seeds.length; i++) {
-                    if(seeds[i].seed === n) return seeds[i].nome;
-                }
-                return 'A definir';
-            };
-            
-            var b = torneioAtual.bracket || {};
-            var qf_s = b.qf || {}; 
-            var sf_s = b.sf || {}; 
-            var fn_s = b.final || {};
+        var getSc = function(faseObj, idx, p) { 
+            if(faseObj && faseObj[idx] && faseObj[idx][p] !== undefined) {
+                return faseObj[idx][p];
+            }
+            return ''; 
+        };
 
-            var getSc = function(faseObj, idx, p) { 
-                if(faseObj && faseObj[idx] && faseObj[idx][p] !== undefined) {
-                    return faseObj[idx][p];
-                }
-                return ''; 
-            };
+        var getVencedor = function(t1, t2, sc1, sc2) {
+            if (sc1 === '' || sc2 === '' || sc1 == null || sc2 == null) return 'A definir';
+            var n1 = parseInt(sc1);
+            var n2 = parseInt(sc2);
+            if (isNaN(n1) || isNaN(n2)) return 'A definir';
+            if (n1 > n2) return t1;
+            if (n2 > n1) return t2;
+            return 'A definir';
+        };
 
-            var getVencedor = function(t1, t2, sc1, sc2) {
-                if (sc1 === '' || sc2 === '' || sc1 == null || sc2 == null) return 'A definir';
-                var n1 = parseInt(sc1);
-                var n2 = parseInt(sc2);
-                if (isNaN(n1) || isNaN(n2)) return 'A definir';
-                if (n1 > n2) return t1;
-                if (n2 > n1) return t2;
-                return 'A definir';
-            };
+        var buildMatchCard = function(title, team1, team2, s1, s2, faseId, matchIdx) {
+            var cls1 = '';
+            var cls2 = '';
+            var t1Icon = '';
+            var t2Icon = '';
 
-            var buildMatchCard = function(title, team1, team2, s1, s2, faseId, matchIdx) {
-                var cls1 = '';
-                var cls2 = '';
-                var t1Icon = '';
-                var t2Icon = '';
-
-                if(s1 !== '' && s2 !== '') {
-                    var n1 = parseInt(s1);
-                    var n2 = parseInt(s2);
-                    if(!isNaN(n1) && !isNaN(n2)) {
-                        if(n1 > n2) { 
-                            cls1 = 'winner'; cls2 = 'loser'; 
-                            if(faseId === 'final') t1Icon = '<div class="trophy-icon">🏆</div>';
-                        }
-                        else if(n2 > n1) { 
-                            cls2 = 'winner'; cls1 = 'loser'; 
-                            if(faseId === 'final') t2Icon = '<div class="trophy-icon">🏆</div>';
-                        }
+            if(s1 !== '' && s2 !== '') {
+                var n1 = parseInt(s1);
+                var n2 = parseInt(s2);
+                if(!isNaN(n1) && !isNaN(n2)) {
+                    if(n1 > n2) { 
+                        cls1 = 'winner'; cls2 = 'loser'; 
+                        if(faseId === 'final') t1Icon = '<div class="trophy-icon">🏆</div>';
+                    }
+                    else if(n2 > n1) { 
+                        cls2 = 'winner'; cls1 = 'loser'; 
+                        if(faseId === 'final') t2Icon = '<div class="trophy-icon">🏆</div>';
                     }
                 }
-
-                var conectores = '';
-                if(faseId === 'qf') conectores = '<div class="connector-right"></div>';
-                else if(faseId === 'sf') conectores = '<div class="connector-bracket"><div class="connector-dot"></div></div><div class="connector-right"></div>';
-                else if(faseId === 'final') conectores = '<div class="connector-bracket final"><div class="connector-dot"></div></div>';
-
-                var t1Name = formatarDuplaLinha(team1);
-                if (!t1Name || t1Name.trim() === '') t1Name = 'A definir';
-                
-                var t2Name = formatarDuplaLinha(team2);
-                if (!t2Name || t2Name.trim() === '') t2Name = 'A definir';
-
-                return '<div class="match-box">' +
-                            '<div class="match-header">' + title + '</div>' +
-                            '<div class="match-team ' + cls1 + '">' +
-                                '<div class="team-name-box" title="' + t1Name + '">' + t1Name + '</div>' +
-                                '<div class="team-score-box">' +
-                                    '<input type="number" class="team-score" placeholder="0" value="' + s1 + '" oninput="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 1, this.value)">' +
-                                    t1Icon +
-                                '</div>' +
-                            '</div>' +
-                            '<div class="match-team ' + cls2 + '">' +
-                                '<div class="team-name-box" title="' + t2Name + '">' + t2Name + '</div>' +
-                                '<div class="team-score-box">' +
-                                    '<input type="number" class="team-score" placeholder="0" value="' + s2 + '" oninput="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 2, this.value)">' +
-                                    t2Icon +
-                                '</div>' +
-                            '</div>' +
-                            conectores +
-                        '</div>';
-            };
-
-            if (numGrupos === 4) {
-                badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Quartas</span></div><div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
-                
-                var qf0_t1 = getS(1); var qf0_t2 = getS(7);
-                var qf1_t1 = getS(6); var qf1_t2 = getS(4);
-                var qf2_t1 = getS(3); var qf2_t2 = getS(5);
-                var qf3_t1 = getS(8); var qf3_t2 = getS(2);
-
-                var sf0_t1 = getVencedor(qf0_t1, qf0_t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'));
-                var sf0_t2 = getVencedor(qf1_t1, qf1_t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'));
-                var sf1_t1 = getVencedor(qf2_t1, qf2_t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2'));
-                var sf1_t2 = getVencedor(qf3_t1, qf3_t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'));
-
-                var fn_t1 = getVencedor(sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'));
-                var fn_t2 = getVencedor(sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'));
-
-                container.innerHTML = 
-                    '<div class="bracket-column col-qf">' +
-                        buildMatchCard('Quartas • P1', qf0_t1, qf0_t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'), 'qf', 0) +
-                        buildMatchCard('Quartas • P2', qf1_t1, qf1_t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'), 'qf', 1) +
-                        buildMatchCard('Quartas • P3', qf2_t1, qf2_t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2'), 'qf', 2) +
-                        buildMatchCard('Quartas • P4', qf3_t1, qf3_t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'), 'qf', 3) +
-                    '</div>' +
-                    '<div class="bracket-column col-sf">' +
-                        buildMatchCard('Semifinal • P1', sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'), 'sf', 0) +
-                        buildMatchCard('Semifinal • P2', sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'), 'sf', 1) +
-                    '</div>' +
-                    '<div class="bracket-column col-final">' +
-                        buildMatchCard('Final • P1', fn_t1, fn_t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0) +
-                    '</div>';
-                    
-            } else if (numGrupos === 2) {
-                badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
-                
-                var sf0_t1 = getS(1); var sf0_t2 = getS(4);
-                var sf1_t1 = getS(2); var sf1_t2 = getS(3);
-                
-                var fn_t1 = getVencedor(sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'));
-                var fn_t2 = getVencedor(sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'));
-
-                container.innerHTML = 
-                    '<div class="bracket-column col-qf">' +
-                        buildMatchCard('Semifinal • P1', sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'), 'sf', 0) +
-                        buildMatchCard('Semifinal • P2', sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'), 'sf', 1) +
-                    '</div>' +
-                    '<div class="bracket-column col-sf">' +
-                        buildMatchCard('Final • P1', fn_t1, fn_t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0) +
-                    '</div>';
             }
-        } catch (e) {
-            container.innerHTML = '<div style="color:red; padding: 20px; font-weight: bold; width: 100%;">Erro interno ao gerar chave. Motivo: ' + e.message + '</div>';
+
+            var conectores = '';
+            if(faseId === 'qf') conectores = '<div class="connector-right"></div>';
+            else if(faseId === 'sf') conectores = '<div class="connector-bracket"><div class="connector-dot"></div></div><div class="connector-right"></div>';
+            else if(faseId === 'final') conectores = '<div class="connector-bracket final"><div class="connector-dot"></div></div>';
+
+            var t1Name = formatarDuplaLinha(team1);
+            if (!t1Name || t1Name.trim() === '') t1Name = 'A definir';
+            
+            var t2Name = formatarDuplaLinha(team2);
+            if (!t2Name || t2Name.trim() === '') t2Name = 'A definir';
+
+            // ATENÇÃO: onchange em vez de oninput para o Firebase rodar liso
+            return '<div class="match-box">' +
+                        '<div class="match-header">' + title + '</div>' +
+                        '<div class="match-team ' + cls1 + '">' +
+                            '<div class="team-name-box" title="' + t1Name + '">' + t1Name + '</div>' +
+                            '<div class="team-score-box">' +
+                                '<input type="number" class="team-score" placeholder="0" value="' + s1 + '" onchange="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 1, this.value)">' +
+                                t1Icon +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="match-team ' + cls2 + '">' +
+                            '<div class="team-name-box" title="' + t2Name + '">' + t2Name + '</div>' +
+                            '<div class="team-score-box">' +
+                                '<input type="number" class="team-score" placeholder="0" value="' + s2 + '" onchange="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 2, this.value)">' +
+                                t2Icon +
+                            '</div>' +
+                        '</div>' +
+                        conectores +
+                    '</div>';
+        };
+
+        if (numGrupos === 4) {
+            badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Quartas</span></div><div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
+            
+            var qf0_t1 = getS(1); var qf0_t2 = getS(7);
+            var qf1_t1 = getS(6); var qf1_t2 = getS(4);
+            var qf2_t1 = getS(3); var qf2_t2 = getS(5);
+            var qf3_t1 = getS(8); var qf3_t2 = getS(2);
+
+            var sf0_t1 = getVencedor(qf0_t1, qf0_t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'));
+            var sf0_t2 = getVencedor(qf1_t1, qf1_t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'));
+            var sf1_t1 = getVencedor(qf2_t1, qf2_t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2'));
+            var sf1_t2 = getVencedor(qf3_t1, qf3_t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'));
+
+            var fn_t1 = getVencedor(sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'));
+            var fn_t2 = getVencedor(sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'));
+
+            container.innerHTML = 
+                '<div class="bracket-column col-qf">' +
+                    buildMatchCard('Quartas • P1', qf0_t1, qf0_t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'), 'qf', 0) +
+                    buildMatchCard('Quartas • P2', qf1_t1, qf1_t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'), 'qf', 1) +
+                    buildMatchCard('Quartas • P3', qf2_t1, qf2_t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2'), 'qf', 2) +
+                    buildMatchCard('Quartas • P4', qf3_t1, qf3_t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'), 'qf', 3) +
+                '</div>' +
+                '<div class="bracket-column col-sf">' +
+                    buildMatchCard('Semifinal • P1', sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'), 'sf', 0) +
+                    buildMatchCard('Semifinal • P2', sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'), 'sf', 1) +
+                '</div>' +
+                '<div class="bracket-column col-final">' +
+                    buildMatchCard('Final • P1', fn_t1, fn_t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0) +
+                '</div>';
+                
+        } else if (numGrupos === 2) {
+            badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
+            
+            var sf0_t1 = getS(1); var sf0_t2 = getS(4);
+            var sf1_t1 = getS(2); var sf1_t2 = getS(3);
+            
+            var fn_t1 = getVencedor(sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'));
+            var fn_t2 = getVencedor(sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'));
+
+            container.innerHTML = 
+                '<div class="bracket-column col-qf">' +
+                    buildMatchCard('Semifinal • P1', sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'), 'sf', 0) +
+                    buildMatchCard('Semifinal • P2', sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'), 'sf', 1) +
+                '</div>' +
+                '<div class="bracket-column col-sf">' +
+                    buildMatchCard('Final • P1', fn_t1, fn_t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0) +
+                '</div>';
         }
     }
 
-    // ==========================================
-    // EXPORTANDO FUNÇÕES PARA O HTML (CORS FIX)
-    // Como estamos usando módulos <script type="module">, o HTML precisa enxergar essas funções no objeto global window.
-    // ==========================================
+    // =================================================================================
+    // EXPORTANDO AS FUNÇÕES PARA O HTML (Requisito obrigatório para Firebase Modules)
+    // =================================================================================
     window.abrirModal = abrirModal;
     window.fecharModal = fecharModal;
     window.abrirModalComoMonta = abrirModalComoMonta;
@@ -935,7 +929,6 @@
     window.sortearGrupos = sortearGrupos;
     window.salvarPlacarGrupo = salvarPlacarGrupo;
     window.salvarPlacarMataMata = salvarPlacarMataMata;
-
   </script>
 </body>
 </html>
