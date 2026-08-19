@@ -342,18 +342,18 @@
   </div>
 
   <script>
-    let torneios = JSON.parse(localStorage.getItem('arenaVitaleTorneios')) || [];
-    let torneioAtual = null;
+    var torneios = JSON.parse(localStorage.getItem('arenaVitaleTorneios')) || [];
+    var torneioAtual = null;
 
     function salvarDados() { localStorage.setItem('arenaVitaleTorneios', JSON.stringify(torneios)); }
     window.onload = function() { renderizarListaTorneios(); };
 
     function formatarDuplaLinha(dupla) {
-        if (!dupla || dupla === 'A definir') return 'A definir';
-        let nomesArray = dupla.split(/ e | x | - | & /i);
-        let j1 = nomesArray[0] ? nomesArray[0].trim() : dupla;
-        let j2 = nomesArray[1] ? nomesArray[1].trim() : '';
-        return j2 ? `${j1} / ${j2}` : j1;
+        if (!dupla || typeof dupla !== 'string' || dupla === 'A definir') return 'A definir';
+        var nomesArray = dupla.split(/ e | x | - | & /i);
+        var j1 = nomesArray[0] ? nomesArray[0].trim() : dupla;
+        var j2 = nomesArray[1] ? nomesArray[1].trim() : '';
+        return j2 ? j1 + ' / ' + j2 : j1;
     }
 
     function abrirModal() { document.getElementById('modalEvento').classList.add('active'); }
@@ -363,8 +363,8 @@
     function fecharModalInfo(id) { document.getElementById(id).classList.remove('active'); }
     
     function toggleQtdTerceiros() {
-        const val = document.getElementById('selectMelhoresTerceiros').value;
-        const inputQtd = document.getElementById('qtdTerceirosInput');
+        var val = document.getElementById('selectMelhoresTerceiros').value;
+        var inputQtd = document.getElementById('qtdTerceirosInput');
         inputQtd.style.display = (val === 'sim') ? 'block' : 'none';
         if(val !== 'sim') inputQtd.value = '';
     }
@@ -382,102 +382,159 @@
 
     document.getElementById('formCriarTorneio').addEventListener('submit', function(e) {
       e.preventDefault();
-      const novoTorneio = {
-        id: Date.now(), nome: document.getElementById('inputNomeTorneio').value,
+      var novoTorneio = {
+        id: Date.now(), 
+        nome: document.getElementById('inputNomeTorneio').value,
         numGrupos: parseInt(document.getElementById('inputNumGrupos').value) || 4,
-        participantes: [], gruposSorteados: [], partidas: [], bracket: {}
+        participantes: [], 
+        gruposSorteados: [], 
+        partidas: [], 
+        bracket: {}
       };
-      torneios.push(novoTorneio); salvarDados(); fecharModal(); this.reset();
+      torneios.push(novoTorneio); 
+      salvarDados(); 
+      fecharModal(); 
+      this.reset();
       document.getElementById('qtdTerceirosInput').style.display = 'none';
-      renderizarListaTorneios(); abrirGestaoTorneio(novoTorneio.id);
+      renderizarListaTorneios(); 
+      abrirGestaoTorneio(novoTorneio.id);
     });
 
     function apagarTorneio(event, id) {
         event.stopPropagation(); 
         if(confirm('Tem certeza que deseja apagar este torneio?')) {
-            torneios = torneios.filter(t => t.id !== id); salvarDados(); renderizarListaTorneios();
+            torneios = torneios.filter(function(t) { return t.id !== id; }); 
+            salvarDados(); 
+            renderizarListaTorneios();
         }
     }
 
     function renderizarListaTorneios() {
-      const container = document.getElementById('containerTorneios');
-      if (torneios.length === 0) { container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-trophy"></i><h3>Nenhum torneio</h3></div>`; return; }
-      container.innerHTML = torneios.map(t => `<div class="torneio-card" onclick="abrirGestaoTorneio(${t.id})"><div><div style="font-weight: bold; font-size: 16px;">${t.nome}</div><div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">${t.participantes.length} duplas • ${t.numGrupos} grupos</div></div><div style="display: flex; align-items: center; gap: 15px;"><button class="btn-apagar-torneio" onclick="apagarTorneio(event, ${t.id})"><i class="fa-solid fa-trash"></i></button><i class="fa-solid fa-chevron-right" style="color: var(--text-gray);"></i></div></div>`).join('');
+      var container = document.getElementById('containerTorneios');
+      if (torneios.length === 0) { 
+        container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-trophy"></i><h3>Nenhum torneio</h3></div>'; 
+        return; 
+      }
+      container.innerHTML = torneios.map(function(t) { 
+        return '<div class="torneio-card" onclick="abrirGestaoTorneio(' + t.id + ')"><div><div style="font-weight: bold; font-size: 16px;">' + t.nome + '</div><div style="font-size: 12px; color: var(--text-gray); margin-top: 3px;">' + t.participantes.length + ' duplas • ' + t.numGrupos + ' grupos</div></div><div style="display: flex; align-items: center; gap: 15px;"><button class="btn-apagar-torneio" onclick="apagarTorneio(event, ' + t.id + ')"><i class="fa-solid fa-trash"></i></button><i class="fa-solid fa-chevron-right" style="color: var(--text-gray);"></i></div></div>'; 
+      }).join('');
     }
 
     function abrirGestaoTorneio(id) {
-      torneioAtual = torneios.find(t => t.id === id);
+      torneioAtual = torneios.find(function(t) { return t.id === id; });
       if(!torneioAtual.bracket) torneioAtual.bracket = {}; 
-      document.getElementById('telaLista').style.display = 'none'; document.getElementById('telaGestao').style.display = 'flex'; document.getElementById('telaChaveamento').style.display = 'none';
+      document.getElementById('telaLista').style.display = 'none'; 
+      document.getElementById('telaGestao').style.display = 'flex'; 
+      document.getElementById('telaChaveamento').style.display = 'none';
       document.getElementById('tituloTorneioHeader').innerText = torneioAtual.nome;
-      atualizarTelaParticipantes(); atualizarTelaGrupos(); atualizarTelaPartidas();
+      atualizarTelaParticipantes(); 
+      atualizarTelaGrupos(); 
+      atualizarTelaPartidas();
       mudarAba('participantes');
     }
 
-    function voltarParaLista() { document.getElementById('telaGestao').style.display = 'none'; document.getElementById('telaLista').style.display = 'block'; renderizarListaTorneios(); }
+    function voltarParaLista() { 
+        document.getElementById('telaGestao').style.display = 'none'; 
+        document.getElementById('telaLista').style.display = 'block'; 
+        renderizarListaTorneios(); 
+    }
+
     function mudarAba(aba) {
-      document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.conteudo-aba').forEach(c => c.classList.remove('active'));
-      const aMap = { 'participantes': 0, 'grupos': 1, 'partidas': 2 }; document.querySelectorAll('.aba-btn')[aMap[aba]].classList.add('active');
-      const cMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas' }; document.getElementById(cMap[aba]).classList.add('active');
+      document.querySelectorAll('.aba-btn').forEach(function(b) { b.classList.remove('active'); }); 
+      document.querySelectorAll('.conteudo-aba').forEach(function(c) { c.classList.remove('active'); });
+      var aMap = { 'participantes': 0, 'grupos': 1, 'partidas': 2 }; 
+      document.querySelectorAll('.aba-btn')[aMap[aba]].classList.add('active');
+      var cMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas' }; 
+      document.getElementById(cMap[aba]).classList.add('active');
     }
 
     function adicionarDuplaIndividual() {
-      const j1 = document.getElementById('jogador1').value.trim(); const j2 = document.getElementById('jogador2').value.trim();
+      var j1 = document.getElementById('jogador1').value.trim(); 
+      var j2 = document.getElementById('jogador2').value.trim();
       if (!j1 || !j2) return alert('Informe os dois jogadores.');
-      torneioAtual.participantes.push(`${j1} & ${j2}`); salvarDados(); 
-      document.getElementById('jogador1').value = ''; document.getElementById('jogador2').value = ''; atualizarTelaParticipantes();
+      torneioAtual.participantes.push(j1 + ' & ' + j2); 
+      salvarDados(); 
+      document.getElementById('jogador1').value = ''; 
+      document.getElementById('jogador2').value = ''; 
+      atualizarTelaParticipantes();
     }
+
     function adicionarDuplasEmMassa() {
-      const texto = document.getElementById('textareaLista').value.trim();
+      var texto = document.getElementById('textareaLista').value.trim();
       if (!texto) return alert('Insira a lista.');
-      texto.split('\n').forEach(linha => { if (linha.trim()) torneioAtual.participantes.push(linha.trim()); });
-      salvarDados(); document.getElementById('textareaLista').value = ''; atualizarTelaParticipantes();
+      texto.split('\n').forEach(function(linha) { 
+          if (linha.trim()) torneioAtual.participantes.push(linha.trim()); 
+      });
+      salvarDados(); 
+      document.getElementById('textareaLista').value = ''; 
+      atualizarTelaParticipantes();
     }
 
     function atualizarTelaParticipantes() {
-      const container = document.getElementById('listaParticipantesContainer'); document.getElementById('contadorParticipantes').innerText = torneioAtual.participantes.length;
-      if (torneioAtual.participantes.length === 0) { container.innerHTML = `<div style="text-align:center; color:gray; padding:20px;">Nenhuma dupla cadastrada.</div>`; return; }
-      container.innerHTML = torneioAtual.participantes.map((p, i) => `<div class="lista-participantes-card"><span><b>#${i + 1}</b> ${p}</span><button onclick="removerParticipante(${i})" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></div>`).join('');
+      var container = document.getElementById('listaParticipantesContainer'); 
+      document.getElementById('contadorParticipantes').innerText = torneioAtual.participantes.length;
+      if (torneioAtual.participantes.length === 0) { 
+          container.innerHTML = '<div style="text-align:center; color:gray; padding:20px;">Nenhuma dupla cadastrada.</div>'; 
+          return; 
+      }
+      container.innerHTML = torneioAtual.participantes.map(function(p, i) { 
+          return '<div class="lista-participantes-card"><span><b>#' + (i + 1) + '</b> ' + p + '</span><button onclick="removerParticipante(' + i + ')" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></div>'; 
+      }).join('');
     }
-    function removerParticipante(index) { torneioAtual.participantes.splice(index, 1); salvarDados(); atualizarTelaParticipantes(); }
+
+    function removerParticipante(index) { 
+        torneioAtual.participantes.splice(index, 1); 
+        salvarDados(); 
+        atualizarTelaParticipantes(); 
+    }
 
     function sortearGrupos() {
       if (torneioAtual.participantes.length === 0) return alert('Cadastre duplas.');
-      const num = torneioAtual.numGrupos;
-      let embaralhados = [...torneioAtual.participantes].sort(() => Math.random() - 0.5);
-      let grupos = Array.from({ length: num }, () => []);
-      embaralhados.forEach((p, i) => grupos[i % num].push(p));
-      torneioAtual.gruposSorteados = grupos; salvarDados(); gerarPartidas(); atualizarTelaGrupos();
+      var num = torneioAtual.numGrupos;
+      var embaralhados = [].concat(torneioAtual.participantes).sort(function() { return Math.random() - 0.5; });
+      var grupos = [];
+      for (var i=0; i<num; i++) { grupos.push([]); }
+      embaralhados.forEach(function(p, i) { grupos[i % num].push(p); });
+      torneioAtual.gruposSorteados = grupos; 
+      salvarDados(); 
+      gerarPartidas(); 
+      atualizarTelaGrupos();
     }
 
-    // Processamento Dinâmico dos Grupos
     function obterClassificacaoGrupos() {
-        let gruposCalculados = [];
+        var gruposCalculados = [];
         if(!torneioAtual.gruposSorteados) return gruposCalculados;
 
-        torneioAtual.gruposSorteados.forEach((grupo, gIdx) => {
-            let stats = grupo.map(dupla => ({ nome: dupla, vitorias: 0, gf: 0, gc: 0, sg: 0, grupoIdx: gIdx }));
+        torneioAtual.gruposSorteados.forEach(function(grupo, gIdx) {
+            var stats = grupo.map(function(dupla) { return { nome: dupla, vitorias: 0, gf: 0, gc: 0, sg: 0, grupoIdx: gIdx }; });
             if (torneioAtual.partidas && torneioAtual.partidas[gIdx]) {
-                torneioAtual.partidas[gIdx].confrontos.forEach(partida => {
+                torneioAtual.partidas[gIdx].confrontos.forEach(function(partida) {
                     if (partida.placar1 !== '' && partida.placar2 !== '') {
-                        let p1 = parseInt(partida.placar1) || 0; let p2 = parseInt(partida.placar2) || 0;
-                        let stat1 = stats.find(s => s.nome === partida.dupla1); let stat2 = stats.find(s => s.nome === partida.dupla2);
+                        var p1 = parseInt(partida.placar1) || 0; 
+                        var p2 = parseInt(partida.placar2) || 0;
+                        var stat1 = stats.find(function(s) { return s.nome === partida.dupla1; }); 
+                        var stat2 = stats.find(function(s) { return s.nome === partida.dupla2; });
                         if(stat1 && stat2) {
                             stat1.gf += p1; stat1.gc += p2; stat2.gf += p2; stat2.gc += p1;
-                            if (p1 > p2) stat1.vitorias += 1; if (p2 > p1) stat2.vitorias += 1;
+                            if (p1 > p2) stat1.vitorias += 1; 
+                            if (p2 > p1) stat2.vitorias += 1;
                         }
                     }
                 });
             }
-            stats.forEach(s => s.sg = s.gf - s.gc);
-            stats.sort((a, b) => {
+            stats.forEach(function(s) { s.sg = s.gf - s.gc; });
+            stats.sort(function(a, b) {
                 if (b.vitorias !== a.vitorias) return b.vitorias - a.vitorias; 
                 if (b.sg !== a.sg) return b.sg - a.sg; 
                 if (torneioAtual.partidas && torneioAtual.partidas[gIdx]) {
-                    let match = torneioAtual.partidas[gIdx].confrontos.find(p => (p.dupla1 === a.nome && p.dupla2 === b.nome) || (p.dupla2 === a.nome && p.dupla1 === b.nome));
+                    var match = torneioAtual.partidas[gIdx].confrontos.find(function(p) { 
+                        return (p.dupla1 === a.nome && p.dupla2 === b.nome) || (p.dupla2 === a.nome && p.dupla1 === b.nome); 
+                    });
                     if (match && match.placar1 !== '' && match.placar2 !== '') {
-                        let p1 = parseInt(match.placar1) || 0; let p2 = parseInt(match.placar2) || 0;
-                        if (match.dupla1 === a.nome) return p2 - p1; if (match.dupla2 === a.nome) return p1 - p2;
+                        var p1 = parseInt(match.placar1) || 0; 
+                        var p2 = parseInt(match.placar2) || 0;
+                        if (match.dupla1 === a.nome) return p2 - p1; 
+                        if (match.dupla2 === a.nome) return p1 - p2;
                     }
                 }
                 return b.gf - a.gf; 
@@ -488,35 +545,49 @@
     }
 
     function atualizarTelaGrupos() {
-      const container = document.getElementById('listaGruposContainer');
-      if (!torneioAtual.gruposSorteados || torneioAtual.gruposSorteados.length === 0) { container.innerHTML = `<div style="text-align:center; padding:30px;">Clique em "Sortear Grupos" acima.</div>`; return; }
+      var container = document.getElementById('listaGruposContainer');
+      if (!torneioAtual.gruposSorteados || torneioAtual.gruposSorteados.length === 0) { 
+          container.innerHTML = '<div style="text-align:center; padding:30px;">Clique em "Sortear Grupos" acima.</div>'; 
+          return; 
+      }
       
-      let gruposData = obterClassificacaoGrupos();
-      container.innerHTML = gruposData.map((stats, gIdx) => `
-          <div class="grupo-titulo-imagem">Grupo ${gIdx + 1}</div>
-          <div class="tabela-grupo-container">
-            <div class="tabela-header"><div>PT</div><div>DUPLA</div><div>VITÓRIAS</div><div>GF</div><div>GC</div><div>SG</div></div>
-            ${stats.length === 0 ? '<div style="padding: 15px; text-align:center; font-size:13px; color: var(--text-gray);">Grupo Vazio</div>' : 
-              stats.map((s, index) => {
-                let [j1, j2] = (s.nome||'').split(/ e | x | - | & /i);
-                let htmlNome = j2 ? `<span>${j1.trim()}</span><span>${j2.trim()}</span>` : `<span>${s.nome}</span>`;
-                let classeLinha = index < 2 ? 'tabela-row classificado' : 'tabela-row';
-                return `<div class="${classeLinha}"><div class="posicao">${index + 1}º</div><div>${htmlNome}</div><div>${s.vitorias}</div><div>${s.gf}</div><div>${s.gc}</div><div>${s.sg}</div></div>`;
-              }).join('')}
-          </div>
-      `).join('');
+      var gruposData = obterClassificacaoGrupos();
+      var html = '';
+      gruposData.forEach(function(stats, gIdx) {
+          html += '<div class="grupo-titulo-imagem">Grupo ' + (gIdx + 1) + '</div>';
+          html += '<div class="tabela-grupo-container"><div class="tabela-header"><div>PT</div><div>DUPLA</div><div>VITÓRIAS</div><div>GF</div><div>GC</div><div>SG</div></div>';
+          
+          if(stats.length === 0) {
+              html += '<div style="padding: 15px; text-align:center; font-size:13px; color: var(--text-gray);">Grupo Vazio</div>';
+          } else {
+              stats.forEach(function(s, index) {
+                  var nomes = (s.nome||'').split(/ e | x | - | & /i);
+                  var j1 = nomes[0] ? nomes[0].trim() : s.nome;
+                  var j2 = nomes[1] ? nomes[1].trim() : '';
+                  var htmlNome = j2 ? '<span>' + j1 + '</span><span>' + j2 + '</span>' : '<span>' + s.nome + '</span>';
+                  var classeLinha = index < 2 ? 'tabela-row classificado' : 'tabela-row';
+                  
+                  html += '<div class="' + classeLinha + '"><div class="posicao">' + (index + 1) + 'º</div><div>' + htmlNome + '</div><div>' + s.vitorias + '</div><div>' + s.gf + '</div><div>' + s.gc + '</div><div>' + s.sg + '</div></div>';
+              });
+          }
+          html += '</div>';
+      });
+      container.innerHTML = html;
     }
 
     function gerarPartidas() {
       torneioAtual.partidas = [];
-      torneioAtual.gruposSorteados.forEach((grupo, indexGrupo) => {
-        let partidasGrupo = [];
-        for (let i = 0; i < grupo.length; i++) {
-          for (let j = i + 1; j < grupo.length; j++) { partidasGrupo.push({ dupla1: grupo[i], dupla2: grupo[j], placar1: '', placar2: '' }); }
+      torneioAtual.gruposSorteados.forEach(function(grupo, indexGrupo) {
+        var partidasGrupo = [];
+        for (var i = 0; i < grupo.length; i++) {
+          for (var j = i + 1; j < grupo.length; j++) { 
+              partidasGrupo.push({ dupla1: grupo[i], dupla2: grupo[j], placar1: '', placar2: '' }); 
+          }
         }
         torneioAtual.partidas.push({ grupoIndex: indexGrupo, confrontos: partidasGrupo });
       });
-      salvarDados(); atualizarTelaPartidas();
+      salvarDados(); 
+      atualizarTelaPartidas();
     }
 
     function salvarPlacarGrupo(gIdx, pIdx, equipe, valor) {
@@ -527,212 +598,246 @@
     }
 
     function atualizarTelaPartidas() {
-      const container = document.getElementById('listaPartidasContainer');
-      if (!torneioAtual.partidas || torneioAtual.partidas.length === 0) { container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;"><i class="fa-solid fa-fire" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i><div>Sorteie os grupos primeiro.</div></div>`; return; }
+      var container = document.getElementById('listaPartidasContainer');
+      if (!torneioAtual.partidas || torneioAtual.partidas.length === 0) { 
+          container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px;"><i class="fa-solid fa-fire" style="font-size: 32px; margin-bottom: 10px; color: var(--brand-yellow);"></i><div>Sorteie os grupos primeiro.</div></div>'; 
+          return; 
+      }
       
-      let html = '';
-      torneioAtual.partidas.forEach((grupoPartida, gIdx) => {
-        html += `<div class="grupo-titulo-imagem">Jogos - Grupo ${grupoPartida.grupoIndex + 1}</div>`;
-        if (grupoPartida.confrontos.length === 0) html += `<div style="text-align:center; padding: 15px; background: white; border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-gray); font-size: 13px;">Sem duplas suficientes.</div>`;
-        else {
-            grupoPartida.confrontos.forEach((partida, pIdx) => {
-                let [d1_j1, d1_j2] = (partida.dupla1||'').split(/ e | x | - | & /i);
-                let [d2_j1, d2_j2] = (partida.dupla2||'').split(/ e | x | - | & /i);
+      var html = '';
+      torneioAtual.partidas.forEach(function(grupoPartida, gIdx) {
+        html += '<div class="grupo-titulo-imagem">Jogos - Grupo ' + (grupoPartida.grupoIndex + 1) + '</div>';
+        if (grupoPartida.confrontos.length === 0) {
+            html += '<div style="text-align:center; padding: 15px; background: white; border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-gray); font-size: 13px;">Sem duplas suficientes.</div>';
+        } else {
+            grupoPartida.confrontos.forEach(function(partida, pIdx) {
+                var d1 = (partida.dupla1||'').split(/ e | x | - | & /i);
+                var d2 = (partida.dupla2||'').split(/ e | x | - | & /i);
                 
-                let n1 = d1_j2 ? `<span>${d1_j1.trim()}</span><span>${d1_j2.trim()}</span>` : `<span>${partida.dupla1}</span>`;
-                let n2 = d2_j2 ? `<span>${d2_j1.trim()}</span><span>${d2_j2.trim()}</span>` : `<span>${partida.dupla2}</span>`;
+                var n1 = d1[1] ? '<span>' + d1[0].trim() + '</span><span>' + d1[1].trim() + '</span>' : '<span>' + partida.dupla1 + '</span>';
+                var n2 = d2[1] ? '<span>' + d2[0].trim() + '</span><span>' + d2[1].trim() + '</span>' : '<span>' + partida.dupla2 + '</span>';
 
-                html += `<div class="partida-card-lista"><div class="dupla-partida" style="text-align: right;">${n1}</div><div class="placar-container"><input type="number" min="0" class="placar-input-lista" placeholder="0" value="${partida.placar1}" oninput="salvarPlacarGrupo(${gIdx}, ${pIdx}, 1, this.value)"><span style="font-weight: bold; color: #ccc;">X</span><input type="number" min="0" class="placar-input-lista" placeholder="0" value="${partida.placar2}" oninput="salvarPlacarGrupo(${gIdx}, ${pIdx}, 2, this.value)"></div><div class="dupla-partida" style="text-align: left;">${n2}</div></div>`;
+                html += '<div class="partida-card-lista"><div class="dupla-partida" style="text-align: right;">' + n1 + '</div><div class="placar-container"><input type="number" min="0" class="placar-input-lista" placeholder="0" value="' + partida.placar1 + '" oninput="salvarPlacarGrupo(' + gIdx + ', ' + pIdx + ', 1, this.value)"><span style="font-weight: bold; color: #ccc;">X</span><input type="number" min="0" class="placar-input-lista" placeholder="0" value="' + partida.placar2 + '" oninput="salvarPlacarGrupo(' + gIdx + ', ' + pIdx + ', 2, this.value)"></div><div class="dupla-partida" style="text-align: left;">' + n2 + '</div></div>';
             });
         }
       });
       container.innerHTML = html;
     }
 
-    // Cálculos de Seeds dinâmicos para o Modal e Chaveamento Visual
     function calcularSeeds() {
-        let gruposData = obterClassificacaoGrupos();
-        let numGrupos = gruposData.length;
+        var gruposData = obterClassificacaoGrupos();
+        var numGrupos = gruposData.length;
         if(numGrupos !== 2 && numGrupos !== 4) return null; 
         
-        let campeoes = []; let vices = [];
-        gruposData.forEach((stats, idx) => {
-            if(stats.length >= 1) campeoes.push({...stats[0], tipo: 'Campeão', origem: idx + 1});
-            if(stats.length >= 2) vices.push({...stats[1], tipo: 'Vice', origem: idx + 1});
+        var campeoes = []; 
+        var vices = [];
+        
+        gruposData.forEach(function(stats, idx) {
+            if(stats.length >= 1) campeoes.push(Object.assign({}, stats[0], {tipo: 'Campeão', origem: idx + 1}));
+            if(stats.length >= 2) vices.push(Object.assign({}, stats[1], {tipo: 'Vice', origem: idx + 1}));
         });
 
-        campeoes.sort((a, b) => b.vitorias - a.vitorias || b.sg - a.sg || b.gf - a.gf);
-        campeoes.forEach((c, i) => c.seed = i + 1);
+        campeoes.sort(function(a, b) { return (b.vitorias - a.vitorias) || (b.sg - a.sg) || (b.gf - a.gf); });
+        campeoes.forEach(function(c, i) { c.seed = i + 1; });
 
-        vices.forEach(v => {
-            let meuCampeao = campeoes.find(c => c.origem === v.origem);
+        vices.forEach(function(v) {
+            var meuCampeao = campeoes.find(function(c) { return c.origem === v.origem; });
             v.forcaDoCampeao = meuCampeao ? meuCampeao.seed : 99;
         });
-        vices.sort((a, b) => a.forcaDoCampeao - b.forcaDoCampeao);
-        vices.forEach((v, i) => v.seed = i + campeoes.length + 1);
+        vices.sort(function(a, b) { return a.forcaDoCampeao - b.forcaDoCampeao; });
+        vices.forEach(function(v, i) { v.seed = i + campeoes.length + 1; });
 
-        return [...campeoes, ...vices];
+        return campeoes.concat(vices);
     }
 
     function renderizarInfoChaveModal() {
-        const container = document.getElementById('conteudoComoMonta');
-        let todosSeeds = calcularSeeds();
-        let numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
+        var container = document.getElementById('conteudoComoMonta');
+        var todosSeeds = calcularSeeds();
+        var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
         
-        if (!todosSeeds) { container.innerHTML = `<div style="text-align:center; padding: 20px;">Você precisa de 2 ou 4 grupos para montar a chave automática.</div>`; return; }
+        if (!todosSeeds) { 
+            container.innerHTML = '<div style="text-align:center; padding: 20px;">Você precisa de 2 ou 4 grupos para montar a chave automática.</div>'; 
+            return; 
+        }
         
-        const getS = (n) => { let s = todosSeeds.find(x => x.seed === n); return s ? formatarDuplaLinha(s.nome) : 'A definir'; };
-        const renderSCard = (s) => {
+        var getS = function(n) { 
+            var s = todosSeeds.find(function(x) { return x.seed === n; }); 
+            return s ? formatarDuplaLinha(s.nome) : 'A definir'; 
+        };
+        
+        var renderSCard = function(s) {
             if(!s) return '';
-            let isCamp = s.seed <= numGrupos;
-            let desc = isCamp ? `${s.seed}º Melhor Campeão` : `Vice do grupo do ${s.forcaDoCampeao}º campeão`;
-            return `<div class="seed-info-card"><div class="seed-info-top"><span class="seed-badge">Seed ${s.seed}</span><span class="seed-info-nome">${formatarDuplaLinha(s.nome)}</span></div><div class="seed-info-detalhes"><span>${desc} &bull; Grp ${s.origem}</span><span style="margin-left: auto;"><b>V:</b> ${s.vitorias} | <b>SG:</b> ${s.sg}</span></div></div>`;
+            var isCamp = s.seed <= numGrupos;
+            var desc = isCamp ? (s.seed + 'º Melhor Campeão') : ('Vice do grupo do ' + s.forcaDoCampeao + 'º campeão');
+            return '<div class="seed-info-card"><div class="seed-info-top"><span class="seed-badge">Seed ' + s.seed + '</span><span class="seed-info-nome">' + formatarDuplaLinha(s.nome) + '</span></div><div class="seed-info-detalhes"><span>' + desc + ' &bull; Grp ' + s.origem + '</span><span style="margin-left: auto;"><b>V:</b> ' + s.vitorias + ' | <b>SG:</b> ' + s.sg + '</span></div></div>';
         };
 
+        var htmlEsquerda = '';
         if (numGrupos === 4) {
-            container.innerHTML = `
-            <div class="chaves-grid">
-                <div class="chaves-col-esquerda">
-                    <div class="titulo-secao-chave">Chaveamento Automático (Quartas)</div>
-                    <div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">Seed 1</span><span class="seed-nome">${getS(1)}</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">Seed 7</span><span class="seed-nome">${getS(7)}</span></div></div>
-                    <div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">Seed 6</span><span class="seed-nome">${getS(6)}</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">Seed 4</span><span class="seed-nome">${getS(4)}</span></div></div>
-                    <div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 3</div><div class="linha-chave"><div class="chave-pos">5</div><span class="seed-badge">Seed 3</span><span class="seed-nome">${getS(3)}</span></div><div class="linha-chave"><div class="chave-pos">6</div><span class="seed-badge">Seed 5</span><span class="seed-nome">${getS(5)}</span></div></div>
-                    <div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 4</div><div class="linha-chave"><div class="chave-pos">7</div><span class="seed-badge">Seed 8</span><span class="seed-nome">${getS(8)}</span></div><div class="linha-chave"><div class="chave-pos">8</div><span class="seed-badge">Seed 2</span><span class="seed-nome">${getS(2)}</span></div></div>
-                </div>
-                <div class="chaves-col-direita"><div class="titulo-secao-chave">Seeds da Fase de Grupos</div>${todosSeeds.sort((a,b)=> a.seed - b.seed).map(s => renderSCard(s)).join('')}</div>
-            </div>`;
+            htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento Automático (Quartas)</div>' +
+                '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">Seed 1</span><span class="seed-nome">' + getS(1) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">Seed 7</span><span class="seed-nome">' + getS(7) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">Seed 6</span><span class="seed-nome">' + getS(6) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">Seed 4</span><span class="seed-nome">' + getS(4) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 3</div><div class="linha-chave"><div class="chave-pos">5</div><span class="seed-badge">Seed 3</span><span class="seed-nome">' + getS(3) + '</span></div><div class="linha-chave"><div class="chave-pos">6</div><span class="seed-badge">Seed 5</span><span class="seed-nome">' + getS(5) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 4</div><div class="linha-chave"><div class="chave-pos">7</div><span class="seed-badge">Seed 8</span><span class="seed-nome">' + getS(8) + '</span></div><div class="linha-chave"><div class="chave-pos">8</div><span class="seed-badge">Seed 2</span><span class="seed-nome">' + getS(2) + '</span></div></div>';
         } else if (numGrupos === 2) {
-            container.innerHTML = `
-            <div class="chaves-grid">
-                <div class="chaves-col-esquerda">
-                    <div class="titulo-secao-chave">Chaveamento Automático (Semifinal Direta)</div>
-                    <div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">Seed 1</span><span class="seed-nome">${getS(1)}</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">Seed 4</span><span class="seed-nome">${getS(4)}</span></div></div>
-                    <div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">Seed 3</span><span class="seed-nome">${getS(3)}</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">Seed 2</span><span class="seed-nome">${getS(2)}</span></div></div>
-                </div>
-                <div class="chaves-col-direita"><div class="titulo-secao-chave">Seeds da Fase de Grupos</div>${todosSeeds.sort((a,b)=> a.seed - b.seed).map(s => renderSCard(s)).join('')}</div>
-            </div>`;
+            htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento Automático (Semifinal Direta)</div>' +
+                '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">Seed 1</span><span class="seed-nome">' + getS(1) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">Seed 4</span><span class="seed-nome">' + getS(4) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">Seed 3</span><span class="seed-nome">' + getS(3) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">Seed 2</span><span class="seed-nome">' + getS(2) + '</span></div></div>';
         }
+
+        var sortedSeeds = todosSeeds.sort(function(a,b){ return a.seed - b.seed; });
+        var htmlDireita = '<div class="titulo-secao-chave">Seeds da Fase de Grupos</div>' + sortedSeeds.map(function(s){ return renderSCard(s); }).join('');
+
+        container.innerHTML = '<div class="chaves-grid"><div class="chaves-col-esquerda">' + htmlEsquerda + '</div><div class="chaves-col-direita">' + htmlDireita + '</div></div>';
     }
 
-    // CHAVEAMENTO MATAMATA VISUAL E INTACTO PARA TODOS OS NAVEGADORES
+    // BRACKET CHAVEAMENTO MATA-MATA (Totalmente Blindado)
     function salvarPlacarMataMata(fase, matchIdx, equipa, valor) {
         if(!torneioAtual.bracket) torneioAtual.bracket = {};
         if(!torneioAtual.bracket[fase]) torneioAtual.bracket[fase] = {};
         if(!torneioAtual.bracket[fase][matchIdx]) torneioAtual.bracket[fase][matchIdx] = {p1: '', p2: ''};
         
-        if(equipa === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
-        if(equipa === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
-        salvarDados(); renderizarBracketVisual(); 
+        if(equipe === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
+        if(equipe === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
+        salvarDados(); 
+        renderizarBracketVisual(); 
     }
 
     function renderizarBracketVisual() {
-        const container = document.getElementById('containerBracketDraw');
-        const badgeRow = document.getElementById('badgeRowContainer');
+        var container = document.getElementById('containerBracketDraw');
+        var badgeRow = document.getElementById('badgeRowContainer');
         
-        let seeds = calcularSeeds();
-        let numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
+        var seeds = calcularSeeds();
+        var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
         
-        if (!seeds) { 
+        if (!seeds || seeds.length === 0) { 
             badgeRow.innerHTML = '';
-            container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio e Resultados. Crie exatos <b>2 ou 4 grupos</b> para a chave funcionar.</div>`; 
+            container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio. Crie exatos <b>2 ou 4 grupos</b> para o chaveamento automático.</div>'; 
             return; 
         }
 
-        const getS = function(n) { let s = seeds.find(function(x){ return x.seed === n; }); return s ? s.nome : 'A definir'; };
+        var getS = function(n) { 
+            for(var i=0; i<seeds.length; i++) {
+                if(seeds[i].seed === n) return seeds[i].nome;
+            }
+            return 'A definir';
+        };
         
-        let b = torneioAtual.bracket || {};
-        let qf_s = b.qf || {}; let sf_s = b.sf || {}; let fn_s = b.final || {};
+        var b = torneioAtual.bracket || {};
+        var qf_s = b.qf || {}; 
+        var sf_s = b.sf || {}; 
+        var fn_s = b.final || {};
 
-        const getSc = function(faseObj, idx, p) { if(faseObj && faseObj[idx]) { return faseObj[idx][p]; } return ''; };
+        var getSc = function(faseObj, idx, p) { 
+            if(faseObj && faseObj[idx] && faseObj[idx][p] !== undefined) {
+                return faseObj[idx][p];
+            }
+            return ''; 
+        };
 
-        const getVencedor = function(t1, t2, sc1, sc2) {
+        var getVencedor = function(t1, t2, sc1, sc2) {
             if (sc1 === '' || sc2 === '' || sc1 == null || sc2 == null) return 'A definir';
-            let n1 = parseInt(sc1), n2 = parseInt(sc2);
+            var n1 = parseInt(sc1);
+            var n2 = parseInt(sc2);
+            if (isNaN(n1) || isNaN(n2)) return 'A definir';
             if (n1 > n2) return t1;
             if (n2 > n1) return t2;
             return 'A definir';
         };
 
-        const buildMatchCard = function(title, team1, team2, s1, s2, faseId, matchIdx) {
-            let cls1 = '', cls2 = '', t1Icon = '', t2Icon = '';
+        var buildMatchCard = function(title, team1, team2, s1, s2, faseId, matchIdx) {
+            var cls1 = '';
+            var cls2 = '';
+            var t1Icon = '';
+            var t2Icon = '';
 
             if(s1 !== '' && s2 !== '') {
-                let n1 = parseInt(s1), n2 = parseInt(s2);
-                if(n1 > n2) { 
-                    cls1 = 'winner'; cls2 = 'loser'; 
-                    if(faseId === 'final') t1Icon = '<div class="trophy-icon">🏆</div>';
-                }
-                else if(n2 > n1) { 
-                    cls2 = 'winner'; cls1 = 'loser'; 
-                    if(faseId === 'final') t2Icon = '<div class="trophy-icon">🏆</div>';
+                var n1 = parseInt(s1);
+                var n2 = parseInt(s2);
+                if(!isNaN(n1) && !isNaN(n2)) {
+                    if(n1 > n2) { 
+                        cls1 = 'winner'; cls2 = 'loser'; 
+                        if(faseId === 'final') t1Icon = '<div class="trophy-icon">🏆</div>';
+                    }
+                    else if(n2 > n1) { 
+                        cls2 = 'winner'; cls1 = 'loser'; 
+                        if(faseId === 'final') t2Icon = '<div class="trophy-icon">🏆</div>';
+                    }
                 }
             }
 
-            let conectores = '';
-            if(faseId === 'qf') conectores = `<div class="connector-right"></div>`;
-            else if(faseId === 'sf') conectores = `<div class="connector-bracket"><div class="connector-dot"></div></div><div class="connector-right"></div>`;
-            else if(faseId === 'final') conectores = `<div class="connector-bracket final"><div class="connector-dot"></div></div>`;
+            var conectores = '';
+            if(faseId === 'qf') conectores = '<div class="connector-right"></div>';
+            else if(faseId === 'sf') conectores = '<div class="connector-bracket"><div class="connector-dot"></div></div><div class="connector-right"></div>';
+            else if(faseId === 'final') conectores = '<div class="connector-bracket final"><div class="connector-dot"></div></div>';
 
-            return `
-            <div class="match-box">
-                <div class="match-header">${title}</div>
-                <div class="match-team ${cls1}">
-                    <span class="team-name">${formatarDuplaLinha(team1)}</span>
-                    <input type="number" class="team-score" placeholder="0" value="${s1||''}" oninput="salvarPlacarMataMata('${faseId}', ${matchIdx}, 1, this.value)">
-                    ${t1Icon}
-                </div>
-                <div class="match-team ${cls2}">
-                    <span class="team-name">${formatarDuplaLinha(team2)}</span>
-                    <input type="number" class="team-score" placeholder="0" value="${s2||''}" oninput="salvarPlacarMataMata('${faseId}', ${matchIdx}, 2, this.value)">
-                    ${t2Icon}
-                </div>
-                ${conectores}
-            </div>`;
+            var t1Name = formatarDuplaLinha(team1);
+            var t2Name = formatarDuplaLinha(team2);
+
+            return '<div class="match-box">' +
+                        '<div class="match-header">' + title + '</div>' +
+                        '<div class="match-team ' + cls1 + '">' +
+                            '<span class="team-name">' + t1Name + '</span>' +
+                            '<input type="number" class="team-score" placeholder="0" value="' + s1 + '" oninput="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 1, this.value)">' +
+                            t1Icon +
+                        '</div>' +
+                        '<div class="match-team ' + cls2 + '">' +
+                            '<span class="team-name">' + t2Name + '</span>' +
+                            '<input type="number" class="team-score" placeholder="0" value="' + s2 + '" oninput="salvarPlacarMataMata(\'' + faseId + '\', ' + matchIdx + ', 2, this.value)">' +
+                            t2Icon +
+                        '</div>' +
+                        conectores +
+                    '</div>';
         };
 
         if (numGrupos === 4) {
-            badgeRow.innerHTML = `<div class="badge-header"><span class="fase-badge">Quartas</span></div><div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>`;
+            badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Quartas</span></div><div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
             
-            let qf = [ {t1: getS(1), t2: getS(7)}, {t1: getS(6), t2: getS(4)}, {t1: getS(3), t2: getS(5)}, {t1: getS(8), t2: getS(2)} ];
-            let sf = [ 
-                {t1: getVencedor(qf[0].t1, qf[0].t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2')), t2: getVencedor(qf[1].t1, qf[1].t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'))}, 
-                {t1: getVencedor(qf[2].t1, qf[2].t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2')), t2: getVencedor(qf[3].t1, qf[3].t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'))} 
-            ];
-            let fn = { 
-                t1: getVencedor(sf[0].t1, sf[0].t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2')), 
-                t2: getVencedor(sf[1].t1, sf[1].t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2')) 
-            };
+            var qf0_t1 = getS(1); var qf0_t2 = getS(7);
+            var qf1_t1 = getS(6); var qf1_t2 = getS(4);
+            var qf2_t1 = getS(3); var qf2_t2 = getS(5);
+            var qf3_t1 = getS(8); var qf3_t2 = getS(2);
 
-            container.innerHTML = `
-                <div class="bracket-column col-qf">
-                    ${buildMatchCard('Quartas • P1', qf[0].t1, qf[0].t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'), 'qf', 0)}
-                    ${buildMatchCard('Quartas • P2', qf[1].t1, qf[1].t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'), 'qf', 1)}
-                    ${buildMatchCard('Quartas • P3', qf[2].t1, qf[2].t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2'), 'qf', 2)}
-                    ${buildMatchCard('Quartas • P4', qf[3].t1, qf[3].t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'), 'qf', 3)}
-                </div>
-                <div class="bracket-column col-sf">
-                    ${buildMatchCard('Semifinal • P1', sf[0].t1, sf[0].t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'), 'sf', 0)}
-                    ${buildMatchCard('Semifinal • P2', sf[1].t1, sf[1].t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'), 'sf', 1)}
-                </div>
-                <div class="bracket-column col-final">
-                    ${buildMatchCard('Final • P1', fn.t1, fn.t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0)}
-                </div>
-            `;
+            var sf0_t1 = getVencedor(qf0_t1, qf0_t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'));
+            var sf0_t2 = getVencedor(qf1_t1, qf1_t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'));
+            var sf1_t1 = getVencedor(qf2_t1, qf2_t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2'));
+            var sf1_t2 = getVencedor(qf3_t1, qf3_t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'));
+
+            var fn_t1 = getVencedor(sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'));
+            var fn_t2 = getVencedor(sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'));
+
+            container.innerHTML = 
+                '<div class="bracket-column col-qf">' +
+                    buildMatchCard('Quartas • P1', qf0_t1, qf0_t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'), 'qf', 0) +
+                    buildMatchCard('Quartas • P2', qf1_t1, qf1_t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'), 'qf', 1) +
+                    buildMatchCard('Quartas • P3', qf2_t1, qf2_t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2'), 'qf', 2) +
+                    buildMatchCard('Quartas • P4', qf3_t1, qf3_t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'), 'qf', 3) +
+                '</div>' +
+                '<div class="bracket-column col-sf">' +
+                    buildMatchCard('Semifinal • P1', sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'), 'sf', 0) +
+                    buildMatchCard('Semifinal • P2', sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'), 'sf', 1) +
+                '</div>' +
+                '<div class="bracket-column col-final">' +
+                    buildMatchCard('Final • P1', fn_t1, fn_t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0) +
+                '</div>';
+                
         } else if (numGrupos === 2) {
-            badgeRow.innerHTML = `<div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>`;
+            badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
             
-            let sf = [ {t1: getS(1), t2: getS(4)}, {t1: getS(2), t2: getS(3)} ];
-            let fn = { t1: getVencedor(sf[0].t1, sf[0].t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2')), t2: getVencedor(sf[1].t1, sf[1].t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2')) };
+            var sf0_t1 = getS(1); var sf0_t2 = getS(4);
+            var sf1_t1 = getS(2); var sf1_t2 = getS(3);
+            
+            var fn_t1 = getVencedor(sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'));
+            var fn_t2 = getVencedor(sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'));
 
-            container.innerHTML = `
-                <div class="bracket-column col-qf"> 
-                    ${buildMatchCard('Semifinal • P1', sf[0].t1, sf[0].t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'), 'sf', 0)}
-                    ${buildMatchCard('Semifinal • P2', sf[1].t1, sf[1].t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'), 'sf', 1)}
-                </div>
-                <div class="bracket-column col-sf">
-                    ${buildMatchCard('Final • P1', fn.t1, fn.t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0)}
-                </div>
-            `;
+            container.innerHTML = 
+                '<div class="bracket-column col-qf">' +
+                    buildMatchCard('Semifinal • P1', sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'), 'sf', 0) +
+                    buildMatchCard('Semifinal • P2', sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'), 'sf', 1) +
+                '</div>' +
+                '<div class="bracket-column col-sf">' +
+                    buildMatchCard('Final • P1', fn_t1, fn_t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0) +
+                '</div>';
         }
     }
   </script>
