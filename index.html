@@ -182,7 +182,6 @@
       <div class="gestao-top"><button class="btn-voltar" onclick="voltarParaLista()"><i class="fa-solid fa-chevron-left"></i> Voltar</button></div>
       <div class="torneio-titulo-header" id="tituloTorneioHeader">Nome do Torneio</div>
 
-      <!-- ADICIONADO A NOVA ABA DE TERCEIROS AQUI -->
       <div class="abas-internas">
         <button class="aba-btn active" onclick="mudarAba('participantes')"><i class="fa-solid fa-users"></i> Participantes</button>
         <button class="aba-btn" onclick="mudarAba('grupos')"><i class="fa-solid fa-layer-group"></i> Grupos</button>
@@ -286,7 +285,6 @@
             <input type="number" id="inputNumDuplas" placeholder="Ex: 10" min="1" required>
           </div>
           <div class="form-group">
-            <!-- RESTRIÇÃO DE 2 OU 4 REMOVIDA AQUI! -->
             <label>Quantidade de grupos</label>
             <input type="number" id="inputNumGrupos" placeholder="Ex: 3" min="1" value="3" required>
           </div>
@@ -386,7 +384,7 @@
                 atualizarTelaParticipantes(); 
                 atualizarTelaGrupos(); 
                 atualizarTelaPartidas();
-                atualizarTelaTerceiros(); // <--- Adicionado aqui
+                atualizarTelaTerceiros(); 
                 renderizarBracketVisual();
             } else {
                 voltarParaLista(); 
@@ -394,7 +392,7 @@
         }
     });
 
-    // Função de Salvamento
+    // Função de Salvamento Firebase
     async function salvarDadosFirebase() {
         if (!torneioAtual) return;
         try {
@@ -441,16 +439,15 @@
       e.preventDefault();
       var novoId = Date.now().toString();
       
-      // Capturando as novas opções de terceiros
       var valTerceiros = document.getElementById('selectMelhoresTerceiros').value;
       var qtdTerceiros = valTerceiros === 'sim' ? (parseInt(document.getElementById('qtdTerceirosInput').value) || 0) : 0;
 
       var novoTorneio = {
         id: novoId, 
         nome: document.getElementById('inputNomeTorneio').value,
-        numGrupos: parseInt(document.getElementById('inputNumGrupos').value) || 3, // Padrão flexível
-        melhoresTerceiros: valTerceiros, // NOVO
-        qtdTerceiros: qtdTerceiros, // NOVO
+        numGrupos: parseInt(document.getElementById('inputNumGrupos').value) || 3,
+        melhoresTerceiros: valTerceiros, 
+        qtdTerceiros: qtdTerceiros, 
         participantes: [], 
         gruposSorteados: [], 
         partidas: [], 
@@ -498,7 +495,6 @@
       document.getElementById('telaGestao').style.display = 'flex'; 
       document.getElementById('tituloTorneioHeader').innerText = torneioAtual.nome;
       
-      // Controla a exibição do botão da Aba de Terceiros
       var btnTerceiros = document.getElementById('btnAbaTerceiros');
       if(torneioAtual.melhoresTerceiros === 'sim' && torneioAtual.qtdTerceiros > 0) {
           btnTerceiros.style.display = 'flex';
@@ -509,7 +505,7 @@
       atualizarTelaParticipantes(); 
       atualizarTelaGrupos(); 
       atualizarTelaPartidas();
-      atualizarTelaTerceiros(); // <--- Carrega a nova tela
+      atualizarTelaTerceiros(); 
       mudarAba('participantes');
     }
 
@@ -524,15 +520,7 @@
       document.querySelectorAll('.aba-btn').forEach(function(b) { b.classList.remove('active'); }); 
       document.querySelectorAll('.conteudo-aba').forEach(function(c) { c.classList.remove('active'); });
       
-      // Encontra o botão correto e ativa
-      var mapaBotoes = {
-          'participantes': 0,
-          'grupos': 1,
-          'partidas': 2,
-          'terceiros': 3,
-          'chaveamento': 4
-      };
-      
+      var mapaBotoes = { 'participantes': 0, 'grupos': 1, 'partidas': 2, 'terceiros': 3, 'chaveamento': 4 };
       document.querySelectorAll('.aba-btn')[mapaBotoes[aba]].classList.add('active');
       
       var cMap = { 'participantes': 'abaParticipantes', 'grupos': 'abaGrupos', 'partidas': 'abaPartidas', 'terceiros': 'abaTerceiros', 'chaveamento': 'abaChaveamento' }; 
@@ -596,11 +584,10 @@
     function sortearGrupos() {
       if (!torneioAtual.participantes || torneioAtual.participantes.length === 0) return alert('Cadastre duplas primeiro.');
       
-      var num = parseInt(torneioAtual.numGrupos) || 3; // Permite qualquer número
+      var num = parseInt(torneioAtual.numGrupos) || 3; 
       var embaralhados = [].concat(torneioAtual.participantes).sort(function() { return Math.random() - 0.5; });
       var grupos = [];
       
-      // DIVISÃO FLEXÍVEL: Distribui uniformemente, quem sobrar cai nos primeiros grupos (4, 3, 3...)
       for (var i=0; i<num; i++) { grupos.push({ duplas: [] }); }
       embaralhados.forEach(function(p, i) { grupos[i % num].duplas.push(p); });
       
@@ -610,7 +597,7 @@
       
       atualizarTelaGrupos();
       atualizarTelaPartidas();
-      atualizarTelaTerceiros(); // <--- Atualiza terceiros
+      atualizarTelaTerceiros(); 
       
       salvarDadosFirebase(); 
     }
@@ -692,9 +679,6 @@
       container.innerHTML = html;
     }
 
-    // =========================================================
-    // LÓGICA DO RANKING DOS TERCEIROS COLOCADOS
-    // =========================================================
     function atualizarTelaTerceiros() {
         var container = document.getElementById('listaTerceirosContainer');
         if (!torneioAtual || torneioAtual.melhoresTerceiros !== 'sim') return;
@@ -704,16 +688,14 @@
         var gruposData = obterClassificacaoGrupos();
         var terceiros = [];
 
-        // Pega somente quem ficou em 3º lugar em cada grupo
         gruposData.forEach(function(stats, gIdx) {
             if (stats.length >= 3) {
-                var terceiro = stats[2]; // O 3º colocado (índice 2 na array)
+                var terceiro = stats[2]; 
                 terceiro.grupoOrigem = gIdx + 1;
                 terceiros.push(terceiro);
             }
         });
 
-        // Ordena os terceiros do melhor pro pior
         terceiros.sort(function(a, b) {
             if (b.vitorias !== a.vitorias) return b.vitorias - a.vitorias;
             if (b.sg !== a.sg) return b.sg - a.sg;
@@ -731,7 +713,6 @@
                 var j2 = nomes[1] ? nomes[1].trim() : '';
                 var htmlNome = j2 ? '<span>' + j1 + '</span><span>' + j2 + '</span>' : '<span>' + s.nome + '</span>';
                 
-                // Destaca de amarelo apenas a quantidade de vagas preenchida na criação do torneio
                 var classeLinha = index < torneioAtual.qtdTerceiros ? 'tabela-row classificado' : 'tabela-row';
                 
                 html += '<div class="' + classeLinha + '" style="grid-template-columns: 50px 1fr 50px 45px 45px;"><div class="posicao">' + (index + 1) + 'º</div><div>' + htmlNome + '</div><div style="font-weight: bold; color: #1e3a8a;">' + s.grupoOrigem + '</div><div>' + s.vitorias + '</div><div>' + s.sg + '</div></div>';
@@ -764,7 +745,7 @@
         if(equipe === 1) torneioAtual.partidas[gIdx].confrontos[pIdx].placar1 = valor;
         if(equipe === 2) torneioAtual.partidas[gIdx].confrontos[pIdx].placar2 = valor;
         atualizarTelaGrupos(); 
-        atualizarTelaTerceiros(); // Atualiza o ranking dos terceiros ao digitar os placares
+        atualizarTelaTerceiros(); 
         salvarDadosFirebase(); 
     }
 
@@ -853,7 +834,38 @@
         };
 
         var htmlEsquerda = '';
-        if (numGrupos === 4) {
+        
+        // NOVA LÓGICA PERSONALIZADA (3 GRUPOS + MELHORES TERCEIROS)
+        if (numGrupos === 3 && torneioAtual.melhoresTerceiros === 'sim') {
+            
+            // Puxando os classificados diretamente das tabelas
+            var gruposData = obterClassificacaoGrupos();
+            var getPos = function(gIndex, posIndex) {
+                if(gruposData[gIndex] && gruposData[gIndex][posIndex]) return formatarDuplaLinha(gruposData[gIndex][posIndex].nome);
+                return 'A definir';
+            };
+
+            var terceirosRank = [];
+            gruposData.forEach(function(stats, gIdx) {
+                if(stats.length >= 3) {
+                    terceirosRank.push(stats[2]);
+                }
+            });
+            terceirosRank.sort(function(a, b) {
+                if (b.vitorias !== a.vitorias) return b.vitorias - a.vitorias;
+                if (b.sg !== a.sg) return b.sg - a.sg;
+                return b.gf - a.gf;
+            });
+            var t1 = terceirosRank[0] ? formatarDuplaLinha(terceirosRank[0].nome) : 'A definir';
+            var t2 = terceirosRank[1] ? formatarDuplaLinha(terceirosRank[1].nome) : 'A definir';
+
+            htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento (Regra Customizada - 3 Grupos)</div>' +
+                '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">1º G1</span><span class="seed-nome">' + getPos(0,0) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge" style="background:#fef08a; color:#b45309;">2º Melhor 3º</span><span class="seed-nome">' + t2 + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">1º G3</span><span class="seed-nome">' + getPos(2,0) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">2º G2</span><span class="seed-nome">' + getPos(1,1) + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 3</div><div class="linha-chave"><div class="chave-pos">5</div><span class="seed-badge">1º G2</span><span class="seed-nome">' + getPos(1,0) + '</span></div><div class="linha-chave"><div class="chave-pos">6</div><span class="seed-badge" style="background:#fef08a; color:#b45309;">1º Melhor 3º</span><span class="seed-nome">' + t1 + '</span></div></div>' +
+                '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 4</div><div class="linha-chave"><div class="chave-pos">7</div><span class="seed-badge">2º G1</span><span class="seed-nome">' + getPos(0,1) + '</span></div><div class="linha-chave"><div class="chave-pos">8</div><span class="seed-badge">2º G3</span><span class="seed-nome">' + getPos(2,1) + '</span></div></div>';
+                
+        } else if (numGrupos === 4) {
             htmlEsquerda = '<div class="titulo-secao-chave">Chaveamento Automático (Quartas)</div>' +
                 '<div class="jogo-chave-box"><div class="jogo-chave-header">Jogo 1</div><div class="linha-chave"><div class="chave-pos">1</div><span class="seed-badge">Seed 1</span><span class="seed-nome">' + getS(1) + '</span></div><div class="linha-chave"><div class="chave-pos">2</div><span class="seed-badge">Seed 7</span><span class="seed-nome">' + getS(7) + '</span></div></div>' +
                 '<div class="jogo-chave-box" style="margin-top:10px;"><div class="jogo-chave-header">Jogo 2</div><div class="linha-chave"><div class="chave-pos">3</div><span class="seed-badge">Seed 6</span><span class="seed-nome">' + getS(6) + '</span></div><div class="linha-chave"><div class="chave-pos">4</div><span class="seed-badge">Seed 4</span><span class="seed-nome">' + getS(4) + '</span></div></div>' +
@@ -878,7 +890,7 @@
         if(!torneioAtual.bracket[fase]) torneioAtual.bracket[fase] = {};
         if(!torneioAtual.bracket[fase][matchIdx]) torneioAtual.bracket[fase][matchIdx] = {p1: '', p2: ''};
         
-        if(equipa === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
+        if(equipe === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
         if(equipa === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
         renderizarBracketVisual(); 
         salvarDadosFirebase(); 
@@ -893,9 +905,10 @@
         var seeds = calcularSeeds();
         var numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
         
-        if (numGrupos !== 2 && numGrupos !== 4) {
+        // ADICIONADA PERMISSÃO PARA O CHAVEAMENTO DE 3 GRUPOS
+        if (numGrupos !== 2 && numGrupos !== 4 && !(numGrupos === 3 && torneioAtual.melhoresTerceiros === 'sim')) {
             badgeRow.innerHTML = '';
-            container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Crie exatos <b>2 ou 4 grupos</b> (ou aguarde a próxima atualização para chaves com 3, 5+ grupos). Veja os classificados nas tabelas.</div>'; 
+            container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Crie exatos <b>2, 3 ou 4 grupos</b> com as configurações corretas para chaveamento automático. Veja os classificados nas tabelas.</div>'; 
             return;
         }
 
@@ -986,7 +999,63 @@
                     '</div>';
         };
 
-        if (numGrupos === 4) {
+        // NOVA REGRA DE DESENHO (3 GRUPOS + TERCEIROS)
+        if (numGrupos === 3 && torneioAtual.melhoresTerceiros === 'sim') {
+            badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Quartas</span></div><div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
+            
+            var gruposData = obterClassificacaoGrupos();
+            var getPos = function(gIndex, posIndex) {
+                if(gruposData[gIndex] && gruposData[gIndex][posIndex]) return gruposData[gIndex][posIndex].nome;
+                return 'A definir';
+            };
+
+            var terceirosRank = [];
+            gruposData.forEach(function(stats, gIdx) {
+                if(stats.length >= 3) {
+                    terceirosRank.push(stats[2]);
+                }
+            });
+            terceirosRank.sort(function(a, b) {
+                if (b.vitorias !== a.vitorias) return b.vitorias - a.vitorias;
+                if (b.sg !== a.sg) return b.sg - a.sg;
+                return b.gf - a.gf;
+            });
+            var t1 = terceirosRank[0] ? terceirosRank[0].nome : 'A definir';
+            var t2 = terceirosRank[1] ? terceirosRank[1].nome : 'A definir';
+
+            var qf0_t1 = getPos(0, 0); // 1º G1
+            var qf0_t2 = t2;           // 2º Melhor 3º
+            var qf1_t1 = getPos(2, 0); // 1º G3
+            var qf1_t2 = getPos(1, 1); // 2º G2
+            var qf2_t1 = getPos(1, 0); // 1º G2
+            var qf2_t2 = t1;           // 1º Melhor 3º
+            var qf3_t1 = getPos(0, 1); // 2º G1
+            var qf3_t2 = getPos(2, 1); // 2º G3
+
+            var sf0_t1 = getVencedor(qf0_t1, qf0_t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'));
+            var sf0_t2 = getVencedor(qf1_t1, qf1_t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'));
+            var sf1_t1 = getVencedor(qf2_t1, qf2_t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2'));
+            var sf1_t2 = getVencedor(qf3_t1, qf3_t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'));
+
+            var fn_t1 = getVencedor(sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'));
+            var fn_t2 = getVencedor(sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'));
+
+            container.innerHTML = 
+                '<div class="bracket-column col-qf">' +
+                    buildMatchCard('Quartas • P1', qf0_t1, qf0_t2, getSc(qf_s,0,'p1'), getSc(qf_s,0,'p2'), 'qf', 0) +
+                    buildMatchCard('Quartas • P2', qf1_t1, qf1_t2, getSc(qf_s,1,'p1'), getSc(qf_s,1,'p2'), 'qf', 1) +
+                    buildMatchCard('Quartas • P3', qf2_t1, qf2_t2, getSc(qf_s,2,'p1'), getSc(qf_s,2,'p2'), 'qf', 2) +
+                    buildMatchCard('Quartas • P4', qf3_t1, qf3_t2, getSc(qf_s,3,'p1'), getSc(qf_s,3,'p2'), 'qf', 3) +
+                '</div>' +
+                '<div class="bracket-column col-sf">' +
+                    buildMatchCard('Semifinal • P1', sf0_t1, sf0_t2, getSc(sf_s,0,'p1'), getSc(sf_s,0,'p2'), 'sf', 0) +
+                    buildMatchCard('Semifinal • P2', sf1_t1, sf1_t2, getSc(sf_s,1,'p1'), getSc(sf_s,1,'p2'), 'sf', 1) +
+                '</div>' +
+                '<div class="bracket-column col-final">' +
+                    buildMatchCard('Final • P1', fn_t1, fn_t2, getSc(fn_s,0,'p1'), getSc(fn_s,0,'p2'), 'final', 0) +
+                '</div>';
+                
+        } else if (numGrupos === 4) {
             badgeRow.innerHTML = '<div class="badge-header"><span class="fase-badge">Quartas</span></div><div class="badge-header"><span class="fase-badge">Semifinal</span></div><div class="badge-header"><span class="fase-badge">Final</span></div>';
             
             var qf0_t1 = getS(1); var qf0_t2 = getS(7);
