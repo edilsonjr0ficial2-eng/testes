@@ -89,7 +89,7 @@
     .link-info { color: #1d4ed8; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 5px 10px; background: #eef2ff; border-radius: 20px; transition: 0.2s; }
     .link-info:hover { background: #e0e7ff; }
 
-    /* ======== CHAVEAMENTO (BRACKET) ======== */
+    /* ======== CHAVEAMENTO ======== */
     .bracket-wrapper { background: white; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 30px; overflow-x: auto; width: 100%; box-sizing: border-box; }
     .badge-row { display: flex; gap: 40px; padding-left: 20px; margin-bottom: 30px; min-width: max-content; }
     .badge-header { width: 250px; display: flex; justify-content: center; flex-shrink: 0; }
@@ -128,7 +128,6 @@
     .connector-bracket::after { content: ""; position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 20px; border-top: 2px solid #60a5fa; }
     .connector-dot { position: absolute; left: -4px; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; z-index: 2; }
 
-    /* Navegação Base */
     .bottom-nav-container { padding: 10px 20px 20px; position: fixed; bottom: 0; width: 100%; box-sizing: border-box; background: var(--bg-color); z-index: 100; }
     .bottom-nav { display: flex; justify-content: space-around; background-color: white; padding: 10px 0; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
     .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 12px; color: var(--text-gray); text-decoration: none; flex: 1; }
@@ -224,7 +223,7 @@
         <div id="listaPartidasContainer"></div>
       </div>
 
-      <!-- ABA: CHAVEAMENTO MATA-MATA -->
+      <!-- ABA: CHAVEAMENTO -->
       <div id="abaChaveamento" class="conteudo-aba">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
              <div style="font-weight: bold; font-size: 16px;">Chaveamento do Torneio</div>
@@ -330,10 +329,10 @@
           <p>A classificação dentro dos grupos segue estritamente a seguinte ordem de desempate:</p>
           <ol style="margin-left: 15px; padding-left: 15px;">
               <li><b>Maior número de Vitórias</b></li>
-              <li><b>Maior Saldo de Games (SG)</b></li>
-              <li><b>Confronto Direto</b></li>
+              <li><b>Maior Saldo de Games (SG)</b>: diferença entre games feitos e sofridos.</li>
+              <li><b>Confronto Direto</b>: caso duas duplas empatem nos itens acima, passa quem venceu o jogo entre elas.</li>
               <li><b>Maior número de Games Feitos (GF)</b></li>
-              <li><b>Sorteio</b></li>
+              <li><b>Sorteio</b> (ordem de inscrição)</li>
           </ol>
       </div>
     </div>
@@ -382,11 +381,18 @@
         }
     });
 
-    // Função de Salvamento (BLINDADA CONTRA ERROS DO FIREBASE)
+    // Função de Salvamento (BLINDADA CONTRA ERROS DE NESTED ARRAY DO FIREBASE)
     async function salvarDadosFirebase() {
         if (!torneioAtual) return;
         try {
-            // Esse truque limpa 100% da sujeira dos dados, garantindo que o Firebase aceite
+            // FIX DEFINITIVO: O Firebase não aceita Arrays dentro de Arrays [[1],[2]]
+            // Aqui convertemos para uma lista de objetos [{duplas: [1]}, {duplas: [2]}]
+            if (torneioAtual.gruposSorteados) {
+                torneioAtual.gruposSorteados = torneioAtual.gruposSorteados.map(function(grupo) {
+                    return Array.isArray(grupo) ? { duplas: grupo } : grupo;
+                });
+            }
+
             const dadosLimpos = JSON.parse(JSON.stringify(torneioAtual));
             await setDoc(doc(db, "torneios", torneioAtual.id.toString()), dadosLimpos);
         } catch (e) {
@@ -396,7 +402,7 @@
     }
 
     // =====================================
-    // LÓGICA DO SISTEMA (ATUALIZA TELA NA HORA)
+    // LÓGICA DO SISTEMA
     // =====================================
 
     function formatarDuplaLinha(dupla) {
@@ -438,7 +444,6 @@
       document.getElementById('qtdTerceirosInput').style.display = 'none';
       
       try {
-          // Empurra pra memória local pra tela não quebrar
           torneios.push(novoTorneio);
           await setDoc(doc(db, "torneios", novoId), novoTorneio);
           torneioAtual = novoTorneio;
@@ -508,8 +513,8 @@
       if(!torneioAtual.participantes) torneioAtual.participantes = [];
       torneioAtual.participantes.push(j1 + ' & ' + j2); 
       
-      atualizarTelaParticipantes(); // Atualiza na hora na tela
-      salvarDadosFirebase(); // Salva na nuvem
+      atualizarTelaParticipantes(); 
+      salvarDadosFirebase(); 
       
       document.getElementById('jogador1').value = ''; 
       document.getElementById('jogador2').value = ''; 
@@ -523,7 +528,7 @@
           if (linha.trim()) torneioAtual.participantes.push(linha.trim()); 
       });
       
-      atualizarTelaParticipantes(); // Atualiza na hora na tela
+      atualizarTelaParticipantes(); 
       salvarDadosFirebase(); 
       document.getElementById('textareaLista').value = ''; 
     }
@@ -547,23 +552,26 @@
 
     function removerParticipante(index) { 
         torneioAtual.participantes.splice(index, 1); 
-        atualizarTelaParticipantes(); // Atualiza na hora
+        atualizarTelaParticipantes(); 
         salvarDadosFirebase(); 
     }
 
+    // A mágica de criação sem o bug de arrays aninhados
     function sortearGrupos() {
       if (!torneioAtual.participantes || torneioAtual.participantes.length === 0) return alert('Cadastre duplas primeiro.');
       
       var num = parseInt(torneioAtual.numGrupos) || 4;
       var embaralhados = [].concat(torneioAtual.participantes).sort(function() { return Math.random() - 0.5; });
       var grupos = [];
-      for (var i=0; i<num; i++) { grupos.push([]); }
-      embaralhados.forEach(function(p, i) { grupos[i % num].push(p); });
+      
+      // Cria a estrutura que o Firebase ama: [{duplas: []}, {duplas: []}]
+      for (var i=0; i<num; i++) { grupos.push({ duplas: [] }); }
+      embaralhados.forEach(function(p, i) { grupos[i % num].duplas.push(p); });
+      
       torneioAtual.gruposSorteados = grupos; 
       
-      gerarPartidas();
+      gerarPartidas(false);
       
-      // ATUALIZA A TELA NA MESMA HORA (Sem delay de internet)
       atualizarTelaGrupos();
       atualizarTelaPartidas();
       
@@ -574,8 +582,12 @@
         var gruposCalculados = [];
         if(!torneioAtual.gruposSorteados) return gruposCalculados;
 
-        torneioAtual.gruposSorteados.forEach(function(grupo, gIdx) {
-            var stats = grupo.map(function(dupla) { return { nome: dupla, vitorias: 0, gf: 0, gc: 0, sg: 0, grupoIdx: gIdx }; });
+        torneioAtual.gruposSorteados.forEach(function(grupoItem, gIdx) {
+            // Compatibilidade garantida
+            var listaDuplas = Array.isArray(grupoItem) ? grupoItem : grupoItem.duplas;
+            if(!listaDuplas) listaDuplas = [];
+
+            var stats = listaDuplas.map(function(dupla) { return { nome: dupla, vitorias: 0, gf: 0, gc: 0, sg: 0, grupoIdx: gIdx }; });
             if (torneioAtual.partidas && torneioAtual.partidas[gIdx]) {
                 torneioAtual.partidas[gIdx].confrontos.forEach(function(partida) {
                     if (partida.placar1 !== '' && partida.placar2 !== '') {
@@ -644,25 +656,29 @@
       container.innerHTML = html;
     }
 
-    function gerarPartidas() {
+    function gerarPartidas(chamarSalvar = true) {
       torneioAtual.partidas = [];
       if(!torneioAtual.gruposSorteados) return;
 
-      torneioAtual.gruposSorteados.forEach(function(grupo, indexGrupo) {
+      torneioAtual.gruposSorteados.forEach(function(grupoItem, indexGrupo) {
+        var listaDuplas = Array.isArray(grupoItem) ? grupoItem : grupoItem.duplas;
+        if(!listaDuplas) listaDuplas = [];
         var partidasGrupo = [];
-        for (var i = 0; i < grupo.length; i++) {
-          for (var j = i + 1; j < grupo.length; j++) { 
-              partidasGrupo.push({ dupla1: grupo[i], dupla2: grupo[j], placar1: '', placar2: '' }); 
+        for (var i = 0; i < listaDuplas.length; i++) {
+          for (var j = i + 1; j < listaDuplas.length; j++) { 
+              partidasGrupo.push({ dupla1: listaDuplas[i], dupla2: listaDuplas[j], placar1: '', placar2: '' }); 
           }
         }
         torneioAtual.partidas.push({ grupoIndex: indexGrupo, confrontos: partidasGrupo });
       });
+      
+      if(chamarSalvar) salvarDadosFirebase(); 
     }
 
     function salvarPlacarGrupo(gIdx, pIdx, equipe, valor) {
         if(equipe === 1) torneioAtual.partidas[gIdx].confrontos[pIdx].placar1 = valor;
         if(equipe === 2) torneioAtual.partidas[gIdx].confrontos[pIdx].placar2 = valor;
-        atualizarTelaGrupos(); // Atualiza tabela instantaneamente
+        atualizarTelaGrupos(); 
         salvarDadosFirebase(); 
     }
 
@@ -777,7 +793,7 @@
         
         if(equipa === 1) torneioAtual.bracket[fase][matchIdx].p1 = valor;
         if(equipa === 2) torneioAtual.bracket[fase][matchIdx].p2 = valor;
-        renderizarBracketVisual(); // Atualiza instantaneamente a tela
+        renderizarBracketVisual(); 
         salvarDadosFirebase(); 
     }
 
