@@ -62,7 +62,7 @@
     .btn-confirmar { background-color: var(--brand-black); color: var(--brand-yellow); border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
     .btn-secundario { background-color: var(--brand-yellow); color: var(--brand-black); border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 
-    /* Switches Restaurados */
+    /* Switches Originais Mantidos */
     .switch-container { margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }
     .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
     .switch input { opacity: 0; width: 0; height: 0; }
@@ -249,7 +249,7 @@
     </div>
   </div>
 
-  <!-- Modal Criar Torneio Restaurado com as Configurações Iniciais -->
+  <!-- Modal Criar Torneio Restaurado na Íntegra -->
   <div class="modal-overlay" id="modalEvento">
     <div class="modal-content">
       <button class="modal-close" type="button" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -450,6 +450,7 @@
       torneioAtual.gruposSorteados = grupos; salvarDados(); gerarPartidas(); atualizarTelaGrupos();
     }
 
+    // Processamento Dinâmico dos Grupos
     function obterClassificacaoGrupos() {
         let gruposCalculados = [];
         if(!torneioAtual.gruposSorteados) return gruposCalculados;
@@ -548,6 +549,7 @@
       container.innerHTML = html;
     }
 
+    // Cálculos de Seeds dinâmicos para o Modal e Chaveamento Visual
     function calcularSeeds() {
         let gruposData = obterClassificacaoGrupos();
         let numGrupos = gruposData.length;
@@ -577,7 +579,7 @@
         let todosSeeds = calcularSeeds();
         let numGrupos = torneioAtual.gruposSorteados ? torneioAtual.gruposSorteados.length : 0;
         
-        if (!todosSeeds) { container.innerHTML = `<div style="text-align:center; padding: 20px;">Você precisa de 2 ou 4 grupos para montar a chave automática. Você tem ${numGrupos}.</div>`; return; }
+        if (!todosSeeds) { container.innerHTML = `<div style="text-align:center; padding: 20px;">Você precisa de 2 ou 4 grupos para montar a chave automática.</div>`; return; }
         
         const getS = (n) => { let s = todosSeeds.find(x => x.seed === n); return s ? formatarDuplaLinha(s.nome) : 'A definir'; };
         const renderSCard = (s) => {
@@ -612,6 +614,7 @@
         }
     }
 
+    // CHAVEAMENTO MATAMATA VISUAL E INTACTO PARA TODOS OS NAVEGADORES
     function salvarPlacarMataMata(fase, matchIdx, equipa, valor) {
         if(!torneioAtual.bracket) torneioAtual.bracket = {};
         if(!torneioAtual.bracket[fase]) torneioAtual.bracket[fase] = {};
@@ -631,18 +634,18 @@
         
         if (!seeds) { 
             badgeRow.innerHTML = '';
-            container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio. Crie exatos <b>2 ou 4 grupos</b> para a chave funcionar.<br>Grupos atuais: ${numGrupos}</div>`; 
+            container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio e Resultados. Crie exatos <b>2 ou 4 grupos</b> para a chave funcionar.</div>`; 
             return; 
         }
 
-        const getS = (n) => { let s = seeds.find(x => x.seed === n); return s ? s.nome : 'A definir'; };
+        const getS = function(n) { let s = seeds.find(function(x){ return x.seed === n; }); return s ? s.nome : 'A definir'; };
         
         let b = torneioAtual.bracket || {};
         let qf_s = b.qf || {}; let sf_s = b.sf || {}; let fn_s = b.final || {};
 
-        const getSc = (faseObj, idx, p) => { if(faseObj && faseObj[idx]) return faseObj[idx][p]; return ''; };
+        const getSc = function(faseObj, idx, p) { if(faseObj && faseObj[idx]) { return faseObj[idx][p]; } return ''; };
 
-        const getVencedor = (t1, t2, sc1, sc2) => {
+        const getVencedor = function(t1, t2, sc1, sc2) {
             if (sc1 === '' || sc2 === '' || sc1 == null || sc2 == null) return 'A definir';
             let n1 = parseInt(sc1), n2 = parseInt(sc2);
             if (n1 > n2) return t1;
@@ -650,7 +653,7 @@
             return 'A definir';
         };
 
-        const buildMatchCard = (title, team1, team2, s1, s2, faseId, matchIdx) => {
+        const buildMatchCard = function(title, team1, team2, s1, s2, faseId, matchIdx) {
             let cls1 = '', cls2 = '', t1Icon = '', t2Icon = '';
 
             if(s1 !== '' && s2 !== '') {
