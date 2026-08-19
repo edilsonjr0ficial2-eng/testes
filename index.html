@@ -80,13 +80,17 @@
     .tabela-row { display: grid; grid-template-columns: 50px 1fr 75px 45px 45px 45px; padding: 12px 10px; font-size: 14px; align-items: center; text-align: center; color: #333; background-color: #ffffff; border-bottom: 1px solid #f0f0f0; }
     .tabela-row.classificado { background-color: #fffae6; }
     .tabela-row > div:nth-child(2) { text-align: left; display: flex; flex-direction: column; gap: 5px; padding-left: 10px; }
+    
+    /* CSS RESTAURADO PARA EMPILHAR NOME NA ABA PARTIDAS */
+    .dupla-partida { flex: 1; display: flex; flex-direction: column; gap: 3px; font-size: 13px; font-weight: 600; color: var(--brand-black); }
     .partida-card-lista { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+    .placar-container { display: flex; align-items: center; gap: 10px; margin: 0 15px; }
     .placar-input-lista { width: 45px !important; height: 40px; text-align: center; font-size: 18px !important; font-weight: bold; border: 2px solid #e5eaf5 !important; border-radius: 8px !important; background-color: #f9f9f9 !important; color: var(--brand-black); padding: 0 !important; }
     .placar-input-lista::-webkit-outer-spin-button, .placar-input-lista::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .link-info { color: #1d4ed8; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 5px 10px; background: #eef2ff; border-radius: 20px; transition: 0.2s; }
     .link-info:hover { background: #e0e7ff; }
 
-    /* ======== CHAVEAMENTO MATA-MATA (BLINDADO CONTRA ERROS DE CSS) ======== */
+    /* ======== TELA DE CHAVEAMENTO (BRACKET) BLINDADO ======== */
     .bracket-wrapper { background: white; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 30px; overflow-x: auto; width: 100%; box-sizing: border-box; }
     .badge-row { display: flex; gap: 40px; padding-left: 20px; margin-bottom: 30px; min-width: max-content; }
     .badge-header { width: 250px; display: flex; justify-content: center; flex-shrink: 0; }
@@ -102,7 +106,6 @@
     .match-box { background: white; border: 1px solid #bbf7d0; border-radius: 8px; position: relative; height: 100px; box-sizing: border-box; z-index: 2; }
     .match-header { background: #f8fafc; padding: 6px 12px; font-size: 10px; color: #64748b; border-bottom: 1px solid #e2e8f0; border-radius: 8px 8px 0 0; height: 24px; box-sizing: border-box; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
     
-    /* ESTRUTURA BLINDADA PARA NUNCA SUMIR O NOME */
     .match-team { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; border-bottom: 1px solid #f1f5f9; height: 37px; box-sizing: border-box; position: relative; }
     .match-team:last-child { border-bottom: none; border-radius: 0 0 8px 8px; }
     
@@ -112,17 +115,14 @@
     .team-score:focus { border-color: #3b82f6; background: #fff; }
     .team-score::-webkit-outer-spin-button, .team-score::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-    /* Cores Dinâmicas */
     .match-team.winner { background-color: #f0fdf4; }
     .match-team.winner .team-name-box { color: #059669; }
     .match-team.winner .team-score { color: #059669; border-color: #a7f3d0; background-color: #ffffff; }
     .match-team.loser .team-name-box { color: #ef4444; }
     .match-team.loser .team-score { color: #ef4444; border-color: #fecaca; background-color: #ffffff; }
 
-    /* Troféu */
     .trophy-icon { position: absolute; right: -25px; font-size: 20px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); z-index: 10; }
 
-    /* Conectores */
     .connector-right { position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 20px; border-top: 2px solid #60a5fa; }
     .connector-bracket { position: absolute; left: -20px; top: 50%; transform: translateY(-50%); width: 20px; height: 120px; border: 2px solid #60a5fa; border-right: none; border-radius: 4px 0 0 4px; z-index: 1; }
     .connector-bracket.final { height: 240px; }
@@ -231,8 +231,8 @@
              <div style="font-weight: bold; font-size: 16px;">Chaveamento do Torneio</div>
           </div>
           <div class="bracket-wrapper">
-              <div class="badge-row" id="badgeRowContainer"></div>
-              <div id="containerBracketDraw" class="bracket-container"></div>
+              <div class="badge-row" id="badgeRowContainerAba"></div>
+              <div id="containerBracketDrawAba" class="bracket-container"></div>
           </div>
       </div>
 
@@ -349,7 +349,7 @@
 
     function formatarDuplaLinha(dupla) {
         if (!dupla || typeof dupla !== 'string' || dupla === 'A definir') return 'A definir';
-        var nomesArray = dupla.split(/ e | x | - | & /i);
+        var nomesArray = dupla.split(/ e | x | - | & | \/ /i);
         var j1 = nomesArray[0] ? nomesArray[0].trim() : dupla;
         var j2 = nomesArray[1] ? nomesArray[1].trim() : '';
         return j2 ? j1 + ' / ' + j2 : j1;
@@ -554,7 +554,7 @@
               html += '<div style="padding: 15px; text-align:center; font-size:13px; color: var(--text-gray);">Grupo Vazio</div>';
           } else {
               stats.forEach(function(s, index) {
-                  var nomes = (s.nome||'').split(/ e | x | - | & /i);
+                  var nomes = (s.nome||'').split(/ e | x | - | & | \/ /i);
                   var j1 = nomes[0] ? nomes[0].trim() : s.nome;
                   var j2 = nomes[1] ? nomes[1].trim() : '';
                   var htmlNome = j2 ? '<span>' + j1 + '</span><span>' + j2 + '</span>' : '<span>' + s.nome + '</span>';
@@ -604,8 +604,8 @@
             html += '<div style="text-align:center; padding: 15px; background: white; border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-gray); font-size: 13px;">Sem duplas suficientes.</div>';
         } else {
             grupoPartida.confrontos.forEach(function(partida, pIdx) {
-                var d1 = (partida.dupla1||'').split(/ e | x | - | & /i);
-                var d2 = (partida.dupla2||'').split(/ e | x | - | & /i);
+                var d1 = (partida.dupla1||'').split(/ e | x | - | & | \/ /i);
+                var d2 = (partida.dupla2||'').split(/ e | x | - | & | \/ /i);
                 
                 var n1 = d1[1] ? '<span>' + d1[0].trim() + '</span><span>' + d1[1].trim() + '</span>' : '<span>' + partida.dupla1 + '</span>';
                 var n2 = d2[1] ? '<span>' + d2[0].trim() + '</span><span>' + d2[1].trim() + '</span>' : '<span>' + partida.dupla2 + '</span>';
@@ -694,9 +694,6 @@
         container.innerHTML = '<div class="chaves-grid"><div class="chaves-col-esquerda">' + htmlEsquerda + '</div><div class="chaves-col-direita">' + htmlDireita + '</div></div>';
     }
 
-    // =========================================================================
-    // BRACKET CHAVEAMENTO MATA-MATA - BLINDADO CONTRA CSS FLEXBOX HIDDEN
-    // =========================================================================
     function salvarPlacarMataMata(fase, matchIdx, equipa, valor) {
         if(!torneioAtual.bracket) torneioAtual.bracket = {};
         if(!torneioAtual.bracket[fase]) torneioAtual.bracket[fase] = {};
@@ -709,8 +706,8 @@
     }
 
     function renderizarBracketVisual() {
-        var container = document.getElementById('containerBracketDraw');
-        var badgeRow = document.getElementById('badgeRowContainer');
+        var container = document.getElementById('containerBracketDrawAba');
+        var badgeRow = document.getElementById('badgeRowContainerAba');
         
         if (!container || !badgeRow) return;
 
@@ -720,7 +717,7 @@
             
             if (!seeds || seeds.length === 0) { 
                 badgeRow.innerHTML = '';
-                container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio e Resultados. Crie exatos <b>2 ou 4 grupos</b> para a chave funcionar.</div>'; 
+                container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 40px; font-size: 14px; width:100%;">Aguardando Sorteio. Crie exatos <b>2 ou 4 grupos</b> para o chaveamento automático.</div>'; 
                 return; 
             }
 
@@ -785,7 +782,6 @@
                 var t2Name = formatarDuplaLinha(team2);
                 if (!t2Name || t2Name.trim() === '') t2Name = 'A definir';
 
-                // Estrutura isolada para o nome nunca sumir
                 return '<div class="match-box">' +
                             '<div class="match-header">' + title + '</div>' +
                             '<div class="match-team ' + cls1 + '">' +
