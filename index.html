@@ -25,13 +25,8 @@
             <!-- Logo Arena Vitale -->
             <img src="logo.jpeg" alt="Arena Vitale Logo" class="max-h-14 object-contain">
         </div>
+        <!-- Opções do menu superior removidas conforme solicitado -->
         <nav class="flex-1 flex items-center px-8 space-x-6 text-sm font-semibold tracking-wide">
-            <a href="#" class="hover:text-gray-300">A CONFEDERAÇÃO</a>
-            <a href="#" class="border-b-2 border-white pb-1">DEPARTAMENTOS <span class="text-xs">▼</span></a>
-            <a href="#" class="hover:text-gray-300">FEDERAÇÕES</a>
-            <a href="#" class="hover:text-gray-300">INSTITUCIONAL</a>
-            <a href="#" class="hover:text-gray-300">OUVIDORIA</a>
-            <a href="#" class="hover:text-gray-300">CONTATO</a>
         </nav>
     </header>
 
@@ -43,26 +38,10 @@
     </section>
 
     <!-- Conteúdo Principal -->
-    <main class="max-w-6xl mx-auto mt-10 flex gap-10 px-4 pb-20">
+    <main class="max-w-5xl mx-auto mt-10 px-4 pb-20">
         
-        <!-- Menu Lateral -->
-        <aside class="w-1/4">
-            <h3 class="text-gray-700 font-bold text-lg mb-4 ml-1">MENU</h3>
-            <ul class="bg-white flex flex-col shadow-sm rounded-sm overflow-hidden">
-                <li class="border-b"><a href="#" class="block p-4 text-gray-600 hover:bg-gray-50 text-sm">Lar</a></li>
-                <li class="border-b"><a href="#" class="block p-4 text-gray-600 hover:bg-gray-50 text-sm">Torneios</a></li>
-                <!-- Item Ativo -->
-                <li class="border-b">
-                    <a href="#" class="block p-4 bg-cbt-green text-white border-l-[6px] border-cbt-yellow font-semibold text-sm">Classificação</a>
-                </li>
-                <li class="border-b"><a href="#" class="block p-4 text-gray-600 hover:bg-gray-50 text-sm">Antidoping</a></li>
-                <li class="border-b"><a href="#" class="block p-4 text-gray-600 hover:bg-gray-50 text-sm">espinhas</a></li>
-                <li><a href="#" class="block p-4 text-gray-600 hover:bg-gray-50 text-sm">História do tênis de praia</a></li>
-            </ul>
-        </aside>
-
-        <!-- Área das Classificações -->
-        <section class="w-3/4">
+        <!-- Área das Classificações (Ocupando largura total pois o menu lateral foi removido) -->
+        <section class="w-full">
             <!-- Cabeçalho das classificações e botão de filtro -->
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-[28px] font-bold text-[#1e3a40]">Classificações</h2>
@@ -81,11 +60,10 @@
             <!-- Lista de Cards -->
             <div class="flex flex-col gap-4">
                 
-                <!-- Card 1 -->
-                <div class="bg-white rounded-md shadow-sm overflow-hidden flex h-36 relative cursor-pointer hover:shadow-md transition">
+                <!-- Card 1 (Masculino) -->
+                <div class="bg-white rounded-md shadow-sm overflow-hidden flex h-28 relative cursor-pointer hover:shadow-md transition">
                     <div class="bg-cbt-green w-[85%] flex flex-col justify-center pl-8 text-white z-10 clip-card">
-                        <h3 class="text-[22px] font-bold mb-2">Ranking Nacional de Beach Tennis 2026</h3>
-                        <p class="text-[13px] font-medium leading-tight">Período<br>01/01/2026 até 31/12/2026</p>
+                        <h3 class="text-[22px] font-bold">Ranking Masculino de Beach Tennis 2026</h3>
                     </div>
                     <!-- Área da Logo no Card -->
                     <div class="w-[20%] flex items-center justify-center absolute right-0 top-0 bottom-0 bg-white p-4">
@@ -93,11 +71,10 @@
                     </div>
                 </div>
 
-                <!-- Card 2 -->
-                <div class="bg-white rounded-md shadow-sm overflow-hidden flex h-36 relative cursor-pointer hover:shadow-md transition">
+                <!-- Card 2 (Feminino) -->
+                <div class="bg-white rounded-md shadow-sm overflow-hidden flex h-28 relative cursor-pointer hover:shadow-md transition">
                     <div class="bg-cbt-green w-[85%] flex flex-col justify-center pl-8 text-white z-10 clip-card">
-                        <h3 class="text-[22px] font-bold mb-2">Ranking Nacional Infantojuvenil BT 2026</h3>
-                        <p class="text-[13px] font-medium leading-tight">Período<br>01/01/2026 até 31/12/2026</p>
+                        <h3 class="text-[22px] font-bold">Ranking Feminino de Beach Tennis 2026</h3>
                     </div>
                     <!-- Área da Logo no Card -->
                     <div class="w-[20%] flex items-center justify-center absolute right-0 top-0 bottom-0 bg-white p-4">
