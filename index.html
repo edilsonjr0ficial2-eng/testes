@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tênis de Praia - Classificações</title>
+    <title>Beach Tennis Arena Vitale - Classificações</title>
     <!-- Tailwind CSS para estilização rápida e responsiva sem precisar de arquivos externos -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -21,12 +21,9 @@
     
     <!-- Cabeçalho (Header) -->
     <header class="flex h-20 bg-cbt-green text-white">
-        <div class="bg-white w-48 flex items-center justify-center clip-header relative z-10 shadow-sm">
-            <!-- Logo CBT (Placeholder) -->
-            <div class="text-center">
-                <div class="text-green-700 font-extrabold text-2xl leading-none">CBT</div>
-                <div class="text-[9px] text-green-700 font-bold mt-1">CONFEDERAÇÃO<br>BRASILEIRA DE TÊNIS</div>
-            </div>
+        <div class="bg-white w-48 flex items-center justify-center clip-header relative z-10 shadow-sm px-4">
+            <!-- Logo Arena Vitale -->
+            <img src="logo.jpeg" alt="Arena Vitale Logo" class="max-h-14 object-contain">
         </div>
         <nav class="flex-1 flex items-center px-8 space-x-6 text-sm font-semibold tracking-wide">
             <a href="#" class="hover:text-gray-300">A CONFEDERAÇÃO</a>
@@ -40,9 +37,8 @@
 
     <!-- Seção de Título (Hero) -->
     <section class="text-white py-12 px-8 pl-56 relative" style="background: linear-gradient(90deg, #2a2522 40%, #c4b5a2 100%);">
-        <div class="relative z-10">
-            <p class="text-sm font-semibold tracking-widest mb-1">DEPARTAMENTOS</p>
-            <h1 class="text-4xl font-extrabold">TÊNIS DE PRAIA</h1>
+        <div class="relative z-10 flex items-center h-full">
+            <h1 class="text-4xl font-extrabold mt-2">Beach Tennis Arena Vitale</h1>
         </div>
     </section>
 
@@ -91,11 +87,9 @@
                         <h3 class="text-[22px] font-bold mb-2">Ranking Nacional de Beach Tennis 2026</h3>
                         <p class="text-[13px] font-medium leading-tight">Período<br>01/01/2026 até 31/12/2026</p>
                     </div>
-                    <!-- Área da Logo CBT no Card -->
-                    <div class="w-[20%] flex items-center justify-center absolute right-0 top-0 bottom-0 bg-white">
-                        <div class="border-2 border-[#2b544b] rounded-[4px] p-2 flex flex-col items-center justify-center">
-                            <span class="text-[#2b544b] font-extrabold text-sm leading-none">CBT</span>
-                        </div>
+                    <!-- Área da Logo no Card -->
+                    <div class="w-[20%] flex items-center justify-center absolute right-0 top-0 bottom-0 bg-white p-4">
+                        <img src="logo.jpeg" alt="Arena Vitale" class="max-h-16 object-contain">
                     </div>
                 </div>
 
@@ -105,11 +99,9 @@
                         <h3 class="text-[22px] font-bold mb-2">Ranking Nacional Infantojuvenil BT 2026</h3>
                         <p class="text-[13px] font-medium leading-tight">Período<br>01/01/2026 até 31/12/2026</p>
                     </div>
-                    <!-- Área da Logo CBT no Card -->
-                    <div class="w-[20%] flex items-center justify-center absolute right-0 top-0 bottom-0 bg-white">
-                        <div class="border-2 border-[#2b544b] rounded-[4px] p-2 flex flex-col items-center justify-center">
-                            <span class="text-[#2b544b] font-extrabold text-sm leading-none">CBT</span>
-                        </div>
+                    <!-- Área da Logo no Card -->
+                    <div class="w-[20%] flex items-center justify-center absolute right-0 top-0 bottom-0 bg-white p-4">
+                        <img src="logo.jpeg" alt="Arena Vitale" class="max-h-16 object-contain">
                     </div>
                 </div>
 
@@ -118,14 +110,12 @@
     </main>
 
     <!-- ========================================== -->
-    <!-- CONFIGURAÇÃO DO FIREBASE (PASSO FUTURO)    -->
+    <!-- CONFIGURAÇÃO DO FIREBASE                   -->
     <!-- ========================================== -->
     <script type="module">
-        // Importando as funções do SDK do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // Aqui é onde você vai colar as credenciais do seu projeto Firebase depois
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "SEU_PROJETO.firebaseapp.com",
@@ -135,11 +125,8 @@
             appId: "SEU_APP_ID"
         };
 
-        // Inicializa o Firebase
         // const app = initializeApp(firebaseConfig);
         // const db = getFirestore(app);
-        
-        console.log("Interface pronta! Aguardando instruções para ativar o Firebase.");
     </script>
 </body>
 </html>
