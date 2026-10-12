@@ -1,110 +1,162 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beach Tennis Arena Vitale - Classificações</title>
-    <!-- Tailwind CSS para estilização rápida e responsiva sem precisar de arquivos externos -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Cores baseadas na imagem */
-        .bg-cbt-green { background-color: #2b544b; }
-        .text-cbt-green { color: #2b544b; }
-        .bg-cbt-yellow { background-color: #d4e03b; }
-        
-        /* Recortes (slanted edges) vistos na imagem */
-        .clip-card { clip-path: polygon(0 0, 90% 0, 85% 100%, 0% 100%); }
-        .clip-header { clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Documentos - AFAGU</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; padding-top: 30px; }
+    .card { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  </style>
 </head>
-<body class="bg-[#f0f2f5] font-sans">
-    
-    <!-- Cabeçalho (Header) -->
-    <header class="flex h-20 bg-cbt-green text-white">
-        <div class="bg-white w-48 flex items-center justify-center clip-header relative z-10 shadow-sm px-4">
-            <!-- Logo Arena Vitale -->
-            <img src="logo.jpeg" alt="Arena Vitale Logo" class="max-h-14 object-contain">
+<body>
+  <div class="container" style="max-width: 650px;">
+    <div class="card p-4">
+      <h3 class="text-center mb-4 text-primary">Gerador de Documentos</h3>
+      
+      <!-- Seleção do Documento -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Tipo de Documento:</label>
+        <select id="tipoDocumento" class="form-select" onchange="alternarFormulario()">
+          <option value="declaracao">Declaração para Trabalho</option>
+          <option value="guia">Guia de Sepultamento</option>
+        </select>
+      </div>
+
+      <hr>
+
+      <!-- Formulário: Declaração de Trabalho -->
+      <form id="formDeclaracao">
+        <div class="mb-2">
+          <label class="form-label">Nome do Funcionário/Declarante</label>
+          <input type="text" class="form-control" id="nome_funcionario" required>
         </div>
-        <!-- Opções do menu superior removidas conforme solicitado -->
-        <nav class="flex-1 flex items-center px-8 space-x-6 text-sm font-semibold tracking-wide">
-        </nav>
-    </header>
-
-    <!-- Seção de Título (Hero) -->
-    <section class="text-white py-12 px-8 pl-56 relative" style="background: linear-gradient(90deg, #2a2522 40%, #c4b5a2 100%);">
-        <div class="relative z-10 flex items-center h-full">
-            <h1 class="text-4xl font-extrabold mt-2">Beach Tennis Arena Vitale</h1>
+        <div class="row mb-2">
+          <div class="col-6">
+            <label class="form-label">CPF do Funcionário</label>
+            <input type="text" class="form-control" id="cpf_funcionario">
+          </div>
+          <div class="col-6">
+            <label class="form-label">Empresa</label>
+            <input type="text" class="form-control" id="empresa">
+          </div>
         </div>
-    </section>
+        <div class="row mb-2">
+          <div class="col-6">
+            <label class="form-label">Parentesco</label>
+            <input type="text" class="form-control" id="parentesco" placeholder="ex: sua prima">
+          </div>
+          <div class="col-6">
+            <label class="form-label">Nome do Falecido(a)</label>
+            <input type="text" class="form-control" id="nome_falecido">
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-6">
+            <label class="form-label">Data Falecimento</label>
+            <input type="text" class="form-control" id="data_falecimento" placeholder="dd/mm/aaaa">
+          </div>
+          <div class="col-6">
+            <label class="form-label">Data Sepultamento</label>
+            <input type="text" class="form-control" id="data_sepultamento" placeholder="dd/mm/aaaa">
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4">
+            <label class="form-label">Horário</label>
+            <input type="text" class="form-control" id="hora_sepultamento" placeholder="17h">
+          </div>
+          <div class="col-8">
+            <label class="form-label">Cemitério</label>
+            <input type="text" class="form-control" id="cemiterio">
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-6">
+            <label class="form-label">Cidade / Estado</label>
+            <input type="text" class="form-control" id="cidade_estado" placeholder="Russas, Ceará">
+          </div>
+          <div class="col-6">
+            <label class="form-label">Atendente</label>
+            <input type="text" class="form-control" id="nome_atendente">
+          </div>
+        </div>
+      </form>
 
-    <!-- Conteúdo Principal -->
-    <main class="max-w-5xl mx-auto mt-10 px-4 pb-20">
-        
-        <!-- Área das Classificações (Ocupando largura total pois o menu lateral foi removido) -->
-        <section class="w-full">
-            <!-- Cabeçalho das classificações e botão de filtro -->
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-[28px] font-bold text-[#1e3a40]">Classificações</h2>
-                <div class="flex gap-4 items-center">
-                    <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full text-xs font-bold text-gray-700 shadow-sm hover:bg-gray-50">
-                        FILTROS
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                    </button>
-                    <!-- Ícone de Acessibilidade (Placeholder) -->
-                    <div class="bg-blue-600 text-white p-2 rounded-full cursor-pointer">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-7.536 5.879a1 1 0 001.415 0 3 3 0 014.242 0 1 1 0 001.415-1.415 5 5 0 00-7.072 0 1 1 0 000 1.415z" clip-rule="evenodd"></path></svg>
-                    </div>
-                </div>
-            </div>
+      <!-- Formulário: Guia de Sepultamento (Inicialmente Oculto) -->
+      <form id="formGuia" class="d-none">
+        <div class="alert alert-info">
+          Insira aqui os campos específicos da Guia de Sepultamento.
+        </div>
+      </form>
 
-            <!-- Lista de Cards -->
-            <div class="flex flex-col gap-4">
-                
-                <!-- Card 1 (Masculino) -->
-                <div class="bg-white rounded-md shadow-sm overflow-hidden flex h-28 relative cursor-pointer hover:shadow-md transition">
-                    <div class="bg-cbt-green w-[85%] flex flex-col justify-center pl-8 text-white z-10 clip-card">
-                        <h3 class="text-[22px] font-bold">Ranking Masculino de Beach Tennis 2026</h3>
-                    </div>
-                    <!-- Área da Logo no Card -->
-                    <div class="w-[20%] flex items-center justify-center absolute right-0 top-0 bottom-0 bg-white p-4">
-                        <img src="logo.jpeg" alt="Arena Vitale" class="max-h-16 object-contain">
-                    </div>
-                </div>
+      <button id="btnGerar" class="btn btn-success w-100 mt-3 fs-5" onclick="gerarPDF()">Gerar e Baixar PDF</button>
+      
+      <div id="status" class="mt-3 text-center"></div>
+    </div>
+  </div>
 
-                <!-- Card 2 (Feminino) -->
-                <div class="bg-white rounded-md shadow-sm overflow-hidden flex h-28 relative cursor-pointer hover:shadow-md transition">
-                    <div class="bg-cbt-green w-[85%] flex flex-col justify-center pl-8 text-white z-10 clip-card">
-                        <h3 class="text-[22px] font-bold">Ranking Feminino de Beach Tennis 2026</h3>
-                    </div>
-                    <!-- Área da Logo no Card -->
-                    <div class="w-[20%] flex items-center justify-center absolute right-0 top-0 bottom-0 bg-white p-4">
-                        <img src="logo.jpeg" alt="Arena Vitale" class="max-h-16 object-contain">
-                    </div>
-                </div>
+  <script>
+    // SUBSTITA pela URL do App da Web gerada no Google Apps Script
+    const WEB_APP_URL = https://script.google.com/macros/s/AKfycbyYUsLn5olI85qOCCuC7ytx8QDzxQ8RGCtmbifNksR9SU8cRRyOgc70ng7g6MXpwcxgOg/exec;
 
-            </div>
-        </section>
-    </main>
+    function alternarFormulario() {
+      const tipo = document.getElementById("tipoDocumento").value;
+      if (tipo === "declaracao") {
+        document.getElementById("formDeclaracao").classList.remove("d-none");
+        document.getElementById("formGuia").classList.add("d-none");
+      } else {
+        document.getElementById("formDeclaracao").classList.add("d-none");
+        document.getElementById("formGuia").classList.remove("d-none");
+      }
+    }
 
-    <!-- ========================================== -->
-    <!-- CONFIGURAÇÃO DO FIREBASE                   -->
-    <!-- ========================================== -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    async function gerarPDF() {
+      const tipo = document.getElementById("tipoDocumento").value;
+      const statusDiv = document.getElementById("status");
+      const btn = document.getElementById("btnGerar");
 
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_PROJETO.firebaseapp.com",
-            projectId: "SEU_PROJETO",
-            storageBucket: "SEU_PROJETO.appspot.com",
-            messagingSenderId: "SEU_SENDER_ID",
-            appId: "SEU_APP_ID"
+      btn.disabled = true;
+      statusDiv.innerHTML = `<span class="text-primary fw-bold">Gerando PDF, aguarde...</span>`;
+
+      // Coleta os valores do formulário ativo
+      let campos = {};
+      if (tipo === "declaracao") {
+        campos = {
+          nome_funcionario: document.getElementById("nome_funcionario").value,
+          cpf_funcionario: document.getElementById("cpf_funcionario").value,
+          empresa: document.getElementById("empresa").value,
+          parentesco: document.getElementById("parentesco").value,
+          nome_falecido: document.getElementById("nome_falecido").value,
+          data_falecimento: document.getElementById("data_falecimento").value,
+          data_sepultamento: document.getElementById("data_sepultamento").value,
+          hora_sepultamento: document.getElementById("hora_sepultamento").value,
+          cemiterio: document.getElementById("cemiterio").value,
+          cidade_estado: document.getElementById("cidade_estado").value,
+          nome_atendente: document.getElementById("nome_atendente").value
         };
+      }
 
-        // const app = initializeApp(firebaseConfig);
-        // const db = getFirestore(app);
-    </script>
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify({ tipoDocumento: tipo, campos: campos })
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          statusDiv.innerHTML = `<a href="${result.url}" target="_blank" class="btn btn-primary w-100">Download do PDF Pronto</a>`;
+        } else {
+          statusDiv.innerHTML = `<span class="text-danger">Erro: ${result.message}</span>`;
+        }
+      } catch (err) {
+        statusDiv.innerHTML = `<span class="text-danger">Erro de conexão ao gerar PDF.</span>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>
-testte
